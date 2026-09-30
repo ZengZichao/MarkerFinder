@@ -1,0 +1,6 @@
+{
+  "assertion": "A-14",
+  "must_fail": true,
+  "far_active": true,
+  "far_card_entries": []
+}

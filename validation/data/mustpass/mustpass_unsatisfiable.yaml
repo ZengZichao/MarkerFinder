@@ -1,0 +1,12 @@
+# Unsatisfiable baseline: forces the gate to prove it can fail.
+markers:
+  ids: []
+must_pass:
+  - relation: "monophyletic"
+    level: "genus"
+    min_taxa: 2
+    note: "genus Bacillus is split on purpose: Bacillus subtilis must NOT
+      be in the same genus clade as Bacillus cereus"
+    forbid:
+      - tips: ["GCF_000009045.1", "GCF_000007825.1"]
+        level: "genus"

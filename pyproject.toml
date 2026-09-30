@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markerfinder"
+version = "0.1.0"
+description = "Adaptive HGT-Aware Phylogenomic Pipeline for Prokaryotic Marker Gene Selection"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10,<3.13"
+authors = [
+    {name = "Zengzichao", email = "zengzichao@sjtu.edu.cn"},
+]
+keywords = ["phylogenomics", "marker-genes", "HGT", "MAG", "prokaryote"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "biopython>=1.81",
+    "pyyaml>=6.0",
+    "ete3>=3.1",
+    "tomli>=2.0;python_version<'3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    # Static checking of the type-annotated modules. Dev-only — the runtime
+    # dependency set stays at biopython/pyyaml/ete3/tomli.
+    "mypy>=1.8",
+    "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+markerfinder = "markerfinder.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/ZengZichao/MarkerFinder"
+Issues = "https://github.com/ZengZichao/MarkerFinder/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["markerfinder*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+# The test suites import the package from the repository, so an editable install
+# is not a precondition for running them (and a plain "pytest" from the repo root
+# works even where the interpreter does not default to adding the CWD).
+pythonpath = ["."]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+[tool.coverage.run]
+source = ["markerfinder"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+fail_under = 65
+show_missing = true

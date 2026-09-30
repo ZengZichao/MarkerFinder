@@ -1,0 +1,6 @@
+{
+  "assertion": "A-11",
+  "must_fail": true,
+  "evidence_coverage": 0.2,
+  "n_markers": 10
+}

@@ -1,0 +1,10 @@
+{
+  "assertion": "A-07",
+  "must_fail": true,
+  "alignments": [
+    {
+      "marker_id": "m1",
+      "effective_columns": 0
+    }
+  ]
+}

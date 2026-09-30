@@ -1,0 +1,8 @@
+{
+  "_comment": "Expected SHA-256 hashes for the databases MarkerFinder verifies. Keys are the names verify_database() reports; each value is the combined hash computed exactly the way DatabaseVersionManager.verify_database() computes it - sha256 over the concatenation of the per-file SHA-256 digests of every file under db/<name>, in sorted path order. Regenerate after a deliberate database update with: python -c \"from markerfinder.utils.db_versioning import DatabaseVersionManager as M; print(M('db').verify_database('gtdb_markers', 'db/gtdb_markers')['hash'])\", or run scripts/fetch_marker_db.py --record.",
+  "_recorded": "2026-09-29, MarkerFinder 0.1.0, db/gtdb_markers = bac120 + ar53 profile directories assembled by scripts/fetch_marker_db.py",
+  "gtdb_markers": "67e931f36515f5711312645e2b283dfec151510e10d9347f225e34069a15c7de",
+  "_note_gtdb_markers": "db/gtdb_markers/ is git-ignored: the TIGRFAM/Pfam profiles are third-party work and are assembled locally by scripts/fetch_marker_db.py. This hash is the reference that build produced, so --check tells a user whose profiles differ (another upstream version, another split) that the database on disk is not the one this release was validated against. It is a WARN, not a hard failure.",
+  "_note_marker_hmm": "Left empty on purpose: the TIGRFAM/Pfam library used by --marker-mode hmm is not shipped with this release (it is downloaded by the user), so a hash for it would be an unverifiable claim. --check reports an empty entry as NOT RUN rather than as a pass.",
+  "marker_hmm": ""
+}

@@ -1,0 +1,11 @@
+{
+  "assertion": "A-01",
+  "must_fail": true,
+  "rendered_fields": [
+    {
+      "field": "avg_ufboot",
+      "value": null,
+      "rendered": "0.0000"
+    }
+  ]
+}

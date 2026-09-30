@@ -1,0 +1,50 @@
+{
+  "directionality": {
+    "n_markers_scored_in_both": 20,
+    "planted": [
+      "TIGR00043",
+      "TIGR00061",
+      "TIGR00431"
+    ],
+    "planted_risk_in_chimera_run": {
+      "TIGR00043": 1.0,
+      "TIGR00061": 1.0,
+      "TIGR00431": 1.0
+    },
+    "planted_risk_in_clean_run": {
+      "TIGR00043": 0.5,
+      "TIGR00061": 1.0,
+      "TIGR00431": 0.0
+    },
+    "planted_unchanged_or_lower": [
+      "TIGR00061"
+    ],
+    "planted_with_risk_increase": [
+      "TIGR00043",
+      "TIGR00431"
+    ],
+    "unplanted_markers_that_moved": []
+  },
+  "quality_at_exclusion": {
+    "background_exclusion_rate": 0.1,
+    "decision": "hgt_risk_level == level_3",
+    "differentially_excluded": [
+      "TIGR00043",
+      "TIGR00431"
+    ],
+    "f1": 0.8,
+    "false_positives": [],
+    "missed": [
+      "TIGR00061"
+    ],
+    "n_excluded_in_chimera_run": 4,
+    "n_excluded_in_clean_run": 2,
+    "n_planted": 3,
+    "precision": 1.0,
+    "recall": 0.6667,
+    "true_positives": [
+      "TIGR00043",
+      "TIGR00431"
+    ]
+  }
+}

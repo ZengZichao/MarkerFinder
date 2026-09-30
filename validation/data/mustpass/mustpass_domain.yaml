@@ -1,0 +1,12 @@
+# Taxonomy must-pass baseline. The requirement it encodes is stated at
+# domain, where the shipped set has >= 2 representatives and every
+# member shares one value, so the gate can be shown to run and pass.
+# The failure direction is mustpass_splitgenus.yaml.
+markers:
+  note: "applies to every gene tree the run produces"
+  ids: []
+must_pass:
+  - relation: "monophyletic"
+    level: "domain"
+    min_taxa: 2
+    note: "all shipped genomes are Bacteria"

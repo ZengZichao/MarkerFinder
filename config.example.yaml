@@ -1,0 +1,157 @@
+# MarkerFinder Example Configuration
+# Copy this file and modify as needed.
+# Usage: markerfinder --config config.yaml -i genomes/ -o output/
+#
+# Priority: CLI arguments > Config file > Defaults
+
+# Input/Output
+input: genomes/ # Input genome directory (.faa files)
+output: output/ # Output directory
+threads: 4 # Number of CPU threads
+
+# Analysis mode
+# Options: conservative, standard, expanded, mag_adaptive
+mode: standard
+
+# HGT Filtering
+# 启用哪些 HGT 筛查步骤。phylogenetic = 系统发育不一致判据（驱动风险分档）;
+# composition = 组成型/GC 偏差诊断，只作为并列证据列产出，
+# 绝不并入 overall_risk / overall_score。
+hgt_steps: "phylogenetic" # 可选 "phylogenetic,composition"；默认只跑系统发育步骤
+hgt_threshold: 0.25 # HGT risk threshold
+# 远缘自适应放宽(默认关闭): 远缘数据集(≥2 目或属比≥0.70)上开启可避免
+# 标记被全部判为 Level 3 剔除. 等价 CLI 开关: --hgt-adaptive-thresholds.
+# hgt_adaptive_thresholds: false
+
+# ---- 自检层新增开关 ----
+# 全部有默认值，且默认行为等于改造前基线行为。
+# 键名即 CLI dest，也可用同名命令行参数覆盖（CLI > 配置文件 > 默认值）。
+
+# 阈值双键：HGTConfig.level_thresholds 的两个边界现可独立设置
+# hgt_threshold_l1l2: 0.25 # Level1/Level2 边界（--hgt-threshold-l1l2）
+# hgt_threshold_l2l3: 0.60 # Level2/Level3 边界（--hgt-threshold-l2l3）
+# 说明：hgt_threshold 保留为 l1l2 的向后兼容别名，使用时打印一次弃用提示。
+
+# 远缘放宽生效时会在报告顶部与逐标记决策卡双处留痕，
+# 且 level2_max 由 level2_max_far 覆盖，不再是只有一行 INFO 日志。
+
+# max_markers: 60 # 标记预算，原为代码内硬编码
+# marker_preset: "none" # none|conservative|standard|expanded|mag_adaptive
+# # 选 none 时保持现行占居率 top-K 行为；
+# # 显式选择预设时用其 min_occupancy/max_markers/strategy 三元组覆盖
+# require_evidence_coverage: 0.5 # HGT 证据覆盖率低于此值时报告顶部显著告警（仅告警）
+# hgt_scan: false # 阈值扫描（--hgt-scan）：只重评已存的风险值，
+# # 绝不重跑任何外部工具；产出 {prefix}.threshold_scan.tsv
+# scan_stability_min: 0.6 # 跨档入选标记集 Jaccard 下限；低于则该结论记 inconclusive
+# hgt_mode: "risk" # risk|consistency|hybrid，默认 risk 永不自动切换；
+# # consistency/hybrid 需通过结构化门禁（校验可观察工件，
+# # 标志位不可伪造），过闸后在 Phase 3 真正执行判据；
+# # hybrid = 两者都要过：risk 判据与
+# # grade==CONSISTENT 同时满足，逐标记裁决写进评估注记
+# consistency_stringency: 1 # 一致性强度档 1..5，门槛逐级递减；默认 1（provisional，尚未校准）
+# cog_category_map: "" # 可选 marker_id<TAB>functional_category 的 TSV。
+# # 未提供或文件缺行时该列渲染 NA 并在报告注记，不凭空填类别
+# min_informative_sites: 0 # 逐标记简约信息位点(PIS)下限，0=关闭（provisional）。
+# # 低于下限的标记在决策卡/报告中标 inconclusive，不得当作"干净"；
+# # 不改变 ev.level，是否剔除属发布决策
+
+# 输出数值断言层
+# strict_assertions: true # severity=fail 断言触发时以退出码 4 结束
+# allow_assertion_failure: false # 显式绕过上一项；绕过行为会写进报告
+# 分类学 must-pass 门禁：默认关闭，开启后任一"必须成立"的
+# 分类关系被违反即以退出码 4 中止（不是扣风险分）。裸开关用仓库内的基线 YAML，
+# 也可显式给路径；产物为 Phase5_reports/{prefix}.mustpass.tsv。
+# 注意：基线的 markers.ids 仍是未填骨架（需按研究对象补全 62 条核糖体标记 id），
+# 此时门禁改为检验全部标记基因树；若 ids 已填但与本数据集无交集，门禁直接中止
+# 而非报"通过"。
+# taxonomy_mustpass: "tests/benchmark/expected/taxonomy_mustpass.yaml"
+
+# 组成型 / GC 偏差诊断默认关闭，且只作并列证据列，
+# 绝不并入 overall_risk / overall_score（由测试锁定）。
+# 开启方式：把 hgt_steps 写成 "phylogenetic,composition"
+# （等价 CLI --hgt-steps phylogenetic,composition），产物为
+# Phase5_reports/{prefix}.composition.tsv（rcv/gc_bias/n_sequences/outlier_flag，
+# 离群标记排榜首；蛋白输入下 gc_bias 恒为 NA=NOT_APPLICABLE）。
+# 注意：HeterogeneityConfig.enable_composition_screen 与上面等价（任一为真即开启），
+# 但它本身仍只能由程序内设置——配置文件与 CLI 都没有对应键，本文件的开关是 hgt_steps。
+# 同一对象里的 composition_warn_threshold 现在真的生效（经 PipelineConfig.heterogeneity_config
+# 传到离群判定）；composition_outlier_metric 若被设为非 rcv 会记 WARN 说明只实现了 rcv。
+
+# Marker Discovery
+# marker_mode: "gtdb_tk" 使用 GTDB-TK 提取的 ar53/bac120 每标记 FASTA（必需 --gtdb-markers-dir）
+# "hmm" 使用 HMMER 扫描输入基因组中的 TIGRFAM/Pfam HMM 目录（--marker-hmm-dir），
+# 无需 GTDB-TK 预运行。
+marker_mode: "gtdb_tk"
+# 当未显式指定 marker_hmm_dir 时如何定位标记 HMM（仅 hmm 模式）：
+# auto=在 db/gtdb_markers/{ar53,bac120} 下按检测到的域自动发现；
+# gtdb=仅查 db/gtdb_markers；cog=仅查 db/cog_hmm；none=不自动发现
+marker_db_source: "auto"
+
+# [gtdb_tk 模式必填] GTDB-TK 提取的每标记 FASTA 目录
+# gtdb_markers_dir: "gtdbtk_out/align/marker_genes"
+
+# [hmm 模式] TIGRFAM/Pfam HMM 目录（未指定时按 marker_db_source 自动发现）
+# marker_hmm_dir: "GTDB-Tk-214-Markers/pfam/individual_hmms"
+
+# Phylogenetic Inference
+ufboot: 1000 # UFBOOT replicates
+# Gene-tree builder for coalescent inference. Options: "fasttree" (FastTree2 with WAG, fast)
+# or "iqtree" (IQ-TREE3, thorough). Default: fasttree. This explicitly selects the per-marker gene-tree
+# method in coalescent mode. The legacy "fast_tree: true" is still accepted as an
+# alias for "gene_tree_builder: fasttree".
+gene_tree_builder: fasttree
+coalescent_mode: post-filter # Options: off, post-filter, always
+
+# Legacy alias (kept for backward compatibility):
+# fast_tree: false # Use FastTree2 instead of IQ-TREE3
+
+# MAG Optimization (CheckM)
+checkm_results: "" # Pre-computed CheckM results file (TSV with 'Bin Id', 'Completeness', 'Contamination')
+skip_checkm: false # Force skip CheckM and use default quality estimates
+# 标记选择最低占用率下限(0-1): 显式指定时覆盖 Phase 0 自适应阈值.
+# 废弃别名 min_marker_coverage 仍被接受, 作用相同.
+# min_occupancy: 0.75
+
+# Report
+report_format: html # Options: html
+
+# Taxonomy
+# taxonomy_table: "" # External taxonomy table file
+# taxonomy_format: table # Format: table (Format B) or embedded (Format A)
+# taxonomy_source_priority: table # Options: embedded, table
+# taxonomy_delimiter_mode: reverse # Options: reverse, greedy, segment
+# table_sep: "" # Force table separator (auto-detect if empty)
+
+# Tree Validation
+# multi_tree_mode: ask # Options: ask, first, last, random (split not supported for reference trees)
+# strip_annotations: false # Remove NHX/bootstrap annotations
+# mol_type: "" # Force molecule type: DNA, RNA, protein (auto-detect if empty)
+# skip_length_check: false # Skip sequence length consistency check
+# no_cross_check: false # Skip tree-sequence cross-validation
+
+# 复现先前运行: 可直接把某次输出的 Phase5_metadata/run_config.json 作为配置
+# 传入, 其中嵌套的 parameters 快照会被自动展开生效.
+# 例如: markerfinder --config output/Phase5_metadata/run_config.json -i genomes/ -o output/
+
+# Logging
+# log_file: "" # Path to log file (UTpersistent)
+
+# Output Management
+# force: false # Overwrite existing output files
+# no_clobber: false # Skip output if file already exists
+# save_intermediates: false # Copy useful intermediate files (marker sequences, alignments,
+# # supermatrix, CheckM output) to <output>/Phase4_intermediate/
+# redo: false # Stepwise mode: force re-run an already-completed step
+# resume: false # Stepwise mode: auto-run missing prerequisite steps and continue
+
+# Advanced
+# tmp_dir 建议使用独立于 output 的路径, 避免与输出目录冲突检查冲突.
+# 默认留空时 MarkerFinder 会在系统临时目录下自动创建每趟 run 独立的
+# markerfinder-{uuid8} 子目录, 流程结束自动清理.
+# tmp_dir: /tmp/markerfinder-run
+db_dir:./db
+
+# 是否保留临时目录. 默认 false,流程结束自动清理; 设为 true 可保留中间文件用于调试.
+keep_tmp: false
+
+verbose: 0 # Verbosity level (0=WARNING, 1=INFO, 2=DEBUG)

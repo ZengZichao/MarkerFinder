@@ -1,0 +1,24 @@
+# taxonomy "must-pass" benchmark skeleton.
+# MarkerFinder pipeline runs on real data MUST satisfy every relation below;
+# any failure aborts with EXIT_ASSERTION_FAILED (4) instead of a risk score.
+# The ribosomal-marker list is a skeleton: fill it with the 62
+# ribosomal-protein marker ids of your own reference set before first real use.
+
+markers:
+  note: "conservative ribosomal-protein markers; fill from your reference set"
+  ids: []
+
+must_pass:
+  - relation: "monophyletic"
+    level: "genus"
+    min_taxa: 2
+    note: "every genus with >=2 representatives must be monophyletic"
+  - relation: "monophyletic"
+    level: "phylum"
+    min_taxa: 2
+    note: "every phylum with >=2 representatives must be monophyletic"
+
+must_fail_fixtures:
+  - name: "collapsed_reference"
+    fixture: "tests/fixtures/reference/collapsed_sponge_other.nwk"
+    expected: "reference rejected, pipeline aborts with exit 4 when used"

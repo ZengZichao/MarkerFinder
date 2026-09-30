@@ -1,0 +1,14 @@
+{
+  "assertion": "A-03",
+  "must_fail": true,
+  "phylo_steps": [
+    {
+      "gene_id": "m1",
+      "quartet_consistency": 1.0,
+      "quartet_state": "measured"
+    }
+  ],
+  "shared_tips": {
+    "m1": 3
+  }
+}

@@ -1,0 +1,468 @@
+{
+  "v02_config": {
+    "yaml_run_rc": 0
+  },
+  "v02_replay": {
+    "differing_parameters": []
+  },
+  "v02_verbosity": {
+    "default_lines": 20,
+    "verbose_lines": 64
+  },
+  "v03_autodiscovery": {
+    "discovered_dir": "<repo>/db/gtdb_markers/ar53"
+  },
+  "v03_bitscore": {
+    "markers_at_score_2000": 7,
+    "markers_at_score_5": 7
+  },
+  "v04_custom_levels": {
+    "warning_with": false,
+    "warning_without": true
+  },
+  "v04_embedded": {
+    "rc": 0
+  },
+  "v04_format_a": {
+    "modes_run": [
+      "greedy",
+      "reverse",
+      "segment"
+    ]
+  },
+  "v04_format_b": {
+    "levels_seen": [
+      "level_1",
+      "level_2"
+    ],
+    "markers_evaluated": 4
+  },
+  "v04_monophyly": {
+    "flagged_at_0.0": 3,
+    "flagged_at_1.0": 3
+  },
+  "v04_priority": {
+    "embedded_priority_uses_table_value": false,
+    "table_priority_uses_table_value": false
+  },
+  "v04_ranks": {
+    "exit_codes": {
+      "class": 0,
+      "domain": 0,
+      "family": 0,
+      "genus": 0,
+      "order": 0,
+      "phylum": 0,
+      "species": 0
+    }
+  },
+  "v05_crosscheck": {
+    "skipped_rc": 0,
+    "with_check_rc": 0
+  },
+  "v05_moltype": {
+    "dna_on_protein_rc": 3,
+    "protein_rc": 0
+  },
+  "v05_multitree": {
+    "modes_accepted": [
+      "first",
+      "last",
+      "random"
+    ]
+  },
+  "v05_species_tree": {
+    "markers_graded": 4
+  },
+  "v05_strip": {
+    "nhx_fixture_chars": 558
+  },
+  "v06_adaptive": {
+    "default_thresholds": [
+      "{\"level1_max\": 0.25, \"level2_max\": 0.6}"
+    ],
+    "opted_thresholds": [
+      "{\"level1_max\": 0.25, \"level2_max\": 0.95}"
+    ]
+  },
+  "v06_alias": {
+    "alias_band_counts": {
+      "level_1": 2,
+      "level_2": 2,
+      "level_3": 0
+    },
+    "base_band_counts": {
+      "level_1": 4,
+      "level_2": 0,
+      "level_3": 0
+    }
+  },
+  "v06_cog": {
+    "categories_filled": [
+      "GrpE",
+      "Polyribonucleotide nucleotidyltransferase, RNA binding domain",
+      "Ribosomal protein S8",
+      "RimP N-terminal domain",
+      "TIGR00006: 16S rRNA (cytosine(1402)-N(4))-methyltransferase"
+    ],
+    "rows_in_profile": 5
+  },
+  "v06_composition": {
+    "markers_in_composition": 4,
+    "score_changed_by_diagnostic": []
+  },
+  "v06_coverage": {
+    "warned_in_summary": true
+  },
+  "v06_default_steps": {
+    "markers": 4
+  },
+  "v06_l2l3": {
+    "excluded_at_0.1": 2,
+    "excluded_at_0.9": 0
+  },
+  "v06_pis": {
+    "markers_with_floor": 0,
+    "markers_without_floor": 0
+  },
+  "v06_scan": {
+    "bands_scanned": 8
+  },
+  "v06_stability": {
+    "impossible_floor_warned": true
+  },
+  "v07_alias": {
+    "selected_directly": 8,
+    "selected_via_alias": 8
+  },
+  "v07_budget": {
+    "selected_per_ceiling": {
+      "2": 2,
+      "4": 4,
+      "8": 8
+    }
+  },
+  "v07_mode_conservative": {
+    "markers_kept": 6
+  },
+  "v07_mode_expanded": {
+    "markers_kept": 6
+  },
+  "v07_mode_mag_adaptive": {
+    "markers_kept": 6
+  },
+  "v07_mode_standard": {
+    "markers_kept": 6
+  },
+  "v07_occupancy": {
+    "kept_at_0.50": 20,
+    "kept_at_0.95": 17
+  },
+  "v07_preset_conservative": {
+    "evaluated": 8,
+    "selected": 8
+  },
+  "v07_preset_expanded": {
+    "evaluated": 8,
+    "selected": 8
+  },
+  "v07_preset_mag_adaptive": {
+    "evaluated": 8,
+    "selected": 8
+  },
+  "v07_preset_none": {
+    "evaluated": 4,
+    "selected": 4
+  },
+  "v07_preset_standard": {
+    "evaluated": 8,
+    "selected": 8
+  },
+  "v07_preset_vs_mode": {
+    "summary": [
+      "Tree recommendation: confidence=medium; recommended_tree=yes; reason: Coalescent method not run (mode=off). Using concatenation tree.",
+      "  Analysis mode:    expanded"
+    ]
+  },
+  "v08_consistency": {
+    "refused": false
+  },
+  "v08_criteria": {
+    "kept_per_mode": {
+      "consistency": [
+        "PF01025.20"
+      ],
+      "hybrid": [
+        "PF01025.20"
+      ],
+      "risk": [
+        "PF01025.20"
+      ]
+    }
+  },
+  "v08_hybrid": {
+    "refused": false
+  },
+  "v08_risk": {
+    "markers": 4,
+    "refused": false
+  },
+  "v08_stringency_1": {
+    "level_1_markers": [
+      "PF01025.20"
+    ]
+  },
+  "v08_stringency_2": {
+    "level_1_markers": [
+      "PF01025.20"
+    ]
+  },
+  "v08_stringency_3": {
+    "level_1_markers": [
+      "PF01025.20"
+    ]
+  },
+  "v08_stringency_4": {
+    "level_1_markers": [
+      "PF01025.20"
+    ]
+  },
+  "v08_stringency_5": {
+    "level_1_markers": [
+      "PF01025.20"
+    ]
+  },
+  "v09_builder": {
+    "fasttree_rc": 0,
+    "iqtree_rc": 0
+  },
+  "v09_coalescent_always": {
+    "astral_written": true
+  },
+  "v09_coalescent_off": {
+    "astral_written": false
+  },
+  "v09_coalescent_post-filter": {
+    "astral_written": true
+  },
+  "v09_support": {
+    "trees_with_branch_lengths": {
+      "fasttree": true,
+      "iqtree": true
+    }
+  },
+  "v09_support_filter": {
+    "trees_at_support_1000": 1,
+    "trees_without_filter": 1
+  },
+  "v09_ufboot": {
+    "recorded": 100,
+    "requested": 100
+  },
+  "v09_unmeasurable": {
+    "mentions_support": true
+  },
+  "v10_checkm": {
+    "first_completeness": 98.62,
+    "rows_supplied": 4
+  },
+  "v10_mag_classification": {
+    "input_names": [
+      "mag_01",
+      "mag_02",
+      "mag_03",
+      "mag_04"
+    ]
+  },
+  "v10_mag_floor": {
+    "markers_kept": 4,
+    "min_occupancy": 0.75
+  },
+  "v10_skip_checkm": {
+    "announced": true
+  },
+  "v11_assertions": {
+    "items": 14,
+    "verdicts": [
+      "PASS"
+    ]
+  },
+  "v11_bypass": {
+    "rc": 4
+  },
+  "v11_gate_fail": {
+    "rc": 4
+  },
+  "v11_gate_pass": {
+    "gate_summary": "groups_tested=8;markers_checked=8"
+  },
+  "v11_inconclusive": {
+    "rc_for_three_tips": 3
+  },
+  "v11_missing_baseline": {
+    "rc": 4
+  },
+  "v12_redo": {
+    "with_redo_rc": 0,
+    "without_redo_rc": 0
+  },
+  "v12_resume": {
+    "rc": 0
+  },
+  "v12_steps": {
+    "markers_aggregate": [
+      "PF00380.20",
+      "PF00410.20",
+      "PF00466.21",
+      "PF01025.20"
+    ],
+    "markers_stepwise": [
+      "PF00380.20",
+      "PF00410.20",
+      "PF00466.21",
+      "PF01025.20"
+    ]
+  },
+  "v13_intermediates": {
+    "files": 3,
+    "suffixes": [
+      ".aln",
+      ".faa",
+      ".trim"
+    ]
+  },
+  "v13_report": {
+    "html_bytes": 4540
+  },
+  "v13_runconfig": {
+    "database_versions": [
+      "gtdb_markers"
+    ]
+  },
+  "v13_tmp": {
+    "explicit_tmp_survives": true,
+    "kept_tmp_still_present": true
+  },
+  "v13_tmp_isolation": {
+    "tmp_dirs": [
+      "<repo>/validation/.work/tmp/gw12/markerfinder-1d8b8cc3",
+      "<repo>/validation/.work/tmp/gw12/markerfinder-d1827025"
+    ]
+  },
+  "v14_cards": {
+    "card_top_level_keys": [
+      "assertion_ids_fired",
+      "confidence",
+      "detector",
+      "far_active",
+      "gene_tree_source",
+      "level",
+      "marker_id",
+      "monophyly",
+      "n_mono",
+      "n_signals_used",
+      "n_total",
+      "notes",
+      "occupancy",
+      "overall_risk",
+      "quartet",
+      "rank_used",
+      "rf",
+      "risk_basis",
+      "schema_version",
+      "thresholds_in_effect",
+      "trimming_regime",
+      "weights"
+    ],
+    "cards": 4
+  },
+  "v14_html": {
+    "bytes": 4857
+  },
+  "v14_partition": {
+    "charsets": 1,
+    "markers_kept": 1,
+    "markers_selected": 4
+  },
+  "v14_products": {
+    "tabular_products_checked": [
+      "Phase5_reports/markerfinder.assertions.tsv",
+      "Phase5_reports/markerfinder.hgt_evaluation.tsv",
+      "Phase5_reports/markerfinder.marker_summary.tsv"
+    ]
+  },
+  "v14_summary": {
+    "summary_level_counts": {
+      "1": 1,
+      "2": 0,
+      "3": 3
+    },
+    "tsv_level_counts": {
+      "level_1": 1,
+      "level_3": 3
+    }
+  },
+  "v14_tree_cache": {
+    "cached_trees": 19,
+    "stamped_trees": 19
+  },
+  "v14_trees": {
+    "gene_trees": 1,
+    "species_tree_tips": [
+      "GCF_000007825.1",
+      "GCF_000009045.1",
+      "GCF_000009645.1",
+      "GCF_000196035.1"
+    ],
+    "support_labels_on_internal_nodes": [
+      "72"
+    ]
+  },
+  "v15_determinism": {
+    "files_compared": 44,
+    "files_differing": []
+  },
+  "v15_ranking": {
+    "markers": 4
+  },
+  "v15_replay": {
+    "markers_after": [
+      "PF00380.20",
+      "PF00410.20",
+      "PF00466.21",
+      "PF01025.20"
+    ],
+    "markers_before": [
+      "PF00380.20",
+      "PF00410.20",
+      "PF00466.21",
+      "PF01025.20"
+    ]
+  },
+  "v15_seeds": {
+    "gene_tree_cache": 8
+  },
+  "v16_degenerate": {
+    "exit_code": 3
+  },
+  "v16_three_tips": {
+    "exit_code": 3
+  },
+  "v17_detection": {
+    "planted_already_flagged_clean": [
+      "TIGR00061"
+    ],
+    "planted_risk_raised": 2,
+    "planted_total": 3
+  },
+  "v17_quality": {
+    "background_exclusion_rate": 0.1,
+    "precision": 1.0,
+    "recall": 0.6666666666666666
+  },
+  "v90_coverage": {
+    "capabilities_covered": 108,
+    "capabilities_required": 108,
+    "capabilities_uncovered": []
+  }
+}

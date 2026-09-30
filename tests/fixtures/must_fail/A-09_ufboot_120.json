@@ -1,0 +1,7 @@
+{
+  "assertion": "A-09",
+  "must_fail": true,
+  "ufboot_values": [
+    120.0
+  ]
+}

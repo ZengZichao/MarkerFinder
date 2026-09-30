@@ -1,0 +1,40 @@
+MarkerFinder validation suite - environment record
+recorded_utc: 2026-09-30T07:55:18+00:00
+
+[host]
+platform        : Linux-6.8.0-111-generic-x86_64-with-glibc2.35
+python          : 3.11.9 (<env>/bin/python)
+implementation  : CPython
+machine         : x86_64
+cpu_count       : 96
+
+[markerfinder]
+version         : 0.1.0
+imported_from   : <repo>/markerfinder
+
+[declared runtime dependencies (from the installed distribution)]
+biopython           : 1.87
+pyyaml              : 6.0.3
+ete3                : 3.1.3
+tomli               : 2.4.1
+
+[external tools on PATH]
+hmmsearch           : HMMER 3.4 (Aug 2023); http://hmmer.org/
+                     path: <env>/bin/hmmsearch
+mafft               : v7.525 (2024/Mar/13)
+                     path: <env>/bin/mafft
+trimal              : trimAl v1.5.rev1 build[2025-11-25]
+                     path: <env>/bin/trimal
+FastTree            : FastTree 2.2.0 Double precision:
+                     path: <env>/bin/FastTree
+iqtree3             : IQ-TREE version 3.1.3 for Linux x86 64-bit built Jul 26 2026
+                     path: <env>/bin/iqtree3
+astral              : This is ASTRAL version 5.7.8
+                     path: <env>/bin/astral
+checkm              : usage: checkm
+                     path: <env>/bin/checkm
+datasets            : datasets version: 18.38.0
+                     path: <env>/bin/datasets
+
+TMPDIR          : <repo>/validation/.work
+MAFFT_TMPDIR    : <repo>/validation/.work

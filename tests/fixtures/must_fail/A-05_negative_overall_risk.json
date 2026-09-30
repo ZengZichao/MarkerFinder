@@ -1,0 +1,10 @@
+{
+  "assertion": "A-05",
+  "must_fail": true,
+  "hgt_evaluations": [
+    {
+      "marker_id": "m1",
+      "overall_risk": -0.1
+    }
+  ]
+}

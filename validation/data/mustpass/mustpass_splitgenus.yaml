@@ -1,0 +1,12 @@
+# Failure control: monophyly at genus against
+# taxonomy/taxonomy_small8_splitgenus.tsv, which assigns three
+# accessions from different orders (and one from another phylum) to a
+# single fake genus. No marker tree can make that group exclusive of
+# the remaining tips, so the gate must abort with exit code 4.
+markers:
+  ids: []
+must_pass:
+  - relation: "monophyletic"
+    level: "genus"
+    min_taxa: 2
+    note: "g__Splitgenus spans Bacillota orders and a Pseudomonadota"

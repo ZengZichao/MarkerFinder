@@ -1,0 +1,19 @@
+# planted-chimera ground truth (position-known HGT positives).
+# make_chimeras.py materialises these swaps; run_benchmark.py scores against
+# this file. Every listed pair must exist in downloads/ after fetch.
+
+chimeras:
+  - marker_id: "REPLACE_MARKER_1"
+    recipient: "REPLACE_GENOME_A" # genome whose marker is replaced
+    donor: "REPLACE_GENOME_B" # distant out-group homologue donor
+    expected: "positive" # position-known HGT positive
+  - marker_id: "REPLACE_MARKER_2"
+    recipient: "REPLACE_GENOME_A2"
+    donor: "REPLACE_GENOME_B2"
+    expected: "positive"
+
+negatives:
+  note: "unmodified genomes serve as negatives (expected: negative)"
+  genomes:
+    - "REPLACE_GENOME_A"
+    - "REPLACE_GENOME_B"

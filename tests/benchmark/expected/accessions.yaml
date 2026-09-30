@@ -1,0 +1,68 @@
+# GTDB ar53 order-level benchmark set.
+# 30 genomes = 25 in-order representatives + 5 out-group representatives.
+# Placeholder accessions follow RefSeq assembly naming; the executing user
+# MUST verify/replace after choosing the concrete order (see README.md).
+
+in_order:
+  order: "REPLACE_WITH_ORDER_NAME" # e.g. Thermococcales
+  genomes:
+    - "GCF_000011605.1" # placeholder row 1
+    - "GCF_000011645.1"
+    - "GCF_000012905.1"
+    - "GCF_000013425.1"
+    - "GCF_000014645.1"
+    - "GCF_000016045.1"
+    - "GCF_000017125.1"
+    - "GCF_000017565.1"
+    - "GCF_000018425.1"
+    - "GCF_000019745.1"
+    - "GCF_000020545.1"
+    - "GCF_000020965.1"
+    - "GCF_000021485.1"
+    - "GCF_000021725.1"
+    - "GCF_000022225.1"
+    - "GCF_000022645.1"
+    - "GCF_000023005.1"
+    - "GCF_000023425.1"
+    - "GCF_000024225.1"
+    - "GCF_000024645.1"
+    - "GCF_000025065.1"
+    - "GCF_000025485.1"
+    - "GCF_000026145.1"
+    - "GCF_000026785.1"
+    - "GCF_000027125.1"
+
+out_group:
+  note: "5 representatives from neighbouring orders (out-group)"
+  genomes:
+    - "GCF_000028065.1"
+    - "GCF_000028485.1"
+    - "GCF_000029125.1"
+    - "GCF_000029785.1"
+    - "GCF_000030305.1"
+
+gtdb_release: "r53"
+
+# the benchmark must be reproducible from this record alone.
+# run_benchmark.py refuses to start while any field below is blank or still a
+# placeholder, because a precision/recall number whose data cannot be
+# re-downloaded identically is not evidence. Fill them when you choose the
+# concrete order:
+# source_registry e.g. "NCBI RefSeq" or "GTDB files.gtdb.ecogenomic.org"
+# doi DOI of the dataset/release you actually downloaded
+# license terms governing redistribution of the sequences
+# retrieved_utc output of `date -u +%Y-%m-%dT%H:%M:%SZ` at fetch time
+# checksum_sha256 output of `sha256sum downloads/manifest.sha256` (the
+# manifest fetch_datasets.sh writes for this exact set)
+provenance:
+  source_registry: ""
+  doi: ""
+  license: ""
+  retrieved_utc: ""
+  checksum_sha256: ""
+
+note: >
+  Accessions above are RefSeq-style placeholders pending the user's concrete
+  order choice ( leaves the order selection to the executing user).
+  fetch_datasets.sh refuses to run while `order` still reads
+  REPLACE_WITH_ORDER_NAME.

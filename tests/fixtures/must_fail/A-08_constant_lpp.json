@@ -1,0 +1,10 @@
+{
+  "assertion": "A-08",
+  "must_fail": true,
+  "astral_supports": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ]
+}

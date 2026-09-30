@@ -1,0 +1,15 @@
+# Taxonomy must-pass baseline for the validation sets:
+# the two ranks the shipped set can actually observe. Relations are
+# >= 2 representatives, so the gate is a real test and not a no-op.
+markers:
+  note: "applies to every gene tree the run produces"
+  ids: []
+must_pass:
+  - relation: "monophyletic"
+    level: "phylum"
+    min_taxa: 2
+    note: "Bacillota members must not be split by the Pseudomonadota outgroup"
+  - relation: "monophyletic"
+    level: "family"
+    min_taxa: 2
+    note: "families with >= 2 representatives must be monophyletic"

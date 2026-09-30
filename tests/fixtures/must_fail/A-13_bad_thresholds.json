@@ -1,0 +1,8 @@
+{
+  "assertion": "A-13",
+  "must_fail": true,
+  "level_thresholds": {
+    "level1_max": 0.7,
+    "level2_max": 0.6
+  }
+}

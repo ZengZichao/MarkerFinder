@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "threads": 2,
+    "mode": "standard",
+    "marker_mode": "gtdb_tk",
+    "gtdb_markers_dir": "validation/data/markers/quad4_core",
+    "taxonomy_table": "validation/data/taxonomy/taxonomy_quad4.tsv",
+    "monophyly_rank": "order",
+    "max_markers": 4,
+    "gene_tree_builder": "fasttree",
+    "coalescent_mode": "off",
+    "skip_checkm": true,
+    "verbose": 1
+  }
+}

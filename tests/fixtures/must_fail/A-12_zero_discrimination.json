@@ -1,0 +1,9 @@
+{
+  "assertion": "A-12",
+  "must_fail": true,
+  "discrimination_probe": {
+    "conflict_risk": 0.25,
+    "identical_risk": 0.25
+  },
+  "_note": "baseline E0 behavior: both inputs, same output"
+}

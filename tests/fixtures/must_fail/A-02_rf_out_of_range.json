@@ -1,0 +1,17 @@
+{
+  "assertion": "A-02",
+  "must_fail": true,
+  "phylo_steps": [
+    {
+      "gene_id": "m1",
+      "normalized_rf": 1.3,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m2",
+      "normalized_rf": "NAN",
+      "quartet_state": "measured"
+    }
+  ],
+  "_note": "m2 的 NAN 由 builder 转为 float('nan')/inf 覆盖 isfinite 分支"
+}

@@ -1,0 +1,65 @@
+{
+  "description": "Planted position-known HGT positives. Each listed marker's recipient sequence was overwritten with the donor ortholog; every other sequence in the directory is byte-identical to the clean run, so the clean run doubles as the negative control.",
+  "random_seed": 20260929,
+  "selection_rule": "3 markers drawn with random.Random(20260929) from the 18 markers of bench12 that contain both recipient and donor and whose two sequences differ",
+  "candidate_marker_pool": [
+    "PF00380.20",
+    "PF00410.20",
+    "PF00466.21",
+    "PF01025.20",
+    "PF02576.18",
+    "PF03726.15",
+    "TIGR00006",
+    "TIGR00019",
+    "TIGR00020",
+    "TIGR00043",
+    "TIGR00054",
+    "TIGR00059",
+    "TIGR00061",
+    "TIGR00064",
+    "TIGR00065",
+    "TIGR00082",
+    "TIGR00431",
+    "TIGR01066"
+  ],
+  "recipient": {
+    "accession": "GCF_000007845.1",
+    "organism": "Bacillus anthracis str. Ames",
+    "order": "Caryophanales"
+  },
+  "donor": {
+    "accession": "GCF_000006865.1",
+    "organism": "Lactococcus lactis subsp. lactis Il1403",
+    "order": "Lactobacillales"
+  },
+  "n_markers_in_directory": 20,
+  "planted": [
+    {
+      "marker_id": "TIGR00043",
+      "recipient_genome": "GCF_000007845.1",
+      "donor_genome": "GCF_000006865.1",
+      "recipient_sequence_length_before": 156,
+      "donor_sequence_length": 162,
+      "replacement": "recipient sequence replaced by the donor ortholog",
+      "sha256_of_written_file": "3792edd03860f3e595a8dfc8cbb16060835b62258e77e8220927863702971e1c"
+    },
+    {
+      "marker_id": "TIGR00061",
+      "recipient_genome": "GCF_000007845.1",
+      "donor_genome": "GCF_000006865.1",
+      "recipient_sequence_length_before": 102,
+      "donor_sequence_length": 104,
+      "replacement": "recipient sequence replaced by the donor ortholog",
+      "sha256_of_written_file": "a07aaf5f9733fd12c754573108f406b0bce3cf6e0d8d2a8457d14a546df95dc5"
+    },
+    {
+      "marker_id": "TIGR00431",
+      "recipient_genome": "GCF_000007845.1",
+      "donor_genome": "GCF_000006865.1",
+      "recipient_sequence_length_before": 307,
+      "donor_sequence_length": 329,
+      "replacement": "recipient sequence replaced by the donor ortholog",
+      "sha256_of_written_file": "a5328c2704d2d0c01851bf4b68b95109213966da884d586fa52373edd585ca1d"
+    }
+  ]
+}

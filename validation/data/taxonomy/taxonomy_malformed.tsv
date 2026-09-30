@@ -1,0 +1,5 @@
+genome_id	taxonomy
+GCF_000009045.1	d__Bacteria;p__Bacillota;c__Bacilli;o__Caryophanales;f__Bacillaceae;g__Bacillus
+NOT_A_TAXONOMY_ROW	this is prose, not a lineage
+GCF_000007825.1	X__magic;d__Bacteria;p__Bacillota
+GCF_000008445.1

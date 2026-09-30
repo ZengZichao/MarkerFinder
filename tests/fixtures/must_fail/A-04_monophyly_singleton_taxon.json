@@ -1,0 +1,11 @@
+{
+  "assertion": "A-04",
+  "must_fail": true,
+  "monophyly_records": [
+    {
+      "proportion": 1.0,
+      "n_total": 1,
+      "n_mono": 1
+    }
+  ]
+}

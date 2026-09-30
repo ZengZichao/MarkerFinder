@@ -1,0 +1,56 @@
+{
+  "assertion": "A-06",
+  "must_fail": true,
+  "phylo_steps": [
+    {
+      "gene_id": "m0",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m1",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m2",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m3",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m4",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m5",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m6",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m7",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m8",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    },
+    {
+      "gene_id": "m9",
+      "normalized_rf": 0.5,
+      "quartet_state": "measured"
+    }
+  ]
+}

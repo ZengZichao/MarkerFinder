@@ -1,0 +1,1 @@
+Subsets carved out of the real PF00380.20 marker file (small8_core) to hold exactly 2 and 1 tips. They are not observed absences: they exist to check that a below-minimally-informative marker file is reported rather than silently producing a tree.

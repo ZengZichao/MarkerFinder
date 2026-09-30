@@ -1,0 +1,112 @@
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ---------------------------------------------------------------------------
+# Distribution / packaging
+# ---------------------------------------------------------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# ---------------------------------------------------------------------------
+# Virtual environments
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+env*/
+
+# ---------------------------------------------------------------------------
+# Test & coverage machinery
+#
+# validation/results/ is deliberately NOT ignored: it is the archived evidence
+# that ships with the release (metrics, coverage matrix, junit record,
+# environment inventory). Only the scratch space is disposable.
+# ---------------------------------------------------------------------------
+.pytest_cache/
+.pytest_of*/
+pytest-of-*/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+coverage.xml
+smoketest_output/
+validation/.work/
+validation/data/markers/.hit_cache/
+validation/data/.download_tmp/
+
+# ---------------------------------------------------------------------------
+# Third-party reference data — fetched, never redistributed in this repository
+#
+# db/gtdb_markers/ holds the per-marker TIGRFAM/Pfam HMM profiles used by
+# ``--marker-mode hmm``. They are third-party work, so they are obtained by
+# ``python scripts/fetch_marker_db.py`` instead of being committed.
+# validation/data/genomes/ holds the NCBI RefSeq proteomes the validation suite
+# runs on; they are re-downloaded by ``validation/scripts/01_fetch_genomes.py``
+# and checked against ``validation/data/MANIFEST.sha256``. validation/data/hmms/
+# is the working copy of those same profiles that ``02_build_marker_sets.py``
+# materialises out of db/gtdb_markers.
+# ---------------------------------------------------------------------------
+db/gtdb_markers/
+validation/data/genomes/
+validation/data/hmms/
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Pipeline output (runtime-generated, not source code)
+# ---------------------------------------------------------------------------
+output/
+output_e2e_run*/
+# Per-run scratch. The pipeline puts it under ``tempfile.gettempdir()``, which
+# falls back to the current directory when the system temp dir is not writable
+# (containers, sandboxes) — so the run's working files can land here. The pattern
+# is deliberately the 8-hex-digit suffix the code generates, not ``markerfinder-*``,
+# so a real directory by that name could never be swallowed.
+markerfinder-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]/
+
+# ---------------------------------------------------------------------------
+# Local test configs (contain developer-specific paths)
+# ---------------------------------------------------------------------------
+config.fna-test.yaml
+config.paired-test.yaml
+config.smoketest.yaml
+
+# ---------------------------------------------------------------------------
+# Logs and temp files
+# ---------------------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+
+# ---------------------------------------------------------------------------
+# Third-party downloads and assistant/session artefacts
+#
+# Downloaded benchmark data never enters the repository, and neither do the
+# working directories of AI coding assistants — they are not part of a release.
+# ---------------------------------------------------------------------------
+tests/benchmark/downloads/
+.mimosa/
+kimi_agents/
+notify/
+state.json
+manifest.json
