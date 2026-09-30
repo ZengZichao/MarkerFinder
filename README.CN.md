@@ -550,6 +550,29 @@ markerfinder \
 
 ---
 
+## 概念来源（含撤稿说明）
+
+MarkerFinder 的核心判定思想——串联法与合并法双框架并行推断、逐个标记基因判定系统发育信号一致性、仅让信号可信的标记进入物种树推断——在方法学上源自一篇已撤稿论文：
+
+> Steenwyk, J. L. & King, N. (2025). Integrative phylogenomics positions sponges at the root of the animal tree. **Science** 390(6774), 751–756. doi:[10.1126/science.adw9456](https://doi.org/10.1126/science.adw9456)
+>
+> **撤稿声明：** Thorp, H. H. (2026). Retraction of Research Article "Integrative phylogenomics positions sponges at the root of the animal tree". **Science** 391(6785), 564. doi:[10.1126/science.aef5589](https://doi.org/10.1126/science.aef5589)
+
+该文于 2026-02-05 由作者主动申请撤稿（Dunn 等人发现其分析流程存在技术错误，伪信号影响了结论）。撤稿针对的是该文的**生物学结论**，而非其方法学思想；MarkerFinder 仅借鉴其方法学框架，代码实现、评估与结论均独立完成，并有自身的验证体系（见 [测试](#测试) 与 `validation/`）。本项目的所有结论不依赖该撤稿文献的任何结果。
+
+对该思想的继承与改造：
+
+| 撤稿论文中的要素 | MarkerFinder 中的落点 |
+|---|---|
+| 串联 + 合并法统一推断 | Phase 3 双策略系统发育推断（Supermatrix + ASTRAL-III）与冲突检测 |
+| 逐基因一致性判定（支持 / 不确定三分类） | `--hgt-mode consistency` 标记级 CONSISTENT / INCONSISTENT / INCONCLUSIVE 分档 |
+| 补充材料 §B.2 的一致性阈值阶梯 | `markerfinder/modules/consistency_screen.py` 的 `BOUNDS`（标注 PROVISIONAL，须经基准校准后方可用于正式结论） |
+| 撤稿缺陷 Error A（合并参照：竞争假说所要求独立的类群在参照中已合并为一支） | `markerfinder/utils/reference.py` 参照合法性校验（POLYTOMY / TIPSET_MISMATCH / TOO_FEW_TIPS / MALFORMED / CLADE_COLLAPSED） |
+| 撤稿缺陷 Error B（\|dlnL\| 异常提示"比错了树"） | `markerfinder/assertions.py` A-10 断言（\|dlnL\| > 30 告警） |
+| 生物学上荒谬的拓扑未被统计检验拦住 | `markerfinder/modules/taxonomy_mustpass.py` 分类学 must-pass 基线 |
+
+---
+
 ## 引用
 
 如果您在研究中使用了 MarkerFinder，请引用：

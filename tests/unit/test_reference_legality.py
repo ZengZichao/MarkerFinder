@@ -1,8 +1,13 @@
 """Reference-tree legality tests.
 
-The Error-A fixture (``collapsed_sponge_other.nwk``) is the retraction's
-merged-reference defect: the two focal groups the competing hypotheses
-require to be independent are already one clade in the reference.
+The Error-A fixture (``collapsed_sponge_other.nwk``) reproduces the
+merged-reference defect of the retracted paper — Steenwyk, J. L. & King,
+N. (2025). Integrative phylogenomics positions sponges at the root of the
+animal tree. Science 390(6774), 751-756, doi:10.1126/science.adw9456;
+retracted 2026-02-05 (retraction notice: Thorp, H. H., 2026. Science
+391(6785), 564, doi:10.1126/science.aef5589): the two focal groups the
+competing hypotheses require to be independent are already one clade in
+the reference.
 """
 
 from pathlib import Path

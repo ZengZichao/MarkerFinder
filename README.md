@@ -33,6 +33,19 @@ methods:
 3. **MAG fragility** — quality-aware adaptive parameters handle incomplete
    metagenome-assembled genomes
 
+## Conceptual Origin
+
+MarkerFinder's integrative (concatenation + coalescence) marker-consistency
+idea is methodologically derived from Steenwyk & King (2025), *Science* 390,
+751–756, doi:10.1126/science.adw9456 — a paper retracted at the authors' own
+request on 2026-02-05 (retraction notice: *Science* 391, 564,
+doi:10.1126/science.aef5589). The retraction concerns the paper's biological
+conclusion, not its methodological framework; MarkerFinder borrows only the
+latter and implements, evaluates and defends it independently. See
+[README.EN.md § Conceptual Origin](README.EN.md#conceptual-origin-with-retraction-note)
+([中文](README.CN.md#概念来源含撤稿说明)) for the full citation and the
+element-by-element mapping into this codebase.
+
 ## Quick Start
 
 ```bash

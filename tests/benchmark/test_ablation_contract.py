@@ -7,7 +7,8 @@ mafft/IQ-TREE/genomes. What is
 proven here is the *refusal* semantics, because that is the requirement:
 "同一份数据只改一个因子". A comparator that happily returns a correlation for two
 runs differing in three things manufactures exactly the kind of number the
-retracted-paper failure mode was built on.
+retracted sponge paper's failure mode was built on (Steenwyk & King 2025,
+Science, doi:10.1126/science.adw9456; retracted 2026-02-05).
 
 Controls are planted on both sides: identical rankings must measure tau = 1.0,
 a single swap must measure less, and a refusal must be a refusal rather than a

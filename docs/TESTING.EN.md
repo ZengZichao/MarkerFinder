@@ -17,8 +17,10 @@ different instrument:
 | Consequence-level | "HGT screening removes phylogenetically misleading markers" | **real end-to-end runs against a positive control**, `validation/` |
 
 A consequence-level claim cannot be established by mocking: if MAFFT is mocked,
-the alignment is whatever the mock returns. The retracted *Science* 2009 case
-that motivated this project's self-check layer failed on exactly this gap —
+the alignment is whatever the mock returns. What motivated this project's
+self-check layer is the retracted *Science* 2025 sponge study (Steenwyk &
+King 2025, *Science* 390:751-756, doi:10.1126/science.adw9456; retracted
+2026-02-05): it failed on exactly this gap —
 every internal check passed, and
 the topology was biologically absurd. So the suite is split:
 

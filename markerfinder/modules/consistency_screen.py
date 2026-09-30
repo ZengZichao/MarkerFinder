@@ -26,9 +26,14 @@ logger = logging.getLogger(__name__)
 from markerfinder.exceptions import UnsupportedCriterion
 from markerfinder.models.evidence import MeasureState, Measurement
 
-# Ladder migrated from the retracted paper (§B.2): (max normalized
-# |ΔRF|, min quartet agreement). PROVISIONAL: must be calibrated on
-# Truth data before consistency mode is used for real conclusions.
+# Ladder migrated from the retracted paper's supplementary §B.2 —
+# Steenwyk, J. L. & King, N. (2025). Integrative phylogenomics positions
+# sponges at the root of the animal tree. Science 390(6774), 751-756,
+# doi:10.1126/science.adw9456; retracted 2026-02-05 (Thorp 2026, Science
+# 391(6785), 564, doi:10.1126/science.aef5589).
+# Entries: (max normalized |ΔRF|, min quartet agreement). PROVISIONAL: must
+# be calibrated on Truth data before consistency mode is used for real
+# conclusions.
 BOUNDS: Dict[int, Tuple[float, float]] = {
     1: (0.05, 0.90),
     2: (0.10, 0.80),
@@ -352,7 +357,8 @@ def write_excluded_profile(
 ) -> Path:
     """R4: profile every marker the consistency screen removed.
 
-    Explicitly answers "did I filter out real signal?" — the retracted paper
+    Explicitly answers "did I filter out real signal?" — the retracted sponge
+    paper (Steenwyk & King 2025, Science, doi:10.1126/science.adw9456)
     read its 95% removal as CONFIRMATION; the profile makes that visible.
     Missing COG category renders NA with a note.
     """

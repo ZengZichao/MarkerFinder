@@ -1,6 +1,11 @@
 """Reference-tree legality validation.
 
-Direct defence against retraction Error A: a reference object that is
+Direct defence against "Error A" of the retracted paper — Steenwyk, J. L. &
+King, N. (2025). Integrative phylogenomics positions sponges at the root of
+the animal tree. Science 390(6774), 751-756, doi:10.1126/science.adw9456;
+retracted 2026-02-05 (retraction notice: Thorp, H. H., 2026. Science
+391(6785), 564, doi:10.1126/science.aef5589). Error A is the
+merged-reference defect: a reference object that is
 unresolved, too small, does not cover the gene tree's tips, or has the
 focal clades already collapsed must NEVER be used as a scoring reference.
 "Legality" here means availability (resolved, covering, not collapsed) —

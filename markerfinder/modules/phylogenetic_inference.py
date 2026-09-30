@@ -473,7 +473,9 @@ class CoalescentInference:
         gene_trees: Dict[str, Tree] = {}
         # Per-marker provenance — did the coalescent leg reuse
         # The exact FastTree the HGT/concat leg produced? Shared upstream
-        # Caps recommendation confidence (R2 / Error-A era lesson).
+        # Caps recommendation confidence (lesson from Error A of the retracted
+        # sponge paper, Steenwyk & King 2025, Science,
+        # doi:10.1126/science.adw9456; retracted 2026-02-05).
         gene_tree_provenance: Dict[str, str] = {}
 
         # Cache reuse (read of an already-built {marker_id}.nwk from a prior

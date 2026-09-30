@@ -561,6 +561,29 @@ markerfinder \
 
 ---
 
+## Conceptual Origin (with retraction note)
+
+MarkerFinder's core decision idea — running concatenation and coalescence as parallel frameworks, grading each marker gene's phylogenetic signal for consistency, and admitting only trustworthy markers into species-tree inference — is methodologically derived from a paper that has since been retracted:
+
+> Steenwyk, J. L. & King, N. (2025). Integrative phylogenomics positions sponges at the root of the animal tree. **Science** 390(6774), 751–756. doi:[10.1126/science.adw9456](https://doi.org/10.1126/science.adw9456)
+>
+> **Retraction notice:** Thorp, H. H. (2026). Retraction of Research Article "Integrative phylogenomics positions sponges at the root of the animal tree". **Science** 391(6785), 564. doi:[10.1126/science.aef5589](https://doi.org/10.1126/science.aef5589)
+
+The paper was retracted at the authors' own request on 2026-02-05 (pipeline errors found by Dunn et al. had artefactually influenced its conclusions). The retraction concerns the paper's **biological conclusion**, not its methodological idea; MarkerFinder borrows only the methodological framework, and its implementation, evaluation and conclusions are independent, backed by its own validation suite (see [Testing](#testing) and `validation/`). No conclusion of this project relies on any result of the retracted paper.
+
+What was inherited and how it was transformed:
+
+| Element from the retracted paper | Where it lives in MarkerFinder |
+|---|---|
+| Unified concatenation + coalescence inference | Phase 3 dual-strategy phylogenetic inference (Supermatrix + ASTRAL-III) with conflict detection |
+| Per-gene consistency grading (supported / inconclusive three-way outcome) | `--hgt-mode consistency` marker-level CONSISTENT / INCONSISTENT / INCONCLUSIVE grades |
+| Consistency threshold ladder from supplementary §B.2 | the `BOUNDS` table in `markerfinder/modules/consistency_screen.py` (marked PROVISIONAL; must be benchmark-calibrated before real conclusions) |
+| Retraction defect Error A (merged reference: focal groups already one clade) | reference-legality validation in `markerfinder/utils/reference.py` (POLYTOMY / TIPSET_MISMATCH / TOO_FEW_TIPS / MALFORMED / CLADE_COLLAPSED) |
+| Retraction defect Error B (\|dlnL\| anomalies signalling "wrong tree compared") | assertion A-10 in `markerfinder/assertions.py` (\|dlnL\| > 30) |
+| Biologically absurd topologies passing all statistical checks | the taxonomy must-pass baseline in `markerfinder/modules/taxonomy_mustpass.py` |
+
+---
+
 ## Citation
 
 If you use MarkerFinder in your research, please cite:

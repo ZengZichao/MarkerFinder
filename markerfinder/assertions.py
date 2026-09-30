@@ -210,6 +210,11 @@ def _check_a09(state: Dict[str, Any]) -> Optional[str]:
 
 
 def _check_a10(state: Dict[str, Any]) -> Optional[str]:
+    # Scale from "Error B" of the retracted sponge paper — Steenwyk, J. L. &
+    # King, N. (2025). Integrative phylogenomics positions sponges at the root
+    # of the animal tree. Science 390(6774), 751-756,
+    # doi:10.1126/science.adw9456; retracted 2026-02-05 (Thorp 2026, Science
+    # 391(6785), 564, doi:10.1126/science.aef5589).
     for diff in state.get("lnl_diffs") or []:
         if diff is not None and abs(diff) > 30:
             return (

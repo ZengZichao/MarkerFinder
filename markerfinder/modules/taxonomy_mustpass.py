@@ -1,6 +1,9 @@
 """Taxonomy must-pass benchmark.
 
-Why this exists: the retracted *Science* paper was not undone by weak
+Why this exists: the retracted *Science* sponge paper — Steenwyk, J. L. &
+King, N. (2025). Integrative phylogenomics positions sponges at the root of
+the animal tree. Science 390(6774), 751-756, doi:10.1126/science.adw9456;
+retracted 2026-02-05 — was not undone by weak
 statistics but by topologies that any taxonomist would call absurd (a
 ctenophore sister to a mite). MarkerFinder had the same blind spot — the
 must-pass baseline existed only as a YAML file with **no reader at all**, so

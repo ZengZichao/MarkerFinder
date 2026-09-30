@@ -944,7 +944,7 @@ This table shares one source with appendix A of.
 | **consistent / concordant** | `consistent` refers specifically to the marker-level two-framework same-side gate; quartet agreement is a dataset-level proportion of concordant topologies | Not interchangeable: they measure different levels |
 | **NOT_MEASURABLE** | A missing dependency, tool or data makes measurement impossible in principle | Distinct from NOT_APPLICABLE; the two lead to different user actions |
 | **NOT_APPLICABLE** | The component should not exist on this decision path at all (e.g. the monophyly path does not measure RF) | Not an error, but it must not be filled with 0 either |
-| **REJECTED** | Measured, but the reference object failed the legality check | The defence against error A |
+| **REJECTED** | Measured, but the reference object failed the legality check | The defence against error A — the merged-reference defect of the retracted paper Steenwyk & King 2025, *Science* 390:751-756, doi:10.1126/science.adw9456; see the "Conceptual Origin" section of the README |
 | **UNKNOWN** | `MarkerLevel.UNKNOWN`: the HGT layer did not screen the marker, which is kept but excluded from the risk narrative | A different thing from `inconclusive` (recommendation / consistency layer) |
 | **inconclusive** | Evidence exists but is too weak to draw a conclusion (recommendation / consistency layer enum) | `MarkerLevel` does not gain this value |
 | **Evidence coverage** | `n_actually_measured / n_markers` | Below `--require-evidence-coverage` the report warns at the top |

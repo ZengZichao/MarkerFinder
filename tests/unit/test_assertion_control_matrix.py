@@ -8,7 +8,9 @@ firing once the body is replaced by a no-op.
 
 Case (b) is the point. A fixture that still "passes the check" against a neutered
 body would mean the verdict is hard-coded somewhere upstream of the check —
-exactly the failure mode that let the retracted paper ship 785 green tests.
+exactly the failure mode that let the retracted sponge paper (Steenwyk &
+King 2025, Science, doi:10.1126/science.adw9456; retracted 2026-02-05)
+ship 785 green tests.
 """
 
 from __future__ import annotations

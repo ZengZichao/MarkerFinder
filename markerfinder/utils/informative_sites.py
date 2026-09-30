@@ -75,8 +75,9 @@ def apply_pis_floor(evaluations: Iterable[Any], pis_by_marker: Dict[str, int],
                     floor: int) -> List[str]:
     """A marker with too few parsimony-informative sites is inconclusive.
 
-    "Support from too little information is not support" — the retracted
-    paper's ``|dlnL| > 2`` rule in sequence terms. A marker whose PIS is below
+    "Support from too little information is not support" — a sequence-level
+    analogue of the ``|dlnL| > 2`` rule of the retracted sponge paper
+    (Steenwyk & King 2025, Science, doi:10.1126/science.adw9456). A marker whose PIS is below
     ``floor`` gets its decision card and notes stamped ``inconclusive`` even
     when its risk score is low, so the report cannot present it as clean.
 

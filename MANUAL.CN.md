@@ -954,7 +954,7 @@ score = 0.25 × hmm_norm + 0.25 × occupancy + 0.10 × length_norm
 | **consistent / concordant** | `consistent` 专指标记级双框架同侧判据；quartet agreement 指数据集级拓扑一致比例 | 不可互换，二者是不同层级的量 |
 | **不可测 (NOT_MEASURABLE)** | 依赖/工具/数据缺失导致根本无法测量 | 与“不适用”区分，用户行动不同 |
 | **不适用 (NOT_APPLICABLE)** | 该分量在此判定路径上本就不该存在（如单系路径不测 RF） | 不是错误，但也不该填成 0 |
-| **被拒绝 (REJECTED)** | 测了，但参照对象合法性未通过 | 错误 A 的防线 |
+| **被拒绝 (REJECTED)** | 测了，但参照对象合法性未通过 | 错误 A 的防线（错误 A 指撤稿论文 Steenwyk & King 2025, *Science* 390:751-756, doi:10.1126/science.adw9456 的合并参照缺陷；详见 README「概念来源」节） |
 | **UNKNOWN** | `MarkerLevel.UNKNOWN`，HGT 层“未筛查”，标记被保留但不参与风险叙事 | 与 `inconclusive`（推荐层/一致性层）是两回事 |
 | **inconclusive** | 证据存在但强度不足 ⇒ 不下结论（推荐层/一致性层枚举） | `MarkerLevel` 不新增此值 |
 | **证据覆盖率** | `n_actually_measured / n_markers` | 低于 `--require-evidence-coverage` 时报告顶部警示 |

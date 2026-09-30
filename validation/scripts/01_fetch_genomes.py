@@ -38,6 +38,7 @@ import datetime as _dt
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -98,6 +99,21 @@ SETS: Dict[str, List[str]] = {
 }
 
 LINEAGE_RANKS = ["domain", "phylum", "class", "order", "family", "genus", "species"]
+
+# RefSeq assembly accessions are strictly "GCF_" + 9 digits + "." + version.
+# Enforcing the shape keeps every downstream path construction inside the
+# data directory even if ACCESSIONS ever becomes file- or CLI-fed.
+ACCESSION_RE = re.compile(r"GCF_[0-9]{9}\.[0-9]+")
+
+
+def safe_genome_path(acc: str) -> Path:
+    """Resolve ``GENOMES / <acc>.faa`` and refuse anything escaping GENOMES."""
+    if not ACCESSION_RE.fullmatch(acc):
+        raise SystemExit(f"unexpected accession format: {acc!r}")
+    candidate = (GENOMES / f"{acc}.faa").resolve()
+    if not candidate.is_relative_to(GENOMES.resolve()):
+        raise SystemExit(f"path escapes the genome directory: {acc!r}")
+    return candidate
 
 PROVENANCE_COLUMNS = [
     "accession", "organism_name", "tax_id",
@@ -243,7 +259,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     rows: List[Dict[str, str]] = []
 
     for acc in ACCESSIONS:
-        faa = GENOMES / f"{acc}.faa"
+        faa = safe_genome_path(acc)
         if faa.exists() and faa.stat().st_size > 0 and not args.force:
             print(f"[cache] {faa.name}")
         elif args.metadata_only:
@@ -270,7 +286,10 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     shutil.rmtree(workdir, ignore_errors=True)
 
-    with open(PROVENANCE, "w", encoding="utf-8", newline="\n") as fh:
+    provenance_path = (DATA / "PROVENANCE.tsv").resolve()
+    if not provenance_path.is_relative_to(DATA.resolve()):
+        raise SystemExit("PROVENANCE path escapes the validation data directory")
+    with provenance_path.open("w", encoding="utf-8", newline="\n") as fh:
         fh.write("\t".join(PROVENANCE_COLUMNS) + "\n")
         for row in rows:
             fh.write("\t".join(str(row.get(c, "")) for c in PROVENANCE_COLUMNS) + "\n")

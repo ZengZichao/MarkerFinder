@@ -597,7 +597,8 @@ class PlainTextReportGenerator:
         ]
         # A low evidence-coverage run must be flagged at the
         # Very top — grading conclusions on a mostly-unmeasured marker set is
-        # Exactly the retracted-paper failure mode.
+        # Exactly the retracted sponge paper's failure mode (Steenwyk & King
+        # 2025, Science, doi:10.1126/science.adw9456; retracted 2026-02-05).
         _min_cov = float(getattr(self.config, "require_evidence_coverage", 0.5) or 0.5)
         _cov = float(getattr(hgt_report, "evidence_coverage", 0.0) or 0.0)
         if hgt_report.total_markers and _cov < _min_cov:

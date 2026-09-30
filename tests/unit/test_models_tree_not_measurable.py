@@ -16,7 +16,8 @@ method in this dataclass carried the same shape::
 ``0.0`` for a tree that simply carries no support labels ("every branch has zero
 support"). Each of those is a claim, indistinguishable from a measurement —
 exactly the G1/ placeholder class that forbids and that blames
-for the retracted-paper failure mode.
+for the retracted sponge paper's failure mode (Steenwyk & King 2025,
+Science, doi:10.1126/science.adw9456; retracted 2026-02-05).
 
 The placeholder was not inert. ``CoalescentInference._filter_gene_trees`` (the
 ``--min-gene-tree-support`` gate, a documented public CLI flag) compared the
