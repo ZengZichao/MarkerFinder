@@ -107,7 +107,8 @@ def test_tool_gap_and_python_gap_are_not_the_same_entry(caplog, monkeypatch):
 
 def test_broken_dependency_names_the_real_cause_not_a_false_diagnosis(monkeypatch):
     """`ete3 is not installed` was printed when ete3 WAS installed but could not
-    be imported (Python >= 3.13 removed `cgi`). Those are different repairs."""
+    be imported. Those are different repairs, and the message must name the
+    real one."""
     import markerfinder.utils.etree as etree_module
     from markerfinder.exceptions import PhyloToolUnavailable
 

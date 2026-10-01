@@ -263,8 +263,16 @@ depends on an expected failure to look green.
   sparsest natural marker over these related genomes still sits at occupancy
   0.875; sparser inputs had to be truncated (2-tip / 1-tip) and are labelled as
   such in `validation/data/markers/degenerate/README`.
-* **Python outside 3.10–3.12.** ete3 cannot be imported on 3.13+ (`cgi` removal);
-  the supported ceiling is itself under test rather than asserted in prose.
+* **Python 3.13 and newer.** ete3 imports the stdlib `cgi` module at
+  package-import time and CPython removed `cgi` in 3.13 (PEP 594), which used to
+  make ete3 — and every MAD / monophyly measurement — unusable on newer
+  interpreters. `markerfinder._cgi_compat` now installs a minimal `cgi`
+  stand-in when, and only when, the real module is absent, so 3.13 and 3.14 are
+  inside the supported range and the CI matrix runs them. The absence of an
+  upper bound is itself under test rather than asserted in prose. Residual risk:
+  the shim covers only the one symbol ete3 touches (`cgi.FieldStorage`) and raises
+  `NotImplementedError` if anything actually calls it. MarkerFinder never uses
+  the ete3 web plugin, so that path is not exercised.
 * **A writable `/tmp`.** MAFFT creates scratch with `mktemp -dt` and, when that
   fails, continues with an empty path and produces no alignment — which the
   pipeline then reported as "no markers could be aligned". The suite pins

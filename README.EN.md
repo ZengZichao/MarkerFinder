@@ -4,8 +4,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
-[![Python 3.10–3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-988%20collected-brightgreen.svg)](#testing)
+[![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-991%20collected-brightgreen.svg)](#testing)
+[![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
 [中文文档](README.CN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -507,14 +508,15 @@ python validation/run_validation.py --all -n 8
 ```
 
 **Test coverage (measured, not estimated):** the suite has 88 modules and collects
-**988** cases — 920 in `tests/unit/`, 17 in `tests/integration/` and 51 in
+**991** cases — 923 in `tests/unit/`, 17 in `tests/integration/` and 51 in
 `tests/benchmark/` (the three directories sum to the badge; both sides are re-checked
 by `tests/unit/test_docs_numbers_are_current.py`).
-On the supported interpreters (CPython 3.10.20, 3.11.15 and 3.12.13, all with ete3)
-the run finishes with **0 failed and 0 skipped**. The badge carries the collected
-total (`python3 -m pytest tests --collect-only -q`) and is refreshed with every
-commit. The repository ships no CI pipeline definition (there is no
-`.github/`), so the badge states a case count, not an external pipeline status.
+The badge carries the collected total (`python3 -m pytest tests --collect-only -q`)
+and is refreshed with every commit. The suite runs in CI on every supported
+interpreter (3.10, 3.11, 3.12 and 3.13) via `.github/workflows/ci.yml`; the
+acceptance layer, which needs real external tools and downloaded genomes, runs
+separately on a schedule (`.github/workflows/validation-nightly.yml`) so a slow
+or network-flaky job cannot hold a pull request hostage.
 
 Coverage spans core configuration, models, marker-selection strategies, the HGT decision engine,
 GTDB-TK marker loading, MAD rooting, taxonomy parsing, tree and sequence validation, and report

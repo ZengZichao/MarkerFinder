@@ -149,7 +149,8 @@ def test_valid_tree_still_measures_when_ete3_is_present():
     if not _ete3_available():
         pytest.skip(
             "ete3 unavailable in this interpreter — ASSERTION NOT EXECUTED "
-            "(the ete3 branch of these APIs needs a 3.10-3.12 environment)"
+            "(the ete3 branch of these APIs needs ete3, which is importable on "
+            "every supported interpreter — so this means a broken install)"
         )
     tree = Tree(newick=VALID)
     induced = tree.get_induced_tree({"A", "B", "C"})
@@ -204,7 +205,8 @@ def test_percent_scale_is_not_collapsed_by_a_zero_one_clamp():
     if not _ete3_available():
         pytest.skip(
             "ete3 unavailable in this interpreter — ASSERTION NOT EXECUTED "
-            "(needs a 3.10-3.12 environment to read labels)"
+            "(needs ete3 to read labels, which is importable on every supported "
+            "interpreter — so this means a broken install)"
         )
     assert Tree(newick=UFBOOT_STRONG).support_labels() == [98.0, 76.0]
     assert _mean(UFBOOT_STRONG) == pytest.approx(0.87)
@@ -221,7 +223,8 @@ def test_zero_support_counts_and_absurd_scales_refuse():
     if not _ete3_available():
         pytest.skip(
             "ete3 unavailable in this interpreter — ASSERTION NOT EXECUTED "
-            "(needs a 3.10-3.12 environment to read labels)"
+            "(needs ete3 to read labels, which is importable on every supported "
+            "interpreter — so this means a broken install)"
         )
     # One branch at 0%, one at 100%: the mean is 0.5. Dropping the zero (the old
     # "s > 0" filter) reported 1.0 instead.
@@ -236,7 +239,8 @@ def test_internal_branches_report_no_support_rather_than_a_default():
     if not _ete3_available():
         pytest.skip(
             "ete3 unavailable in this interpreter — ASSERTION NOT EXECUTED "
-            "(needs a 3.10-3.12 environment to read labels)"
+            "(needs ete3 to read labels, which is importable on every supported "
+            "interpreter — so this means a broken install)"
         )
     branches = Tree(newick=VALID).internal_branches
     assert branches is not None and len(branches) == 2

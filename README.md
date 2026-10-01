@@ -4,12 +4,14 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
-[![Python 3.10～3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-988%20collected-brightgreen.svg)](#testing)
+[![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-991%20collected-brightgreen.svg)](#testing)
+[![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 <!-- The badge count is the live collection total of the fast suite under tests/;
      it is re-measured on every run by tests/unit/test_docs_numbers_are_current.py,
-     so a stale number here is a failing test, not a forgotten edit. There is no
-     external CI pipeline: the badge reports collected cases, nothing more. -->
+     so a stale number here is a failing test, not a forgotten edit. It is a
+     collection count, not a pass rate -- the CI badge above carries that, and
+     the two answer different questions. -->
 
 [English README](README.EN.md) | [中文说明](README.CN.md) | [Manual (EN)](MANUAL.EN.md) | [Manual (CN)](MANUAL.CN.md)
 

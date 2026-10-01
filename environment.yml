@@ -4,10 +4,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  # ete3 cannot be imported on Python 3.13 and later (its webapp still does
-  # `import cgi`, removed from the standard library), so the interpreter is
-  # pinned to the supported range. See README「Environment and Verification」.
-  - python=3.10
+  # MarkerFinder declares `requires-python = ">=3.10"` and has no upper bound.
+  # It used to be pinned to `python=3.10` here because ete3 could not be
+  # imported on 3.13+ (its webapp still does `import cgi`, removed from the
+  # standard library in PEP 594). `markerfinder._cgi_compat` now installs a
+  # minimal `cgi` stand-in when — and only when — the real module is absent, so
+  # that ceiling no longer exists. The floor is what is enforced here; the solver
+  # picks a concrete version, and the CI matrix is what proves each one.
+  - python>=3.10
 
   # External tools the pipeline shells out to. The mapping from tool to call
   # site is data in markerfinder/utils/dependency_check.py (EXTERNAL_TOOLS /
@@ -19,7 +23,7 @@ dependencies:
   - astral-tree>=5.7.0 # coalescent species tree
   - fasttree>=2.1.11 # FastTree / fasttree — fast gene trees
   - checkm-genome>=1.2 # optional: MAG quality (needs its own ~1.4 GB data package)
-  - ete3 # phylogenetic tree operations (Python 3.10-3.12)
+  - ete3 # phylogenetic tree operations; see _cgi_compat for Python 3.13+
 
   # Only for rebuilding validation/data. The committed fixtures are enough to
   # run ``pytest tests``; the 12 NCBI RefSeq proteomes the validation suite runs

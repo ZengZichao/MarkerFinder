@@ -14,16 +14,20 @@ tree whose MAD score equals the global minimum.
 import pytest
 
 # Differential tests: the independent brute-force reference is written against
-# Ete3 itself, so without ete3 there is nothing to compare to. The guard must be
-# At module scope because a bare ``from ete3 import...`` aborts collection of
-# The WHOLE suite (exit 2, zero results) on Python >= 3.13, where ete3 cannot be
-# Imported at all (the stdlib ``cgi`` module was removed in 3.13). A skip is
-# Labelled NOT EXECUTED so it can never be read as a pass.
+# ete3 itself, so without ete3 there is nothing to compare to. The guard must be
+# at module scope because a bare ``from ete3 import...`` aborts collection of
+# the whole suite (exit 2, zero results) on any interpreter where ete3 cannot
+# be imported. On Python 3.13+ ``markerfinder._cgi_compat`` installs the stdlib
+# ``cgi`` stand-in ete3 needs, so reaching this skip there means a broken
+# install, not an unsupported interpreter. A skip is labelled NOT EXECUTED so
+# it can never be read as a pass.
 pytest.importorskip(
     "ete3",
     reason=(
         "ete3 unavailable in this interpreter — DIFFERENTIAL TESTS NOT "
-        "EXECUTED (must run in a 3.10-3.12 environment)"
+        "EXECUTED (every supported interpreter, Python >=3.10, can import "
+        "ete3 once `markerfinder` is imported, so this means a broken "
+        "install rather than an unsupported interpreter)"
     ),
 )
 from ete3 import Tree as EteTree  # Noqa: E402

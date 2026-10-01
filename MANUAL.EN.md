@@ -66,7 +66,7 @@ MarkerFinder is a phylogenomic pipeline that automates marker gene selection, ho
 
 ```bash
 # Create and activate environment
-conda create -n markerfinder python=3.10 -y
+conda create -n markerfinder "python>=3.10" -y
 conda activate markerfinder
 
 # Install bioinformatics tools (blast is not needed because the main flow skips BBH/graph clustering; diamond is optional as a reserved interface)

@@ -25,7 +25,7 @@ every internal check passed, and
 the topology was biologically absurd. So the suite is split:
 
 ```
-tests/       988 fast cases, no external tools required, no data download
+tests/       991 fast cases, no external tools required, no data download
 validation/  153 end-to-end cases on real genomes with real tools
 ```
 
@@ -180,11 +180,17 @@ would inflate apparent sensitivity. Two quantities are reported:
 
 ## 5. Environment
 
-Required: Python 3.10–3.12 (ete3 cannot be imported on 3.13+, where the standard
-library `cgi` module is gone), the declared runtime dependencies
-(biopython, pyyaml, ete3, tomli), and the external tools `hmmsearch`, `mafft`,
-`trimal`, `FastTree`/`fasttree`, `astral`, plus `iqtree3` for ML gene trees and
-`checkm` if quality assessment is not skipped.
+Required: Python 3.10 or newer, with no upper bound. The declared runtime
+dependencies (biopython, pyyaml, ete3, tomli), and the external tools
+`hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`, plus `iqtree3`
+for ML gene trees and `checkm` if quality assessment is not skipped.
+
+The range used to stop at 3.12. ete3 imports the stdlib `cgi` module at
+package-import time and CPython removed `cgi` in 3.13 (PEP 594), which made
+ete3 — and with it every MAD / monophyly measurement — unusable on newer
+interpreters. `markerfinder._cgi_compat` now installs a minimal `cgi` stand-in
+when, and only when, the real module is absent, so ete3 imports on 3.13+ and
+the ceiling has no reason to exist.
 
 The suite pins its own environment (`validation/conftest.py::_tool_env`):
 the invoking interpreter's `bin` is prepended to `PATH`, and `TMPDIR` /
@@ -215,8 +221,10 @@ pytest validation/cases/test_v06_hgt_screening.py -k composition -n 4
 ```
 
 Interpreters other than the default are exercised by running the same suites
-under each: 3.10, 3.11 and 3.12 are the measured, supported range, and the upper
-bound is itself under test (`tests/unit/test_supported_range_is_earned.py`).
+under each: 3.10, 3.11, 3.12 and 3.13 are the CI matrix, and the declared range
+is itself under test (`tests/unit/test_supported_range_is_earned.py` asserts the
+manifest carries no upper bound; `tests/unit/test_self_test_environment.py`
+asserts `--check` agrees with it).
 
 ## 7. Results, findings and current limits
 

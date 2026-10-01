@@ -4,7 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markerfinder"
-version = "0.1.0"
+# Single source of truth for the version is markerfinder/_version.py — see
+# [tool.setuptools.dynamic] below. It used to be restated here as a literal, so
+# a release could bump one copy and ship the other.
+dynamic = ["version"]
 description = "Adaptive HGT-Aware Phylogenomic Pipeline for Prokaryotic Marker Gene Selection"
 readme = "README.md"
 license = {text = "MIT"}
@@ -21,6 +24,8 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 dependencies = [
@@ -34,8 +39,19 @@ dependencies = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+    # The acceptance layer documents `run_validation.py -n 8`, but -n is
+    # pytest-xdist's flag and neither environment.yml nor this list installed
+    # it — the documented command failed on a fresh dev install.
+    "pytest-xdist>=3.0",
     # Static checking of the type-annotated modules. Dev-only — the runtime
     # dependency set stays at biopython/pyyaml/ete3/tomli.
+    #
+    # Deliberately NOT a CI gate yet. `mypy markerfinder --ignore-missing-imports`
+    # reports 89 errors across 16 of 62 modules (the bulk in pipeline.py,
+    # gtdb_tk_markers.py, modules/phylogenetic_inference.py), and the pinned
+    # mypy has no --baseline-file, so a ratchet on the error count is not
+    # available. Turning it on today would mean a permanently red first run,
+    # which is worse than an honest absence. Fix the errors, then gate it.
     "mypy>=1.8",
     "types-PyYAML>=6.0",
 ]
@@ -50,6 +66,13 @@ Issues = "https://github.com/ZengZichao/MarkerFinder/issues"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["markerfinder*"]
+
+[tool.setuptools.dynamic]
+# Read statically from markerfinder/_version.py, which imports nothing, so the
+# build never has to import the package (and never has to install ete3) to learn
+# the version. __init__.py re-exports the same constant, so `markerfinder
+# --version`, the banner and the installed metadata cannot disagree.
+version = {attr = "markerfinder._version.__version__"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

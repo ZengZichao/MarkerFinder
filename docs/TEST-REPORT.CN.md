@@ -229,8 +229,12 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 * **占居率的极端分布。** 这套 profile 是保守标记集，在这组亲缘较近的基因组上最稀疏的天然
   marker 占居率仍为 0.875；更稀疏的输入只能靠截取模拟，并在
   `validation/data/markers/degenerate/README` 中如实标注。
-* **3.10–3.12 之外的 Python。** ete3 在 3.13+ 无法导入（标准库移除了 `cgi`）；被支持的
-  上界本身也在被测，而不是靠文档声明。
+* **Python 3.13 及以上。** ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除 `cgi`
+  （PEP 594），此前导致 ete3 —— 以及所有 MAD / 单系性测量 —— 在更新的解释器上不可用。
+  `markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 3.13 与
+  3.14 已纳入受支持范围，CI 矩阵逐个实跑。「不设上界」这一点本身在被测，而不是靠文档
+  声明。残留风险：替身只覆盖 ete3 真正引用的那一个符号（`cgi.FieldStorage`），一旦被真正
+  调用就抛 `NotImplementedError`；MarkerFinder 不使用 ete3 的 web 插件，该路径不会被触发。
 * **可写的 `/tmp`。** MAFFT 用 `mktemp -dt` 建暂存目录，失败后并不会停止，而是带着空路径
   继续、产不出比对——流水线于是把结果报成「没有 marker 可比对」。套件把
   `TMPDIR`/`MAFFT_TMPDIR` 钉在 `validation/.work` 内，因此只读 `/tmp` 的容器不可能把一个
