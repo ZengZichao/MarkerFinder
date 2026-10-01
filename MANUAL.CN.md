@@ -66,7 +66,7 @@ MarkerFinder 是一个系统发育基因组学流水线，自动化完成标记�
 
 ```bash
 # 创建并激活环境
-conda create -n markerfinder python=3.10 -y
+conda create -n markerfinder "python>=3.10" -y
 conda activate markerfinder
 
 # 安装生物信息学工具（当前主流程跳过 BBH/图聚类，blast 不需要；diamond 为预留接口可选）

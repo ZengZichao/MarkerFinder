@@ -57,16 +57,26 @@ def test_ete3_is_usable_on_every_supported_interpreter():
 
     On 3.13+ this only holds because ``markerfinder._cgi_compat`` restores the
     removed ``cgi`` module, hence the deliberate package import first.
+
+    The failure text carries the underlying exception. It used to swallow it,
+    which cost real diagnosis time: an undeclared transitive dependency of ete3
+    (it does ``import six.moves.cPickle`` while declaring no requirements at
+    all) made every ete3-dependent test fail in CI with a message that named
+    only the symptom, "ete3 is installed but unimportable". A green local
+    checkout hid it, because some unrelated package happened to have six
+    installed. An assertion that cannot say why cannot be acted on.
     """
     importable = importlib.util.find_spec("ete3") is not None
+    failure = ""
     try:
         import markerfinder  # noqa: F401  -- installs the cgi shim when needed
 
         import ete3  # Noqa: F401
 
         usable = True
-    except Exception:
+    except Exception as exc:
         usable = False
+        failure = f"{type(exc).__name__}: {exc}"
 
     if not importable:
         pytest.skip(
@@ -76,7 +86,8 @@ def test_ete3_is_usable_on_every_supported_interpreter():
     assert usable, (
         "ete3 is installed but unimportable on Python "
         f"{sys.version_info.major}.{sys.version_info.minor}, which is inside the "
-        "declared range -- the differential tests would silently stop comparing"
+        "declared range -- the differential tests would silently stop comparing. "
+        f"Underlying import error: {failure or 'none captured'}"
     )
 
 

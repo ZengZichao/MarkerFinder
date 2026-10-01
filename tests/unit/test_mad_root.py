@@ -13,7 +13,9 @@ pytest.importorskip(
     "ete3",
     reason=(
         "ete3 unavailable in this interpreter — MAD ROOTING TESTS NOT "
-        "EXECUTED (rooting has no pure-Python fallback; needs 3.10-3.12)"
+        "EXECUTED (rooting has no pure-Python fallback; every supported "
+        "interpreter, Python >=3.10, can import ete3 once `markerfinder` is "
+        "loaded, so this means a broken install)"
     ),
 )
 

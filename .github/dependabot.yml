@@ -1,0 +1,80 @@
+# Dependabot. Added because ete3 and Biopython are the two upstream projects
+# most likely to need an urgent upgrade — ete3 is effectively unmaintained, so
+# if a security fix ever lands for it, nobody will be watching by hand.
+#
+# Two lessons are baked in here on purpose:
+#
+#   * Every ecosystem gets BOTH `groups` and `ignore`. Multiple dependabot PRs
+#     that touch the same manifest just create conflicts for whoever merges
+#     them, and a bare semver-major filter on a repo this size is how you get a
+#     wall of unrelated upgrade PRs instead of one reviewable one.
+#   * Every `ignore` entry carries an explicit `dependency-name`. Combining
+#     `groups` with an `ignore` that only has a version range is rejected by
+#     GitHub with "did not contain a required property of 'dependency-name'",
+#     and the whole file silently fails to take effect.
+version: 2
+
+updates:
+  # --- pip (pyproject.toml) ---------------------------------------------
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 5
+    groups:
+      # Runtime deps move together: Biopython and PyYAML are both imported on
+      # every code path, and a PR that bumps one while a second PR bumps the
+      # other is pure merge conflict.
+      runtime-patch-minor:
+        patterns:
+          - biopython
+          - pyyaml
+          - tomli
+          - ete3
+        update-types:
+          - minor
+          - patch
+      # Tooling moves as a unit so the suite is never half-upgraded and
+      # therefore unrunnable.
+      dev-tooling-patch-minor:
+        patterns:
+          - pytest
+          - pytest-cov
+          - pytest-xdist
+          - mypy
+          - types-PyYAML
+        update-types:
+          - minor
+          - patch
+    # Deliberately NO `ignore` block. A semver-major filter here would suppress
+    # majors for good, and combined with the `update-types` on the groups above
+    # that would mean a major never appears at all — neither bundled nor
+    # reviewable. Instead the groups absorb patch+minor and a major arrives as
+    # its own single-dependency PR, which is the right unit of review: a pytest
+    # or mypy major can change the output formats the documentation tests
+    # assert on, and biopython 2.x would need real code changes.
+    #
+    # If a semver-major filter is ever added here, remember that every entry
+    # must carry an explicit `dependency-name` once `groups` is in use —
+    # GitHub rejects the file with "did not contain a required property of
+    # 'dependency-name'" and the whole config silently stops taking effect.
+
+  # --- GitHub Actions ----------------------------------------------------
+  # The workflows pin every action by commit SHA, so this section is the only
+  # upgrade channel they have. Without it, `uses:` lines never move again.
+  #
+  # No semver-major ignore on purpose. The action majors are runtime migrations
+  # (setup-python v6 moved from node20 to node24 and required a runner version
+  # floor), which is exactly the kind of change that should show up as one
+  # reviewable PR rather than be auto-bundled or hidden.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"

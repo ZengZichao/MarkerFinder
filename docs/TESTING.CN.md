@@ -22,7 +22,7 @@ doi:10.1126/science.adw9456，2026-02-05 撤稿）正是在这个
 缺口上失败的——所有内部检查都通过，而拓扑在生物学上荒谬。因此测试被拆成：
 
 ```
-tests/       988 个快速用例，不需要外部工具，不下载数据
+tests/       991 个快速用例，不需要外部工具，不下载数据
 validation/  153 个在真实基因组上用真实工具跑的端到端用例
 ```
 
@@ -159,10 +159,14 @@ Il1403（Lactobacillales 目）的同源序列——一次位置已知的跨目�
 
 ## 5. 环境
 
-必需：Python 3.10–3.12（ete3 在 3.13+ 无法导入，因为标准库已移除 `cgi`）、声明的
-运行期依赖（biopython、pyyaml、ete3、tomli），以及外部工具 `hmmsearch`、`mafft`、
-`trimal`、`FastTree`/`fasttree`、`astral`；若使用 ML 基因树还需 `iqtree3`，若不跳过
-质量评估则需 `checkm`。
+必需：Python 3.10 及以上，不设上界。声明的运行期依赖（biopython、pyyaml、ete3、
+tomli），以及外部工具 `hmmsearch`、`mafft`、`trimal`、`FastTree`/`fasttree`、`astral`；
+若使用 ML 基因树还需 `iqtree3`，若不跳过质量评估则需 `checkm`。
+
+这个区间此前止于 3.12：ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除
+`cgi`（PEP 594），导致 ete3 —— 以及所有 MAD / 单系性测量 —— 在更新的解释器上不可用。
+`markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 ete3 在
+3.13+ 可以导入，上界也就没有继续存在的理由。
 
 套件会自行固定环境（`validation/conftest.py::_tool_env`）：把调用它的解释器所在
 `bin` 前置到 `PATH`，并把 `TMPDIR`/`MAFFT_TMPDIR` 指向 `validation/.work` 内。第二
@@ -189,9 +193,9 @@ python validation/run_validation.py --prepare       # 先从 NCBI 重建数据
 pytest validation/cases/test_v06_hgt_screening.py -k composition -n 4
 ```
 
-其他解释器通过在同一套套件下重复运行来检验：3.10、3.11、3.12 是实测过、被支持的
-区间，且上界本身也在测试之内
-（`tests/unit/test_supported_range_is_earned.py`）。
+其他解释器通过在同一套套件下重复运行来检验：3.10 至 3.14 是 CI 矩阵，
+声明区间本身也在测试之内——`tests/unit/test_supported_range_is_earned.py` 断言
+manifest 不带上界，`tests/unit/test_self_test_environment.py` 断言 `--check` 与之一致。
 
 ## 7. 结果、发现与当前边界
 

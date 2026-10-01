@@ -14,14 +14,18 @@ import pytest
 
 # Differential test: the independent reference reimplements the old per-taxon
 # Approach with ete3, so it needs ete3 importable. Guarded at module scope —
-# A bare ``from ete3 import...`` made ``pytest tests`` abort during collection
-# On Python >= 3.13 (ete3 imports the stdlib ``cgi`` module, removed in 3.13),
-# Which reported zero results instead of a labelled NOT EXECUTED skip.
+# a bare ``from ete3 import...`` made ``pytest tests`` abort during collection
+# on an interpreter where ete3 cannot import, which reported zero results
+# instead of a labelled NOT EXECUTED skip. On Python 3.13+ ete3 imports fine
+# once ``markerfinder._cgi_compat`` has installed its ``cgi`` stand-in, so the
+# guard is a real broken-install detector, not a version check.
 pytest.importorskip(
     "ete3",
     reason=(
         "ete3 unavailable in this interpreter — DIFFERENTIAL TEST NOT "
-        "EXECUTED (must run in a 3.10-3.12 environment)"
+        "EXECUTED (every supported interpreter, Python >=3.10, can import "
+        "ete3 once `markerfinder` is imported, so this means a broken "
+        "install rather than an unsupported interpreter)"
     ),
 )
 from ete3 import Tree as EteTree  # Noqa: E402

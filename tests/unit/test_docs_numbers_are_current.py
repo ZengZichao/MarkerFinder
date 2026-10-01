@@ -116,17 +116,23 @@ def count_guard_reason() -> str | None:
     """Why the live-count comparison cannot run here, or None when it can.
 
     The badge quotes the FULL-suite collection count, which only exists where
-    every module collects: inside the declared range (>=3.10,<3.13) with ete3
+    every module collects: inside the declared range (``>=3.10``) with ete3
     importable. Anywhere else the ete3-dependent modules skip and the live
     total legitimately differs from the badge -- failing there would let an
     interpreter that cannot even measure the number veto a doc sync. Per the
     suite-wide convention that is NOT EXECUTED, and never a silent pass.
+
+    There is deliberately no version short-circuit here any more. It used to
+    read ``if sys.version_info >= (3, 13)``, on the premise that ete3 cannot
+    import above the retired ``<3.13`` ceiling. ``markerfinder._cgi_compat``
+    restored the stdlib ``cgi`` module ete3 needs, so on 3.13+ that premise is
+    false -- and the short-circuit silently disabled the very guards that keep
+    the README numbers honest on every interpreter we now claim to support.
+    ete3 importability is the real question, so it is the real check.
     """
-    if sys.version_info >= (3, 13):
-        return (f"NOT EXECUTED: interpreter {sys.version_info[:3]} is outside "
-                "the declared range (>=3.10,<3.13), so ete3 cannot import and "
-                "the suite cannot collect fully here")
     try:
+        import markerfinder  # Noqa: F401  -- installs the cgi shim when needed
+
         import ete3  # Noqa: F401
     except Exception:
         return ("NOT EXECUTED: ete3 is not importable here, so the "
@@ -166,14 +172,21 @@ def test_manuals_do_not_restate_suite_counts():
 
 
 def test_control_the_count_guard_skips_outside_its_measurable_envelope():
-    """Positive control for the NOT EXECUTED branch: on an out-of-range
-    interpreter the comparison must skip with a named reason, not fail and not
-    pretend the numbers agree."""
+    """Positive control for the NOT EXECUTED branch: where the live count cannot
+    be measured the comparison must skip with a named reason, not fail and not
+    pretend the numbers agree.
+
+    The unmeasurable condition is "ete3 not importable", not a version number.
+    The guard used to key off ``sys.version_info >= (3, 13)``; once the cgi shim
+    made ete3 importable there, that premise turned false and switched this very
+    guard off on every supported interpreter. So the control simulates the real
+    condition -- an ``ete3`` that cannot be imported -- by hiding the module.
+    """
     import unittest.mock as mock
 
-    with mock.patch.object(sys, "version_info", (3, 14, 6, "final", 0)):
-        out_of_range = count_guard_reason()
-    assert out_of_range is not None and "NOT EXECUTED" in out_of_range
+    with mock.patch.dict(sys.modules, {"ete3": None}):
+        unmeasurable = count_guard_reason()
+    assert unmeasurable is not None and "NOT EXECUTED" in unmeasurable
 
 
 def test_readme_badges_quote_the_measured_total():

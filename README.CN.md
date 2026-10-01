@@ -4,8 +4,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
-[![Python 3.10～3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-988%20collected-brightgreen.svg)](#测试)
+[![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-991%20collected-brightgreen.svg)](#测试)
+[![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
 [English](README.EN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -74,7 +75,8 @@ MarkerFinder 是一条面向原核生物的系统发育基因组学流水线，�
 |-----------|---------|--------------------------------------------------------|
 | Biopython | >= 1.81 | 序列解析 |
 | PyYAML | >= 6.0 | 配置文件解析 |
-| ete3 | >= 3.1 | 系统发育树操作（Python 3.10～3.12；3.13 及以上需自行回退） |
+| ete3 | >= 3.1 | 系统发育树操作（所有受支持解释器；3.13+ 由 `_cgi_compat` 提供 `cgi` 替身） |
+| six | >= 1.16 | ete3 的 webapp 模块所需，而 ete3 自身并未声明 |
 | tomli | >= 2.0 | TOML 配置解析（Python < 3.11） |
 
 > 注：本项目此前声明了 `pandas`、`numpy`、`scipy` 和 `rich` 四个依赖，包内却从未导入它们，
@@ -82,10 +84,16 @@ MarkerFinder 是一条面向原核生物的系统发育基因组学流水线，�
 
 ### 环境与验证（受支持解释器）
 
-`pyproject.toml` 声明 `requires-python = ">=3.10,<3.13"`。**ete3 在 Python 3.13 及以上无法导入**：
-它的 `ete3/webplugin/webapp.py` 仍会 `import cgi`，而标准库的 `cgi` 已在 3.13 中移除。
-因此 RF/quartet 的 ete3 路径只在 3.10～3.12 上可用。在 3.13 及以上，`--check` 会明确报告
-“版本越界”并以非零码退出，同时启用纯标准库的 split-set 回退（`method="splits-python"`）。
+`pyproject.toml` 声明 `requires-python = ">=3.10"`，**没有上界**。此前曾声明 `>=3.10,<3.13`，
+原因很具体：ete3 的 `ete3/webplugin/webapp.py` 在导入时仍会 `import cgi`，而标准库的 `cgi`
+已在 Python 3.13 中被移除（PEP 594），导致整个 MAD / 单系性测量路径静默失效。
+`markerfinder/_cgi_compat.py` 现在只在标准库 `cgi` 确实缺失时安装一个最小替身模块，
+ete3 因此在 3.13 及以上照常可用，RF/quartet 的 ete3 路径不再受解释器版本限制。
+`--check` 对所有 ≥3.10 的解释器报告解释器检查通过。
+
+> 替身模块只补 ete3 真正引用的 `cgi.FieldStorage` 这一个符号，且一旦被真正调用就抛
+> `NotImplementedError`——它不是通用实现。MarkerFinder 不走 ete3 的 web 插件，因此这条路径
+> 不会被触发。CI 矩阵逐个解释器（3.10 / 3.11 / 3.12 / 3.13 / 3.14）实跑验证这一点。
 
 推荐用仓库根目录的 `environment.yml` 创建 conda 环境，它会一并安装 mafft、trimal、FastTree、
 IQ-TREE 和 ASTRAL：
@@ -96,29 +104,33 @@ conda run -n markerfinder markerfinder --check
 conda run -n markerfinder pytest -q
 ```
 
-**使用 pip 安装时需注意**：PyPI 上的 `ete3` 未声明依赖 `six`。只执行 `pip install ete3` 时，
-`import ete3` 会抛出 `ModuleNotFoundError: No module named 'six'`。请改用
-`pip install ete3 six`。conda 渠道的 `ete3` 没有此问题。
+**`six` 已由本项目代为声明**：PyPI 上的 `ete3` 完全没有声明任何依赖，但
+`ete3/webplugin/webapp.py` 里有 `import six.moves.cPickle`，而 `ete3/__init__.py` 又以星号
+导入该模块。因此 MarkerFinder 把 `six` 写进了自己的依赖，`pip install markerfinder` 得到的
+ete3 是可导入的。若**单独**安装 `ete3`，仍需 `pip install ete3 six`。
+（这不是假设性问题：一个干净的 CI 环境——恰好没有别的包把 six 带进来——就是这样暴露出来的。）
 
 **受支持范围内的实测结果**（同一份代码，在每个受支持解释器上配合 ete3 完整运行一次）：
 
 | 解释器 | 结果 |
 |---|---|
-| CPython 3.10.20 / 3.11.15 / 3.12.13 + ete3 | 全量 **0 skipped / 0 failed**（用例总数以顶部徽章为准，随提交实跑刷新，此处不重复）；`--check` 49 项检查 0 FAIL、退出码 0（未获取参考数据库的源码检出为 48 项检查，那一项以 INFO 报出） |
+| CPython 3.10 / 3.11 / 3.12 + ete3 | 全量 **0 failed**（用例总数以顶部徽章为准，随提交实跑刷新，此处不重复）；`--check` 49 项检查 0 FAIL、退出码 0（未获取参考数据库的源码检出为 48 项检查，那一项以 INFO 报出） |
 | CPython 3.12.13 | ete3 在该版本会打印大量 `SyntaxWarning: invalid escape sequence`。这些警告与被测代码无关，但会干扰用户阅读 |
-| CPython 3.14.6（**超出声明范围**） | ete3 不可导入：依赖 ete3 的模块以含 `NOT EXECUTED` 的理由显式 skip，其余用例全部通过、退出码 0；`--check` 明确报告“版本越界”并以非零码退出 |
+| CPython 3.13 / 3.14 + ete3 | 依赖 ete3 的模块通过 `markerfinder/_cgi_compat` 提供的 `cgi` 替身正常导入，**不会**以 `NOT EXECUTED` 理由 skip；`--check` 解释器检查 PASS、退出码 0 |
 
 ete3 差分测试（把纯 Python split-set 的 RF/quartet 结果与 ete3 逐树对比）**只有在
-3.10～3.12 + ete3 的环境下才会真正执行**。在无 ete3 的环境里，它们以含 `NOT EXECUTED` 的理由
-显式 skip，不计为通过。
+ete3 可导入时才会真正执行**——即所有受支持的解释器。在 ete3 确实装坏的环境里，它们以含
+`NOT EXECUTED` 的理由显式 skip，不计为通过。
 
-声明范围的上界本身也在测试之内（`test_supported_range_is_earned.py`）。如果在 3.13 及以上，
-ete3 反而变得可以导入，该测试就会失败，并要求**重新决定** `<3.13` 这个上界，
-而不是让一条边界条件依赖记忆维持。
+声明范围没有上界这一点本身就在测试之内（`test_supported_range_is_earned.py` 断言
+manifest 不带 `<3.13`，`test_self_test_environment.py` 断言 `--check` 与之一致），
+这样一条边界条件就不会退化成靠记忆维持的约定。
 
-在 Python 3.14（超出声明范围）上直接运行 `pytest tests` 时，两个依赖 ete3 的模块
-会在收集阶段被显式跳过并标注 `NOT EXECUTED`（而不是崩溃后一条结果都不报，退出码 2）；
-3.11 与 3.12 已一并纳入实测范围。
+在受支持解释器上，依赖 ete3 的模块始终真正执行：在 3.13+ 上是 `markerfinder._cgi_compat`
+的 `cgi` 替身让 `import ete3` 成功，而不是靠 skip 绕过。因此在 3.13/3.14 上跑
+`pytest tests` 同样是 0 failed——**如果哪天替身失效，你会看到失败而不是静默的 skip**。
+真正装坏 ete3 时，这些模块仍会在收集阶段被显式跳过并标注 `NOT EXECUTED`
+（而不是崩溃后一条结果都不报，退出码 2）。
 
 ### 外部工具
 
@@ -499,12 +511,13 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**测试覆盖（实测值，不再是估计值）：** 测试共 88 个模块，收集 **988** 个用例，
-其中 `tests/unit/` 920 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
+**测试覆盖（实测值，不再是估计值）：** 测试共 88 个模块，收集 **991** 个用例，
+其中 `tests/unit/` 923 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
 （三个目录之和 == 徽章数字，由 `tests/unit/test_docs_numbers_are_current.py` 双向复核）。
-在受支持解释器（CPython 3.10.20、3.11.15、3.12.13，均安装 ete3）下 **0 failed、0 skipped**。
 用例总数以顶部徽章为准（`python3 -m pytest tests --collect-only -q`），每次提交随实跑结果刷新。
-仓库内不含 CI 流水线定义（无 `.github/`），徽章仅陈述用例总数。
+快速层在 CI 中对每个受支持解释器（3.10、3.11、3.12、3.13、3.14）运行
+（`.github/workflows/ci.yml`）；验收层需要真实外部工具和下载的基因组，因此拆到独立的
+定时工作流（`.github/workflows/validation-nightly.yml`），避免缓慢或依赖外网的作业拖住 PR。
 
 覆盖范围包括核心配置、模型、标记选择策略、HGT 决策引擎、GTDB-TK 标记加载、MAD 定根、
 分类学解析、树与序列验证、报告生成。此外还包含三类专项测试：
@@ -518,8 +531,9 @@ python validation/run_validation.py --all -n 8
 取数、嵌合阳性对照、度量、取证与反向消融脚本，以及对应的契约测试。仍然缺少的，是真实建树工具链
 与真实基因组下的端到端数值正确性（见 MANUAL 的限制说明）。
 
-> **Python 版本说明：** 所依赖的 ete3 当前不兼容 Python 3.13 及以上（标准库 `cgi` 已移除），
-> 请使用 Python 3.10～3.12。
+> **Python 版本说明：** 3.10 及以上全部受支持。这条注记原先附带的 `< 3.13` 上界，已在
+> `markerfinder/_cgi_compat.py` 开始补回 ete3 所需的标准库 `cgi` 模块后作废；CI 矩阵覆盖
+> 3.10 至 3.14。
 
 ---
 

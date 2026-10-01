@@ -84,15 +84,20 @@ def check_python_dependencies(strict: bool = False) -> List[str]:
         require_ete3()
     except Exception as e:  # Uninstalled, or installed but unimportable
         # "not installed" used to be asserted whenever the import failed, which
-        # Is wrong on Python >= 3.13 where ete3 IS installed but cannot be
-        # Imported (the stdlib cgi module is gone). Report what actually happened
-        # (name the cause, never mislabel it).
+        # is wrong when ete3 IS installed but cannot be imported. The usual cause
+        # was Python 3.13+, where the stdlib `cgi` module ete3 imports at
+        # package-import time no longer exists; `markerfinder._cgi_compat`
+        # normally papers over that, so a failure here means something else is
+        # wrong. Report what actually happened (name the cause, never mislabel
+        # it) and do not send the user downgrading an interpreter that is fine.
         msg = (
             f"ete3 is unusable in this interpreter ({e}). The phylogenetic HGT "
             "screening (MAD rooting + monophyly proportion) will not be "
-            "available. Install it on a supported interpreter (Python "
-            "3.10-3.12): `conda install -c etetoolkit ete3` or "
-            "`pip install ete3 six` (the PyPI wheel does not declare six)."
+            "available. Every supported interpreter (Python >=3.10) can import "
+            "ete3 once `markerfinder` has been imported — so this is a broken "
+            "installation, not an unsupported interpreter. Reinstall with "
+            "`conda install -c etetoolkit ete3` or `pip install ete3 six` "
+            "(the PyPI wheel does not declare six)."
         )
         if strict:
             raise ImportError(msg)

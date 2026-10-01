@@ -1,15 +1,19 @@
 """Single ete3 import entry point + pure-Python tree measurement fallback.
 
- of:
+Two orders of preference:
 
 *:func:`require_ete3` is the ONLY sanctioned place to import ete3. Scattered
   ``try: from ete3...`` blocks that swallow failures into placeholder numbers
   are the root cause of the zero-discrimination defect.
-* When ete3 is unavailable (Python ≥ 3.13 removed ``cgi`` which ete3 still
-  imports), the pure-Python split-set path below provides REAL measurements
+* When ete3 is genuinely unavailable for some *other* reason (a broken install,
+  or a Python 3.13+ interpreter reached without ``markerfinder`` having been
+  imported, so :mod:`markerfinder._cgi_compat` never installed its ``cgi``
+  stand-in), the pure-Python split-set path below provides REAL measurements
   for RF distance, quartet topology and clade monophyly on trees of up to
 :data:`MAX_PURE_PYTHON_TIPS` shared tips. These are measurements, not
   placeholders — callers report ``method="splits-python"`` when they are used.
+  On every supported interpreter (Python >=3.10) ete3 itself is importable, so
+  this is a backstop, not the normal route.
 
 The Newick parser here is deliberately minimal: it understands unquoted and
 quoted tip labels (numeric labels such as ``"123"`` / ``"12.5"`` are kept as
