@@ -48,9 +48,19 @@ def require_ete3() -> Any:
 
     Every ete3 use in MarkerFinder must go through this function so that
     "dependency missing" has exactly one observable failure type.
+
+    On Python 3.13+ the stdlib ``cgi`` module no longer exists and ete3's
+    import-time ``from .webplugin.webapp import *`` therefore raises
+    ``ModuleNotFoundError``. :mod:`markerfinder._cgi_compat` installs a minimal
+    stand-in for it, restoring ete3 (and with it the real MAD / monophyly
+    measurements) instead of letting every affected marker degrade to
+    "unmeasured". On 3.12 and earlier the shim is a no-op.
     """
     try:
+        from markerfinder import _cgi_compat  # noqa: F401, PLC0415
+
         import ete3  # Noqa: PLC0415 — deferred on purpose: import must be lazy
+
         return ete3
     except Exception as e:  # ImportError and broken ete3 installs alike
         raise PhyloToolUnavailable(
