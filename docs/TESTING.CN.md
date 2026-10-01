@@ -193,7 +193,7 @@ python validation/run_validation.py --prepare       # 先从 NCBI 重建数据
 pytest validation/cases/test_v06_hgt_screening.py -k composition -n 4
 ```
 
-其他解释器通过在同一套套件下重复运行来检验：3.10、3.11、3.12、3.13 是 CI 矩阵，
+其他解释器通过在同一套套件下重复运行来检验：3.10 至 3.14 是 CI 矩阵，
 声明区间本身也在测试之内——`tests/unit/test_supported_range_is_earned.py` 断言
 manifest 不带上界，`tests/unit/test_self_test_environment.py` 断言 `--check` 与之一致。
 

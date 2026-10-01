@@ -32,6 +32,16 @@ dependencies = [
     "biopython>=1.81",
     "pyyaml>=6.0",
     "ete3>=3.1",
+    # ete3 does not declare this itself — its 3.1.3 metadata has an empty
+    # Requires-Dist — but `ete3/webplugin/webapp.py` does `import six.moves.cPickle`
+    # and `from six.moves import map`, and `ete3/__init__.py` pulls that module in
+    # with a star import. So a clean install gets an unimportable ete3, and every
+    # MAD / monophyly measurement degrades to "unmeasured" instead of failing
+    # loudly. Nothing else in this dependency closure pulls six in, so it has to
+    # be named here. (`markerfinder._cgi_compat` covers the *removed stdlib*
+    # `cgi` module; it is not a substitute for a package that is genuinely
+    # required.)
+    "six>=1.16",
     "tomli>=2.0;python_version<'3.11'",
 ]
 

@@ -73,7 +73,8 @@ Genome Input (.faa)
 |------------|-----------------|---------------------------------------------------------------------|
 | Biopython | >= 1.81 | Sequence parsing |
 | PyYAML | >= 6.0 | Config file parsing |
-| ete3 | >= 3.1 | Phylogenetic tree ops (Python 3.10–3.12; 3.13 and later need a fallback) |
+| ete3 | >= 3.1 | Phylogenetic tree ops (every supported interpreter) |
+| six | >= 1.16 | Required by ete3's webapp module, which ete3 itself does not declare |
 | tomli | >= 2.0 | TOML config parsing (Python < 3.11) |
 
 > Note: `pandas`, `numpy`, `scipy` and `rich` were declared as dependencies before
@@ -82,12 +83,18 @@ Genome Input (.faa)
 
 ### Environment and Verification (Supported Interpreters)
 
-`pyproject.toml` declares `requires-python = ">=3.10,<3.13"`. **ete3 cannot be imported on
-Python 3.13 and later**: its `ete3/webplugin/webapp.py` still does `import cgi`, and the
-standard-library `cgi` module was removed in 3.13. The ete3 path for RF/quartet is therefore
-only available on 3.10–3.12. On 3.13 and later, `--check` reports "interpreter out of range" and
-exits non-zero, while the pure standard-library split-set fallback (`method="splits-python"`)
-takes over.
+`pyproject.toml` declares `requires-python = ">=3.10"` with **no upper bound**. It used to declare
+`>=3.10,<3.13` for a concrete reason: `ete3/webplugin/webapp.py` does `import cgi` at import time,
+and CPython removed the standard-library `cgi` module in 3.13 (PEP 594), which made the whole
+MAD / monophyly measurement path silently unusable. `markerfinder/_cgi_compat.py` now installs a
+minimal `cgi` stand-in only when the real module is genuinely absent, so ete3 imports normally on
+3.13 and later and the RF/quartet ete3 path is no longer limited by interpreter version.
+`--check` reports the interpreter check as passing on every interpreter at or above the floor.
+
+> The stand-in covers only the single symbol ete3 actually touches (`cgi.FieldStorage`) and raises
+> `NotImplementedError` if anything really calls it — it is not a general reimplementation.
+> MarkerFinder never uses the ete3 web plugin, so that path is not exercised. The CI matrix runs
+> each interpreter (3.10 / 3.11 / 3.12 / 3.13 / 3.14) to verify this.
 
 The recommended route is the `environment.yml` at the repository root, which also installs
 mafft, trimal, FastTree, IQ-TREE and ASTRAL:
@@ -98,31 +105,37 @@ conda run -n markerfinder markerfinder --check
 conda run -n markerfinder pytest -q
 ```
 
-**When installing with pip instead**: the `ete3` wheel on PyPI does not declare `six`, so
-`pip install ete3` alone raises `ModuleNotFoundError: No module named 'six'` on `import ete3`.
-Install `pip install ete3 six`. The conda build of `ete3` does not have this problem.
+**`six` is declared for you**: the `ete3` wheel on PyPI declares no requirements at all, yet
+`ete3/webplugin/webapp.py` does `import six.moves.cPickle` and `ete3/__init__.py` star-imports
+that module. MarkerFinder therefore lists `six` in its own dependencies, so `pip install
+markerfinder` gives you an importable ete3. Installing `ete3` *on its own* still needs
+`pip install ete3 six`. (This was not a hypothetical: a clean CI environment — where nothing
+else happens to pull six in — is exactly how the undeclared dependency surfaced.)
 
 **Measured results inside the supported range** (the same code, one full run per interpreter with
 ete3 installed):
 
 | Interpreter | Result |
 |---|---|
-| CPython 3.10.20 / 3.11.15 / 3.12.13 with ete3 | **0 skipped / 0 failed** overall (the case total lives in the badge above, refreshed with every commit; it is not repeated here); `--check` reports 49 items (48 items on a checkout without the fetched reference databases, where the hash comparison is INFO) with 0 FAIL and exit code 0 |
-| CPython 3.12.13 | ete3 prints many `SyntaxWarning: invalid escape sequence` lines on this version. The warnings do not come from the code under test, but they distract the user |
-| CPython 3.14.6 (**outside the declared range**) | ete3 cannot be imported: the ete3-dependent modules skip explicitly with `NOT EXECUTED` in the reason, everything else passes and the exit code is 0; `--check` reports "interpreter out of range" and exits non-zero |
+| CPython 3.10 / 3.11 / 3.12 with ete3 | **0 failed** overall (the case total lives in the badge above, refreshed with every commit; it is not repeated here); `--check` reports 49 items (48 items on a checkout without the fetched reference databases, where the hash comparison is INFO) with 0 FAIL and exit code 0 |
+| CPython 3.12 | ete3 prints many `SyntaxWarning: invalid escape sequence` lines on this version. The warnings do not come from the code under test, but they distract the user |
+| CPython 3.13 / 3.14 with ete3 | the ete3-dependent modules import normally through the `cgi` stand-in from `markerfinder/_cgi_compat` and do **not** skip with a `NOT EXECUTED` reason; the `--check` interpreter item PASSes and the exit code is 0 |
 
 The ete3 differential tests (comparing the pure-Python split-set RF/quartet results with ete3 tree
-by tree) **only really execute on 3.10–3.12 with ete3**. Without ete3 they skip explicitly with
-`NOT EXECUTED` in the reason, which never counts as a pass.
+by tree) **execute whenever ete3 is importable** — which is every supported interpreter. Where
+ete3 is genuinely broken they skip explicitly with `NOT EXECUTED` in the reason, which never counts
+as a pass.
 
-The upper bound of the declared range is itself under test (`test_supported_range_is_earned.py`).
-If ete3 ever became importable on 3.13 and later, that test fails and asks the maintainer to
-**decide the `<3.13` bound again** rather than keep it from memory.
+The *absence* of an upper bound is itself under test — `test_supported_range_is_earned.py` asserts
+the manifest carries no `<3.13`, and `test_self_test_environment.py` asserts `--check` agrees with
+it — so a boundary condition cannot decay into a convention kept from memory.
 
-On Python 3.14 (outside the declared range), running `pytest tests` directly skips the two
-ete3-dependent modules during collection with an explicit `NOT EXECUTED` marker rather than
-crashing and reporting **no result at all** (exit code 2); 3.11 and 3.12 are brought into the
-measured range as well.
+On a supported interpreter the ete3-dependent modules always really execute: on 3.13+ it is
+`markerfinder._cgi_compat`'s `cgi` stand-in that makes `import ete3` succeed, not a skip. So
+`pytest tests` on 3.13/3.14 is likewise 0 failed — **if the stand-in ever stopped working you would
+see a failure, not a silent skip**. Where ete3 is genuinely broken those modules still skip during
+collection with an explicit `NOT EXECUTED` marker rather than crashing and reporting **no result at
+all** (exit code 2).
 
 ### External Tools
 
@@ -513,7 +526,7 @@ python validation/run_validation.py --all -n 8
 by `tests/unit/test_docs_numbers_are_current.py`).
 The badge carries the collected total (`python3 -m pytest tests --collect-only -q`)
 and is refreshed with every commit. The suite runs in CI on every supported
-interpreter (3.10, 3.11, 3.12 and 3.13) via `.github/workflows/ci.yml`; the
+interpreter (3.10 through 3.14) via `.github/workflows/ci.yml`; the
 acceptance layer, which needs real external tools and downloaded genomes, runs
 separately on a schedule (`.github/workflows/validation-nightly.yml`) so a slow
 or network-flaky job cannot hold a pull request hostage.
@@ -532,7 +545,9 @@ the fetch, planted-chimera, metric, provenance and reverse-ablation scripts toge
 contract tests. What is still missing is end-to-end numeric correctness against a real
 phylogenetics toolchain on real genomes; see the limitations note in the manual.
 
-> **Python version note:** the ete3 dependency is currently incompatible with Python ≥ 3.13 (the standard-library `cgi` module was removed). Please use Python 3.10–3.12.
+> **Python version note:** every interpreter from 3.10 up is supported. The `< 3.13` ceiling that
+> this note used to carry was retired when `markerfinder/_cgi_compat.py` began restoring the
+> standard-library `cgi` module that ete3 imports, and the CI matrix runs 3.10 through 3.14.
 
 ---
 

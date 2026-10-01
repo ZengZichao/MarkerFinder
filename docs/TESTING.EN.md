@@ -221,7 +221,7 @@ pytest validation/cases/test_v06_hgt_screening.py -k composition -n 4
 ```
 
 Interpreters other than the default are exercised by running the same suites
-under each: 3.10, 3.11, 3.12 and 3.13 are the CI matrix, and the declared range
+under each: 3.10 through 3.14 are the CI matrix, and the declared range
 is itself under test (`tests/unit/test_supported_range_is_earned.py` asserts the
 manifest carries no upper bound; `tests/unit/test_self_test_environment.py`
 asserts `--check` agrees with it).

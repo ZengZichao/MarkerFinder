@@ -76,6 +76,7 @@ MarkerFinder 是一条面向原核生物的系统发育基因组学流水线，�
 | Biopython | >= 1.81 | 序列解析 |
 | PyYAML | >= 6.0 | 配置文件解析 |
 | ete3 | >= 3.1 | 系统发育树操作（所有受支持解释器；3.13+ 由 `_cgi_compat` 提供 `cgi` 替身） |
+| six | >= 1.16 | ete3 的 webapp 模块所需，而 ete3 自身并未声明 |
 | tomli | >= 2.0 | TOML 配置解析（Python < 3.11） |
 
 > 注：本项目此前声明了 `pandas`、`numpy`、`scipy` 和 `rich` 四个依赖，包内却从未导入它们，
@@ -92,7 +93,7 @@ ete3 因此在 3.13 及以上照常可用，RF/quartet 的 ete3 路径不再受�
 
 > 替身模块只补 ete3 真正引用的 `cgi.FieldStorage` 这一个符号，且一旦被真正调用就抛
 > `NotImplementedError`——它不是通用实现。MarkerFinder 不走 ete3 的 web 插件，因此这条路径
-> 不会被触发。CI 矩阵逐个解释器（3.10 / 3.11 / 3.12 / 3.13）实跑验证这一点。
+> 不会被触发。CI 矩阵逐个解释器（3.10 / 3.11 / 3.12 / 3.13 / 3.14）实跑验证这一点。
 
 推荐用仓库根目录的 `environment.yml` 创建 conda 环境，它会一并安装 mafft、trimal、FastTree、
 IQ-TREE 和 ASTRAL：
@@ -103,9 +104,11 @@ conda run -n markerfinder markerfinder --check
 conda run -n markerfinder pytest -q
 ```
 
-**使用 pip 安装时需注意**：PyPI 上的 `ete3` 未声明依赖 `six`。只执行 `pip install ete3` 时，
-`import ete3` 会抛出 `ModuleNotFoundError: No module named 'six'`。请改用
-`pip install ete3 six`。conda 渠道的 `ete3` 没有此问题。
+**`six` 已由本项目代为声明**：PyPI 上的 `ete3` 完全没有声明任何依赖，但
+`ete3/webplugin/webapp.py` 里有 `import six.moves.cPickle`，而 `ete3/__init__.py` 又以星号
+导入该模块。因此 MarkerFinder 把 `six` 写进了自己的依赖，`pip install markerfinder` 得到的
+ete3 是可导入的。若**单独**安装 `ete3`，仍需 `pip install ete3 six`。
+（这不是假设性问题：一个干净的 CI 环境——恰好没有别的包把 six 带进来——就是这样暴露出来的。）
 
 **受支持范围内的实测结果**（同一份代码，在每个受支持解释器上配合 ete3 完整运行一次）：
 
@@ -512,7 +515,7 @@ python validation/run_validation.py --all -n 8
 其中 `tests/unit/` 923 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
 （三个目录之和 == 徽章数字，由 `tests/unit/test_docs_numbers_are_current.py` 双向复核）。
 用例总数以顶部徽章为准（`python3 -m pytest tests --collect-only -q`），每次提交随实跑结果刷新。
-快速层在 CI 中对每个受支持解释器（3.10、3.11、3.12、3.13）运行
+快速层在 CI 中对每个受支持解释器（3.10、3.11、3.12、3.13、3.14）运行
 （`.github/workflows/ci.yml`）；验收层需要真实外部工具和下载的基因组，因此拆到独立的
 定时工作流（`.github/workflows/validation-nightly.yml`），避免缓慢或依赖外网的作业拖住 PR。
 
@@ -528,8 +531,9 @@ python validation/run_validation.py --all -n 8
 取数、嵌合阳性对照、度量、取证与反向消融脚本，以及对应的契约测试。仍然缺少的，是真实建树工具链
 与真实基因组下的端到端数值正确性（见 MANUAL 的限制说明）。
 
-> **Python 版本说明：** 所依赖的 ete3 当前不兼容 Python 3.13 及以上（标准库 `cgi` 已移除），
-> 请使用 Python 3.10～3.12。
+> **Python 版本说明：** 3.10 及以上全部受支持。这条注记原先附带的 `< 3.13` 上界，已在
+> `markerfinder/_cgi_compat.py` 开始补回 ete3 所需的标准库 `cgi` 模块后作废；CI 矩阵覆盖
+> 3.10 至 3.14。
 
 ---
 
