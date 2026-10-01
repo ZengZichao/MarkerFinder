@@ -80,16 +80,38 @@ jobs:
 
       - name: Build validation data from NCBI
         shell: bash -el {0}
-        # The committed fixtures under validation/data/markers are enough for
-        # `pytest tests`, but the 12 RefSeq proteomes the cases run on are
-        # third-party data that this repository never redistributes.
-        run: python validation/run_validation.py --prepare
+        # Every `run:` block is a fresh shell, so the `conda activate` in the
+        # install step does NOT carry over. Without this line the harness ran
+        # under the runner's /usr/bin/python in a base environment where
+        # `datasets` was absent, and 01_fetch_genomes.py died in one second
+        # with "NCBI datasets CLI not found on PATH" — a misleading message,
+        # because the binary *was* installed, just in another environment.
+        run: |
+          conda activate acceptance
+          # Print what is actually in use before doing 40 minutes of work, so
+          # environment drift is visible in the first ten log lines rather than
+          # after a download.
+          echo "python : $(command -v python)"
+          echo "PATH   : ${PATH%%:*}"
+          for tool in datasets hmmsearch mafft trimal FastTree astral; do
+            command -v "$tool" >/dev/null || {
+              echo "::error::$tool is not on PATH in the 'acceptance' env" >&2
+              exit 1
+            }
+          done
+          # The committed fixtures under validation/data/markers are enough for
+          # `pytest tests`, but the 12 RefSeq proteomes the cases run on are
+          # third-party data that this repository never redistributes.
+          python validation/run_validation.py --prepare
 
       - name: Run the acceptance cases
         shell: bash -el {0}
-        # -m "not slow" is applied by the harness unless --all, which keeps the
-        # 12-genome planted-chimera detection case out of the nightly.
-        run: python validation/run_validation.py -n 4
+        # Same reason as the step above: fresh shell, activate again.
+        run: |
+          conda activate acceptance
+          # -m "not slow" is applied by the harness unless --all, which keeps the
+          # 12-genome planted-chimera detection case out of the nightly.
+          python validation/run_validation.py -n 4
 
       - name: Archive the run record
         # The run rewrites validation/results/* inside the runner's checkout and
