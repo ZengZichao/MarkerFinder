@@ -9,6 +9,7 @@ integrity gates over the shipped test data itself.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 
 import pytest
@@ -212,9 +213,37 @@ def test_manifest_checksums_match_the_shipped_files(data_dir):
     materialised by ``02_build_marker_sets.py`` out of ``db/gtdb_markers``. The
     manifest is what tells the builder (and this check) that it got the same
     bytes the report was measured on. Any other absent file is a real defect.
+
+    The four ``variants/mag_named/genomes/mag_0*.faa`` entries are the same
+    category of uncommitted data reached through a symlink, so the prefix test
+    has to look at where a link *points*, not only at where it sits. They are
+    committed as links precisely because the proteomes are not redistributed,
+    and ``03_build_fixtures.py`` recreates them. Judging them by their own path
+    made this check pass only on a machine where the fetch had already run, and
+    fail everywhere else — the manifest is a record of what a *prepared*
+    environment contains, so an un-prepared one must not report corruption.
     """
     manifest = data_dir / "MANIFEST.sha256"
     assert manifest.exists(), f"{manifest} missing — re-run 03_build_fixtures.py"
+
+    def _is_uncommitted(rel: str) -> bool:
+        """True when this entry's bytes come from fetched, not committed, data."""
+        if rel.startswith(("genomes/", "hmms/")):
+            return True
+        # A committed symlink into one of those trees: resolve it and classify
+        # by the target. Path.is_symlink() survives the target being absent,
+        # which is exactly the state that used to be reported as corruption.
+        path = data_dir / rel
+        if path.is_symlink():
+            target = (path.parent / os.readlink(path)).resolve()
+            data_root = data_dir.resolve()
+            try:
+                inside = target.relative_to(data_root).as_posix()
+            except ValueError:
+                return False
+            return inside.startswith(("genomes/", "hmms/"))
+        return False
+
     checked = 0
     fetched = 0
     mismatches = []
@@ -225,7 +254,7 @@ def test_manifest_checksums_match_the_shipped_files(data_dir):
             continue
         path = data_dir / rel
         if not path.exists():
-            if rel.startswith(("genomes/", "hmms/")):
+            if _is_uncommitted(rel):
                 fetched += 1
                 continue
             mismatches.append(f"{rel} (absent)")
