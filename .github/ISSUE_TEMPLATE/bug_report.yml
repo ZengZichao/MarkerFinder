@@ -1,0 +1,43 @@
+name: Bug report
+description: MarkerFinder does not do what its documentation says it does
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to file this. Chinese descriptions are
+        welcome (中文描述也可以).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        What did you run, what did you expect, and what happened instead?
+        Paste the relevant tail of the log or the terminal output.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can it be reproduced?
+      description: |
+        The exact command line, plus a description of the input files
+        (tree, FASTA, taxonomy table). Attach small files directly.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: MarkerFinder version
+      description: Output of `markerfinder --version`.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Operating system, how MarkerFinder was installed (conda / pip),
+        and the output of `markerfinder --check` if you have it.
+    validations:
+      required: false
