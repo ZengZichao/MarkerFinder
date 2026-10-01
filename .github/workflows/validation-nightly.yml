@@ -53,6 +53,10 @@ jobs:
           # environment.yml: checkm-genome alone pulls a ~1.4 GB data package
           # that no case needs. Package names mirror environment.yml so the
           # binary names (FastTree, astral) match what the preflight looks for.
+          # iqtree is here despite not being in run_validation's
+          # REQUIRED_TOOLS: it is an optional builder to the pipeline, but the
+          # v09 support-scale case exercises --gene-tree-builder iqtree
+          # directly and cannot measure anything without iqtree3 on PATH.
           #
           # The channels are not optional. setup-miniconda configures only
           # `defaults`, and every one of these packages lives in bioconda or
@@ -62,7 +66,8 @@ jobs:
           conda create -y -n acceptance \
             -c bioconda -c conda-forge -c defaults \
             python=3.12 \
-            hmmer mafft trimal fasttree astral-tree ncbi-datasets-cli
+            hmmer mafft trimal fasttree astral-tree ncbi-datasets-cli \
+            'iqtree>=3.0.0'
           conda activate acceptance
           python -m pip install -e ".[dev]"
 
@@ -70,7 +75,7 @@ jobs:
           # renamed binary should cost seconds, not the 40 minutes it takes to
           # pull 12 proteomes from NCBI.
           missing=0
-          for tool in hmmsearch mafft trimal FastTree astral datasets; do
+          for tool in hmmsearch mafft trimal FastTree astral datasets iqtree3; do
             if ! command -v "$tool" >/dev/null 2>&1; then
               echo "MISSING from PATH: $tool" >&2
               missing=1

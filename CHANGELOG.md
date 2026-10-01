@@ -31,6 +31,10 @@ the manifest, in the code and in the documentation at the same time.
 - `six` is now declared as a runtime dependency. See Fixed below.
 - `pytest-xdist` added to the `dev` extra; the documented
   `run_validation.py -n 8` is xdist's flag and could not run before.
+- The nightly acceptance workflow installs `iqtree` (`>=3.0.0`, matching
+  `environment.yml`). The pipeline treats `iqtree3` as an optional builder,
+  but the v09 support-scale case exercises `--gene-tree-builder iqtree`
+  directly and cannot measure either builder's support units without it.
 
 ### Fixed
 
@@ -65,6 +69,22 @@ the manifest, in the code and in the documentation at the same time.
 - `test_ete3_is_usable_on_every_supported_interpreter` swallowed the underlying
   exception and reported only "ete3 is installed but unimportable". The actual
   cause is now in the assertion message.
+- **`MANIFEST.sha256` recorded stale digests for two shipped must-pass
+  tables.** The committed `mustpass/mustpass.yaml` and
+  `mustpass/mustpass_domain.yaml` do not match the hashes the manifest listed,
+  so the manifest checksum case failed on every clean checkout and could only
+  pass where a working tree still held the bytes the manifest was generated
+  from. The two entries now record the digests of the files as committed.
+- **The acceptance layer now reports an unfetchable dependency as skipped,
+  not failed.** The hmm-mode cases and the `database_versions` assertion can
+  only hold when the third-party TIGRFAM/Pfam profile library exists
+  (`db/gtdb_markers`, `validation/data/hmms/core` — both git-ignored by
+  design, see `db/README.md`). On a checkout that never fetched it they now
+  skip with that stated reason — a `hmm_library` fixture, a guard in the
+  `hmm_dir` fixture, and a `iqtree3`-presence guard on the v09 support-scale
+  case — instead of erroring in a way that was indistinguishable from a
+  regression. The capability matrix is unaffected: it is built from
+  collection-time declarations, not from run outcomes.
 
 ### Changed
 
