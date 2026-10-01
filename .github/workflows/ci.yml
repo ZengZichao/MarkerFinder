@@ -85,3 +85,34 @@ jobs:
         # a runtime that disagree turns CI red instead of quietly lying in the
         # README.
         run: python -m markerfinder --check
+
+  # The single job branch protection points at.
+  #
+  # "Require status checks to pass" matches on check *name*, and the names of a
+  # matrix job contain its version ("pytest + self-check (py3.13)"). Requiring
+  # all five would break the moment the matrix is edited — a required check
+  # that GitHub cannot find is a required check that can never be satisfied, and
+  # the safe-looking response is to turn the requirement off again. This job has
+  # a fixed name and an explicit dependency on the whole matrix, so the branch
+  # rule survives any change to the versions under test.
+  required:
+    name: ci-required
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: test
+    # Runs even when the matrix failed or was cancelled, so the branch rule
+    # always gets an answer. Without `always()` this job is skipped on failure
+    # and a skipped required check is reported as pending, not as a failure.
+    if: always()
+    steps:
+      - name: Fail if any interpreter did not pass
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          echo "matrix result: ${TEST_RESULT}"
+          if [ "${TEST_RESULT}" != "success" ]; then
+            echo "::error::ci-required gate: the test matrix reported" \
+                 "'${TEST_RESULT}', not 'success'. Merging is blocked." >&2
+            exit 1
+          fi
+          echo "all interpreters passed"
