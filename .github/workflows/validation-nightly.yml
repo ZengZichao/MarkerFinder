@@ -99,10 +99,22 @@ jobs:
               exit 1
             }
           done
-          # The committed fixtures under validation/data/markers are enough for
-          # `pytest tests`, but the 12 RefSeq proteomes the cases run on are
-          # third-party data that this repository never redistributes.
-          python validation/run_validation.py --prepare
+          # Only the genomes, NOT `--prepare`.
+          #
+          # `--prepare` runs 01 → 02 → 03, but only 01 is needed here. 02 rebuilds
+          # `validation/data/markers/` from `db/gtdb_markers/`, which is
+          # gitignored because it holds third-party GTDB-Tk HMM profiles this
+          # repository does not redistribute — so 02 died with "no HMM profiles
+          # found", and every run since would too. 03 rebuilds taxonomy/ and
+          # trees/ from PROVENANCE.tsv, and those are already committed (the
+          # 241-entry MANIFEST.sha256 covers them).
+          #
+          # `validation/data/genomes/` is the only committed-bundle gap: those
+          # 12 RefSeq proteomes are fetched by 01 on demand. So fetch exactly
+          # that, then let the harness run against the committed fixtures --
+          # its preflight without --prepare only requires MANIFEST.sha256, which
+          # is in the repository.
+          python validation/scripts/01_fetch_genomes.py
 
       - name: Run the acceptance cases
         shell: bash -el {0}
