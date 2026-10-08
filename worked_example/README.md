@@ -53,8 +53,9 @@ python scripts/fetch_marker_db.py --auto --record # and stamp the reference hash
 ```
 
 The ar53 set is 53 per-marker profiles (12 `.hmm` + 41 `.HMM`); `db/expected_hashes.json`
-holds the SHA-256 the release was validated against. A mismatch is reported as a
-**warning**, not a failure — see `_note_gtdb_markers` in that file.
+holds the SHA-256 the release was validated against. A mismatch is a **warning during a
+run** (the run continues) but a **FAIL for `markerfinder --check`**, which exits non-zero —
+see `_note_gtdb_markers` in that file.
 
 ## Step 2 — obtain the six genomes
 
