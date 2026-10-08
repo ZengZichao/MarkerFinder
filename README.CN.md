@@ -3,9 +3,9 @@
 **自适应 HGT 感知的原核生物系统发育基因组学流水线**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
+[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10～3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-988%20collected-brightgreen.svg)](#测试)
+[![Tests](https://img.shields.io/badge/tests-1034%20collected-brightgreen.svg)](#测试)
 
 [English](README.EN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -186,7 +186,7 @@ pip install -e ".[dev]"
 ```bash
 # 检查 CLI
 markerfinder --version
-# 预期输出: markerfinder 0.1.0
+# 预期输出: markerfinder 0.1.1
 # 版本号是包内的常量，因此解压的源码树、可编辑安装和构建出的 wheel 报的是同一个串。
 
 # 检查外部工具
@@ -351,7 +351,8 @@ input_dir/
 | `-i, --input` | *必填* | 包含 `.faa` 文件的输入目录 |
 | `-o, --output` | *必填* | 输出目录 |
 | `-t, --threads` | `min(8, CPU 数)` | CPU 线程数 |
-| `--mode` | `standard` | 分析模式：`conservative`、`standard`、`expanded`、`mag_adaptive` |
+| `--mode` | `standard` | 仅选择筛选策略：`conservative`、`standard`、`expanded`、`mag_adaptive`（不设置占有率/预算，见「分析模式」） |
+| `--marker-preset` | `none` | 一次设定占有率 / 预算 / 策略三元组：`none`、`conservative`、`standard`、`expanded`、`mag_adaptive` |
 | `--config` | — | YAML/TOML/JSON 配置文件路径（CLI 参数优先于配置文件） |
 
 ### 树与分类学参数
@@ -420,12 +421,36 @@ input_dir/
 
 ### 分析模式
 
-| 模式 | 选择策略 | 最低占有率 | 最大标记数 | 适用场景 |
-|------|---------|-----------|-----------|---------|
-| `conservative` | InfoMax | 0.90 | 30 | 高质量分离株，严格过滤 |
-| `standard` | Greedy | 0.75 | 60 | 混合分离株数据集 |
-| `expanded` | RateBalanced | 0.50 | 120 | 多样性数据集，容忍缺失 |
-| `mag_adaptive` | SparseOptimized | 0.40 | 150 | MAG 为主的数据集 |
+`--mode` 只选择标记**筛选策略**，不设置占有率下限与标记预算：`min_occupancy` 与
+`max_markers` 保持配置默认值（0.75 / 60），除非用户显式给出
+`--min-occupancy`/`--min-marker-coverage`、`--max-markers`、`--marker-preset` 或配置文件；
+Phase 0 仍可能按数据集自适应，而任何显式用户取值都会覆盖自适应结果。下表读取自
+`markerfinder/cli/config_build.py` 中的 `_MODE_STRATEGY`。
+
+| 模式 | 选择的策略 | 适用场景 |
+|------|-----------|---------|
+| `conservative` | InfoMax | 高质量分离株，严格过滤 |
+| `standard` | Greedy（默认） | 混合分离株数据集 |
+| `expanded` | RateBalanced | 多样性数据集，容忍缺失 |
+| `mag_adaptive` | SparseOptimized | MAG 为主的数据集 |
+
+### 标记预设
+
+`--marker-preset` 才是一次设定占有率 / 预算 / 策略**三元组**的参数
+（`markerfinder/models/marker.py` 中的 `RESOLUTION_PRESETS`）。它的四个具名预设与上面
+四个模式同名，但作用不止策略：预设还会写入 `min_occupancy`、`max_markers` 与
+`user_max_markers`，因此会覆盖 Phase 0 的自适应预算。预设的策略赋值落在
+`SelectionConfig.strategy` 字段上——即筛选模块真正读取的字段
+（回归测试：`tests/unit/test_marker_preset_strategy_regression.py`）。
+
+| 预设 | 最低占有率 | 最大标记数 | 选择策略 | 适用场景 |
+|------|-----------|-----------|---------|---------|
+| `conservative` | 0.90 | 30 | InfoMax | 高质量分离株，严格过滤 |
+| `standard` | 0.75 | 60 | Greedy | 混合分离株数据集 |
+| `expanded` | 0.50 | 120 | RateBalanced | 多样性数据集，容忍缺失 |
+| `mag_adaptive` | 0.40 | 150 | SparseOptimized | MAG 为主的数据集 |
+
+`none`（默认值）不改动任何旋钮，包括 `--mode` 已经选定的策略。
 
 ---
 
@@ -499,8 +524,8 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**测试覆盖（实测值，不再是估计值）：** 测试共 88 个模块，收集 **988** 个用例，
-其中 `tests/unit/` 920 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
+**测试覆盖（实测值，不再是估计值）：** 测试共 90 个模块，收集 **1034** 个用例，
+其中 `tests/unit/` 966 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
 （三个目录之和 == 徽章数字，由 `tests/unit/test_docs_numbers_are_current.py` 双向复核）。
 在受支持解释器（CPython 3.10.20、3.11.15、3.12.13，均安装 ete3）下 **0 failed、0 skipped**。
 用例总数以顶部徽章为准（`python3 -m pytest tests --collect-only -q`），每次提交随实跑结果刷新。
@@ -582,7 +607,7 @@ MarkerFinder 的核心判定思想——串联法与合并法双框架并行推�
   author       = {Zengzichao},
   title        = {MarkerFinder: Adaptive HGT-Aware Phylogenomic Pipeline},
   year         = {2026},
-  version      = {0.1.0},
+  version      = {0.1.1},
   url          = {https://github.com/ZengZichao/MarkerFinder},
   orcid        = {0000-0001-6553-970X},
   license      = {MIT}

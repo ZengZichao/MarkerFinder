@@ -3,9 +3,9 @@
 **Adaptive HGT-Aware Phylogenomic Pipeline for Prokaryotic Marker Gene Selection**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
+[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10–3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-988%20collected-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-1034%20collected-brightgreen.svg)](#testing)
 
 [中文文档](README.CN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -189,7 +189,7 @@ pip install -e ".[dev]"
 ```bash
 # Check CLI
 markerfinder --version
-# Expected: markerfinder 0.1.0
+# Expected: markerfinder 0.1.1
 # The version is a constant in the package, so an unpacked source tree, an
 # editable install and a built wheel all report the same string.
 
@@ -358,7 +358,8 @@ input_dir/
 | `-i, --input` | *required* | Input directory containing `.faa` files |
 | `-o, --output` | *required* | Output directory |
 | `-t, --threads` | `min(8, CPU count)` | Number of CPU threads |
-| `--mode` | `standard` | Analysis mode: `conservative`, `standard`, `expanded`, `mag_adaptive` |
+| `--mode` | `standard` | Selection strategy only: `conservative`, `standard`, `expanded`, `mag_adaptive` (does not set occupancy/budget — see Analysis Modes) |
+| `--marker-preset` | `none` | Sets the occupancy / budget / strategy triple at once: `none`, `conservative`, `standard`, `expanded`, `mag_adaptive` |
 | `--config` | — | YAML/TOML/JSON config file path (CLI args override config file) |
 
 ### Tree & Taxonomy Parameters
@@ -427,12 +428,40 @@ input_dir/
 
 ### Analysis Modes
 
-| Mode | Strategy | Min Occupancy | Max Markers | Use Case |
-|------|----------|---------------|-------------|----------|
-| `conservative` | InfoMax | 0.90 | 30 | High-quality isolates, strict filtering |
-| `standard` | Greedy | 0.75 | 60 | Mixed isolate datasets |
-| `expanded` | RateBalanced | 0.50 | 120 | Diverse datasets, tolerant of missing data |
-| `mag_adaptive` | SparseOptimized | 0.40 | 150 | MAG-heavy datasets |
+`--mode` selects the marker-**selection strategy** and nothing else. It does not
+set the occupancy floor or the marker budget: `min_occupancy` and `max_markers`
+keep their configuration defaults (0.75 / 60) unless the user passes
+`--min-occupancy`/`--min-marker-coverage`, `--max-markers`, `--marker-preset` or a
+config file, and Phase 0 may still adapt them for the dataset (the adaptive result
+is overridden by any explicit user value). The strategy table below is read from
+`_MODE_STRATEGY` in `markerfinder/cli/config_build.py`.
+
+| Mode | Strategy selected | Use Case |
+|------|-------------------|----------|
+| `conservative` | InfoMax | High-quality isolates, strict filtering |
+| `standard` | Greedy (the default) | Mixed isolate datasets |
+| `expanded` | RateBalanced | Diverse datasets, tolerant of missing data |
+| `mag_adaptive` | SparseOptimized | MAG-heavy datasets |
+
+### Marker Presets
+
+`--marker-preset` is the flag that sets the occupancy / budget / strategy **triple**
+at once (`RESOLUTION_PRESETS` in `markerfinder/models/marker.py`). Its four named
+presets share their names with the four modes above but apply more than the strategy:
+the preset also writes `min_occupancy`, `max_markers` and `user_max_markers`, so it
+wins over the Phase-0 adaptive budget. The preset's strategy assignment lands on
+`SelectionConfig.strategy` — the field the selection module actually reads (regression
+test: `tests/unit/test_marker_preset_strategy_regression.py`).
+
+| Preset | Min Occupancy | Max Markers | Strategy | Use Case |
+|--------|---------------|-------------|----------|----------|
+| `conservative` | 0.90 | 30 | InfoMax | High-quality isolates, strict filtering |
+| `standard` | 0.75 | 60 | Greedy | Mixed isolate datasets |
+| `expanded` | 0.50 | 120 | RateBalanced | Diverse datasets, tolerant of missing data |
+| `mag_adaptive` | 0.40 | 150 | SparseOptimized | MAG-heavy datasets |
+
+`none` (the default) leaves every knob — including the strategy chosen by `--mode` —
+untouched.
 
 ---
 
@@ -506,8 +535,8 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**Test coverage (measured, not estimated):** the suite has 88 modules and collects
-**988** cases — 920 in `tests/unit/`, 17 in `tests/integration/` and 51 in
+**Test coverage (measured, not estimated):** the suite has 90 modules and collects
+**1034** cases — 966 in `tests/unit/`, 17 in `tests/integration/` and 51 in
 `tests/benchmark/` (the three directories sum to the badge; both sides are re-checked
 by `tests/unit/test_docs_numbers_are_current.py`).
 On the supported interpreters (CPython 3.10.20, 3.11.15 and 3.12.13, all with ete3)
@@ -593,7 +622,7 @@ If you use MarkerFinder in your research, please cite:
   author       = {Zengzichao},
   title        = {MarkerFinder: Adaptive HGT-Aware Phylogenomic Pipeline},
   year         = {2026},
-  version      = {0.1.0},
+  version      = {0.1.1},
   url          = {https://github.com/ZengZichao/MarkerFinder},
   orcid        = {0000-0001-6553-970X},
   license      = {MIT}

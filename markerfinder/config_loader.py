@@ -148,6 +148,11 @@ SNAPSHOT_MARKERS = frozenset({
 # Alone so the CLI keeps reporting what it cannot express.
 SNAPSHOT_ENVELOPE_KEYS = frozenset({
     "timestamp", "run_duration_seconds", "markerfinder_version", "tmp_dir_auto",
+    # The thresholds Phase 0 actually derived for that dataset. Replaying them
+    # as if the user had requested them would pin an adaptive default (the same
+    # reason ``user_min_occupancy`` / ``user_max_markers`` decide whether the
+    # recorded value is an input at all); the replay re-derives them instead.
+    "effective_parameters",
 }) | SNAPSHOT_MARKERS
 
 # Scratch, not configuration: the recorded temporary directory belongs to the

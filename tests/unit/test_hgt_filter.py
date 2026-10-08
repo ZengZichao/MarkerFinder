@@ -90,6 +90,36 @@ class TestPhylogeneticHGTDetector:
             # MAD rooting unavailable without ete3 → None (NOT_MEASURABLE).
             assert result is None
 
+    def test_monophyly_screen_marks_rf_not_applicable(self, default_hgt_config):
+        """No RF is measured here, so the record must not claim it was.
+
+        ``rf_state`` defaulted to MEASURED while ``rf`` stayed ``NA``, which made
+        ``hgt_evaluation.tsv`` and the decision cards of every taxonomy-table run
+        report "no value, but measured" for all markers.
+        """
+        from markerfinder.models.evidence import MeasureState
+
+        detector = PhylogeneticHGTDetector(default_hgt_config)
+        gene_tree_newick = "((B1:0.1,B2:0.2),(A1:0.3,A2:0.4));"
+        taxonomy_map = {
+            "B1": {"domain": "Bacteria", "phylum": "P1", "genus": "B"},
+            "B2": {"domain": "Bacteria", "phylum": "P1", "genus": "B"},
+            "A1": {"domain": "Bacteria", "phylum": "P1", "genus": "A"},
+            "A2": {"domain": "Bacteria", "phylum": "P1", "genus": "A"},
+        }
+        result = detector.detect_monophyly(
+            "m1", gene_tree_newick, taxonomy_map, level="genus", threshold=0.5
+        )
+        if not _ete3_available():
+            pytest.skip("MAD rooting (and thus the monophyly screen) needs ete3")
+        assert result.risk_basis == "monophyly_only"
+        assert result.normalized_rf is None and result.rf_distance is None
+        assert result.rf_state is MeasureState.NOT_APPLICABLE
+        # The numbers are unchanged: the monophyly signal still drives the risk.
+        assert result.monophyly_state is MeasureState.MEASURED
+        assert result.overall_risk == 0.0
+        assert result.unmeasured_components() == []
+
     def test_quartet_consistency_perfect(self, default_hgt_config):
         detector = PhylogeneticHGTDetector(default_hgt_config)
         gene_tree = Tree(newick="((A,B),(C,D));")

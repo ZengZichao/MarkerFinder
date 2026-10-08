@@ -1,11 +1,20 @@
 # MarkerFinder 测试报告 — 发布验收的实测结果
 
 测试方案：[TESTING.CN.md](TESTING.CN.md)（本报告执行的正是该方案）·
-适用版本：MarkerFinder 0.1.0 · [English version](TEST-REPORT.EN.md) — 英文版为主版本。
+适用版本：MarkerFinder 0.1.1 · [English version](TEST-REPORT.EN.md) — 英文版为主版本。
 
 > 本报告中每一个数字都来自随包发布的一份产物，且
 > `tests/unit/test_validation_report_is_current.py` 会在每次 `pytest tests` 时从这
 > 些产物重新推导主指标。数字与证据不一致会导致测试失败，而不只是一句过时的话。
+
+> **混合版本警示。** §2 的两个层是在不同的代码树上测得的。快速层（`tests/`，
+> 收集 1034 / 通过 1034）是在本 0.1.1 代码树、且安装了 `dev` 附加依赖（含 mypy）的
+> 解释器上测得的；缺少 mypy 时同一条命令报告 1033 passed + 1 skipped，而那条 skip
+> 明确标注为 `NOT EXECUTED`。验收层与 §1 的运行标识则是 `validation/results/` 中
+> **归档**的那次运行——其中的 `environment.txt` 写着 `version : 0.1.0`，因为那次端到端
+> 运行是在 0.1.0 标签上执行、此后未再重跑。在 0.1.1 上重跑 `validation/` 仍是待作者
+> 完成的事项；在此之前，引用时须把 §1 当作 0.1.0 的验收证据、把 §2 的快速层当作
+> 0.1.1 的数字，不能混成一个不带版本号的大数。
 
 ---
 
@@ -31,7 +40,7 @@
 
 | 层 | 用例数 | 结果 | 能证明什么 |
 |---|---|---|---|
-| `tests/`（单元 + 集成 + 基准驱动，外部工具 mock） | 收集 988 | 988 passed · 0 skipped · 0 failed | 算术、schema、接线、拒绝路径 |
+| `tests/`（单元 + 集成 + 基准驱动，外部工具 mock） | 收集 1034 | 1034 passed · 0 skipped · 0 failed | 算术、schema、接线、拒绝路径 |
 | `validation/`（真实流水线、真实基因组、真实工具） | 153 | 152 passed · 1 xfailed · 0 failed | 结论：筛查能否区分、门禁能否触发、植入的转移能否检出 |
 
 快速层不需要外部二进制、也不下载数据；验收层两者都需要，它是发布的验收证据。

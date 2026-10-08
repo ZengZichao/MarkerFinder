@@ -433,7 +433,7 @@ def test_f7_run_step_cleanup_invoked(tmp_path, monkeypatch):
                 "text_output": PlainTextReportOutput(file_paths=[])}
     monkeypatch.setattr(pipeline_mod.MarkerFinderPipeline, "run_report", _fake_report)
     monkeypatch.setattr(pipeline_mod.MarkerFinderPipeline, "_write_run_config",
-                        lambda self, s, e: None)
+                        lambda self, s, e, context=None: None)
     monkeypatch.setattr(pipeline_mod.MarkerFinderPipeline, "_save_intermediates",
                         lambda self: None)
 
@@ -629,6 +629,50 @@ def test_f19_run_config_duration_guard(tmp_path):
     pipe._write_run_config(0.0, time.time())
     data = json.loads((Path(tmp_path) / "Phase5_metadata" / "run_config.json").read_text())
     assert data["run_duration_seconds"] == 0.0
+
+
+def test_run_config_records_effective_adaptive_thresholds(tmp_path):
+    """The snapshot must state the thresholds the run *applied*, not only the defaults.
+
+    Phase 0 replaces ``min_hmm_score`` (30.0 on a high-quality dataset),
+    ``min_occupancy`` and ``max_markers`` with dataset-adaptive values, so an
+    archive that only carried ``min_hmm_score = 20.0`` described a bitscore floor
+    that had never been in effect.
+    """
+    from markerfinder.config_loader import load_config_file
+    from markerfinder.models.pipeline_types import AdaptiveParams
+
+    cfg = PipelineConfig(output_dir=str(tmp_path))
+    ctx = types.SimpleNamespace(adaptive_params=AdaptiveParams(
+        min_hmm_score=30.0, min_occupancy=0.75, max_markers=60))
+    _bare_pipeline(cfg)._write_run_config(0.0, 1.0, context=ctx)
+
+    path = Path(tmp_path) / "Phase5_metadata" / "run_config.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    effective = data["effective_parameters"]
+    assert effective["min_hmm_score"] == 30.0
+    assert effective["source"] == "phase0_adaptive"
+    assert effective["configured"]["min_hmm_score"] == 20.0
+    # Existing readers of the configured value are untouched (the validation
+    # suite asserts ``recorded("selection_config", "min_hmm_score") == 20.0``).
+    assert data["parameters"]["selection_config"]["min_hmm_score"] == 20.0
+    # A replay must not promote the derived value into a user request.
+    flat = load_config_file(str(path))
+    assert "effective_parameters" not in flat
+
+
+def test_run_config_falls_back_to_configured_thresholds_without_phase0(tmp_path):
+    """A bare/stepwise archive with no adaptive context still records a source."""
+    cfg = PipelineConfig(output_dir=str(tmp_path))
+    pipe = _bare_pipeline(cfg)
+    pipe._write_run_config(0.0, 1.0, context=None)
+
+    data = json.loads(
+        (Path(tmp_path) / "Phase5_metadata" / "run_config.json").read_text(
+            encoding="utf-8"))
+    effective = data["effective_parameters"]
+    assert effective["source"] == "configured_defaults"
+    assert effective["min_hmm_score"] == cfg.selection_config.min_hmm_score
 
 
 def test_f19_completed_steps_dedup(tmp_path, monkeypatch):

@@ -1,6 +1,6 @@
 # MarkerFinder Test Plan and Validation Methodology
 
-Applies to: MarkerFinder 0.1.0
+Applies to: MarkerFinder 0.1.1
 [中文版本](TESTING.CN.md) · Companion report: [TEST-REPORT.EN.md](TEST-REPORT.EN.md)
 
 ---
@@ -25,7 +25,7 @@ every internal check passed, and
 the topology was biologically absurd. So the suite is split:
 
 ```
-tests/       988 fast cases, no external tools required, no data download
+tests/       1034 fast cases, no external tools required, no data download
 validation/  153 end-to-end cases on real genomes with real tools
 ```
 

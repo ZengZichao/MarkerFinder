@@ -1,13 +1,24 @@
 # MarkerFinder Test Report — Measured Results of the Release Validation
 
 Method: [TESTING.EN.md](TESTING.EN.md) (the plan this report executes) ·
-Applies to: MarkerFinder 0.1.0 · [中文版本](TEST-REPORT.CN.md) — this English
+Applies to: MarkerFinder 0.1.1 · [中文版本](TEST-REPORT.CN.md) — this English
 file is the primary version.
 
 > Every number in this report is read out of an artefact that ships with the
 > release, and `tests/unit/test_validation_report_is_current.py` re-derives the
 > headline figures from those artefacts on every run of `pytest tests`. A number
 > that drifts from the evidence is a failing test, not a stale sentence.
+
+> **Mixed-vintage warning.** The two layers in §2 are measured on different trees.
+> The fast layer (`tests/`, 1034 collected / 1034 passed) is measured on this 0.1.1
+> tree, in an interpreter that has the `dev` extra installed; without mypy the same
+> run reports 1033 passed + 1 skipped, and that skip is labelled `NOT EXECUTED`.
+> The validation layer and the run identity in §1 are the **archived** run recorded
+> in `validation/results/` — `environment.txt` there stamps `version : 0.1.0`,
+> because that end-to-end run was executed on the 0.1.0 tag and has not been
+> re-executed since. Re-running `validation/` on 0.1.1 is an outstanding author
+> action; until it is done, quote §1 as the 0.1.0 validation evidence and §2's fast
+> layer as the 0.1.1 figure, never as one undated number.
 
 ---
 
@@ -35,7 +46,7 @@ from prose.
 
 | Layer | Cases | Result | What it can prove |
 |---|---|---|---|
-| `tests/` (unit + integration + benchmark drivers, external tools mocked) | 988 collected | 988 passed · 0 skipped · 0 failed | arithmetic, schemas, wiring, refusal paths |
+| `tests/` (unit + integration + benchmark drivers, external tools mocked) | 1034 collected | 1034 passed · 0 skipped · 0 failed | arithmetic, schemas, wiring, refusal paths |
 | `validation/` (real pipeline, real genomes, real tools) | 153 | 152 passed · 1 xfailed · 0 failed | conclusions: that the screen separates, that gates fire, that a planted transfer is detected |
 
 The fast layer needs no external binaries and no download; the validation layer

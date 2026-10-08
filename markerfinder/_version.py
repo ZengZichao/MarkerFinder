@@ -6,7 +6,7 @@ derived from a VCS checkout, so an unpacked source tree and an installed
 distribution state the same thing.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __author__ = "Zengzichao"
 __email__ = "zengzichao@sjtu.edu.cn"
