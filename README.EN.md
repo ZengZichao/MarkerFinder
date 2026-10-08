@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10–3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1034%20collected-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-1040%20collected-brightgreen.svg)](#testing)
 
 [中文文档](README.CN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -535,8 +535,8 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**Test coverage (measured, not estimated):** the suite has 90 modules and collects
-**1034** cases — 966 in `tests/unit/`, 17 in `tests/integration/` and 51 in
+**Test coverage (measured, not estimated):** the suite has 91 modules and collects
+**1040** cases — 972 in `tests/unit/`, 17 in `tests/integration/` and 51 in
 `tests/benchmark/` (the three directories sum to the badge; both sides are re-checked
 by `tests/unit/test_docs_numbers_are_current.py`).
 On the supported interpreters (CPython 3.10.20, 3.11.15 and 3.12.13, all with ete3)

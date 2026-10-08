@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10～3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1034%20collected-brightgreen.svg)](#测试)
+[![Tests](https://img.shields.io/badge/tests-1040%20collected-brightgreen.svg)](#测试)
 
 [English](README.EN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
 
@@ -524,8 +524,8 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**测试覆盖（实测值，不再是估计值）：** 测试共 90 个模块，收集 **1034** 个用例，
-其中 `tests/unit/` 966 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
+**测试覆盖（实测值，不再是估计值）：** 测试共 91 个模块，收集 **1040** 个用例，
+其中 `tests/unit/` 972 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
 （三个目录之和 == 徽章数字，由 `tests/unit/test_docs_numbers_are_current.py` 双向复核）。
 在受支持解释器（CPython 3.10.20、3.11.15、3.12.13，均安装 ete3）下 **0 failed、0 skipped**。
 用例总数以顶部徽章为准（`python3 -m pytest tests --collect-only -q`），每次提交随实跑结果刷新。

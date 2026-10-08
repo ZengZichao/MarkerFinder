@@ -31,6 +31,31 @@ This file deliberately does not guess those values. Fill them in here **and** in
 manuscript's Methods and the Code Checklist, keeping all three identical; do not
 submit while any of them is still blank.
 
+## Record: the 0.1.1 repair round (recorded by the assistant that did it)
+
+Unlike the v0.1.0 work above, the involvement in the v0.1.1 commits is something the
+assistant can state from its own evidence rather than reconstruct from memory:
+
+* **Date:** 2026-10-08 (commits `27eefbe`, `8b653a4`, `90a1b00` and their successors).
+* **Application:** Qoder CN agent CLI, application version **0.4.3** (read from the
+  installed bundle's `CFBundleShortVersionString`). The bundle does not surface the
+  underlying model identifier, so if the journal wants that too it must come from the
+  account's own usage record.
+* **Scope:** the `--marker-preset` strategy-dispatch fix and its regression test, the
+  config-key warning path, `config.example.yaml`, the database-hash notes and self-test
+  wording, `scripts/make_review_package.py` and its new tests,
+  `scripts/add_llm_markers.py` and this file, `worked_example/README.md`, and the
+  README/MANUAL/TESTING/TEST-REPORT synchronisation. Manuscript, SI and figure text in
+  the accompanying paper were revised in the same session.
+* **Verification:** every code change above was kept only after `python -m pytest tests`
+  passed (currently **1039 passed, 1 skipped** — the skip is `NOT EXECUTED: no mypy`),
+  and the packager's output was re-scanned for identifiers independently of its own audit.
+
+This is a record of what the tool did, **not** an author attestation: whether any part of
+the v0.1.0 work was assisted, and the model name/version required by the journal, remain
+the author's to state. The marker-line convention below has still not been applied to any
+file, because the file list in `ai-annotation-checklist.md` is empty by design.
+
 ## What the authors are responsible for
 
 Every AI-assisted change was **executed and reviewed against the test suite**

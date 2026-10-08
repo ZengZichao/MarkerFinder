@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10～3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1034%20collected-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-1040%20collected-brightgreen.svg)](#testing)
 <!-- The badge count is the live collection total of the fast suite under tests/;
      it is re-measured on every run by tests/unit/test_docs_numbers_are_current.py,
      so a stale number here is a failing test, not a forgotten edit. There is no

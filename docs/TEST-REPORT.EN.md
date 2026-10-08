@@ -10,7 +10,7 @@ file is the primary version.
 > that drifts from the evidence is a failing test, not a stale sentence.
 
 > **Mixed-vintage warning.** The two layers in §2 are measured on different trees.
-> The fast layer (`tests/`, 1034 collected / 1034 passed) is measured on this 0.1.1
+> The fast layer (`tests/`, 1040 collected / 1039 passed + 1 skipped) is measured on this 0.1.1
 > tree, in an interpreter that has the `dev` extra installed; without mypy the same
 > run reports 1033 passed + 1 skipped, and that skip is labelled `NOT EXECUTED`.
 > The validation layer and the run identity in §1 are the **archived** run recorded
@@ -46,7 +46,7 @@ from prose.
 
 | Layer | Cases | Result | What it can prove |
 |---|---|---|---|
-| `tests/` (unit + integration + benchmark drivers, external tools mocked) | 1034 collected | 1034 passed · 0 skipped · 0 failed | arithmetic, schemas, wiring, refusal paths |
+| `tests/` (unit + integration + benchmark drivers, external tools mocked) | 1040 collected | 1039 passed · 1 skipped · 0 failed | arithmetic, schemas, wiring, refusal paths |
 | `validation/` (real pipeline, real genomes, real tools) | 153 | 152 passed · 1 xfailed · 0 failed | conclusions: that the screen separates, that gates fire, that a planted transfer is detected |
 
 The fast layer needs no external binaries and no download; the validation layer

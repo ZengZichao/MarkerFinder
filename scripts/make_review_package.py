@@ -293,6 +293,12 @@ class Scrubber:
         # The ORCID profile URL is masked before the bare word, and the author's own
         # repository URL before the owner name, so replacements never nest.
         self.own_repo = [pat for label, pat in rules if label == "own-repository URL"]
+        # The audit also matches the *parts* of a compound token, so a README that
+        # writes only the surname is caught. Removal has to use the same rules or
+        # detection and redaction disagree: the build would refuse to ship something
+        # it could equally well have scrubbed.
+        self.part_rules = [(label, pat) for label, pat in rules
+                           if label.endswith(" part")]
 
     def generic(self, text: str) -> str:
         # Own-repository URLs first, as a unit: masking just the owner would leave a
@@ -319,6 +325,8 @@ class Scrubber:
                 continue
             text = re.sub(re.escape(literal), "[author name " + REDACTED + "]",
                           text, flags=re.I)
+        for _label, pat in self.part_rules:
+            text = pat.sub("[author name " + REDACTED + "]", text)
         return text
 
     def __call__(self, rel: str, text: str) -> str:
