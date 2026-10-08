@@ -60,8 +60,10 @@ see `_note_gtdb_markers` in that file.
 ## Step 2 — obtain the six genomes
 
 Download each assembly's predicted protein set (`.faa`) into `genomes/`, named after
-the accession, e.g. `genomes/RS_GCF_000517625.1.faa`. Record where each file came
-from; see *Provenance record* below.
+the accession, e.g. `genomes/RS_GCF_000517625.1.faa`. `provenance_manifest.json` lists,
+per genome, the accessions, the GTDB r220 lineage, the download URL, the retrieval date,
+the SHA-256 and the sequence counts the manuscript quotes, so a reviewer can fetch the
+identical files and check them by digest; see *Provenance record* below.
 
 ## Step 3 — supply the taxonomy table
 
@@ -111,20 +113,33 @@ needs `git add -f`, or archive the run in the data deposit instead.
 | Assertion log | `Phase5_reports/markerfinder.assertions.tsv` | which output assertions fired |
 | Decision cards | `Phase5_evidence/decision_*.json` | per-marker provenance behind the HGT calls |
 | Trees | `Phase4_trees/markerfinder.species_tree_concat.newick`, `...species_tree_astral.newick` | the two topologies the RF/quartet statistics compare |
-| Provenance record | `provenance_manifest.json` (author-built, schema below) | registry, DOI, licence, retrieval date, checksum per genome |
+| Provenance record | `provenance_manifest.json` (ships with the release) | registry, licence, retrieval date, download URL and SHA-256 per genome, plus the counts Table S6c quotes |
 
 ## Provenance record
 
 `tests/benchmark/provenance.py` defines what "provenance" has to mean here; its
 `REQUIRED_FIELDS` are the contract, and placeholder values (`tbd`, `n/a`, empty) are
-rejected on purpose so a blank record cannot pass as a filled one. The equivalent
-record for the six worked-example genomes must carry, per genome:
+rejected on purpose so a blank record cannot pass as a filled one.
 
-`source_registry`, `doi`, `license`, `retrieved_utc`, `checksum_sha256`,
-`gtdb_release`.
+`provenance_manifest.json` is that record for the six worked-example genomes. It follows
+`validation/data/PROVENANCE.tsv`, the shipped provenance file for the bacterial
+validation set, and carries per genome: `source_registry`, `license`, `retrieved_utc`,
+`checksum_sha256`, `gtdb_release`, the GTDB and NCBI accessions, the GTDB r220 lineage,
+both download URLs, and the protein count and total residue count that Table S6c of the
+Supporting Information quotes.
 
-`validation/data/PROVENANCE.tsv` is the shipped example of the same discipline for the
-bacterial validation set — use it as the template.
+One field of the contract has no honest value to write here. Its `doi` is defined in
+`tests/benchmark/expected/accessions.yaml` as the "DOI of the dataset/release you actually
+downloaded" — a release-level identifier, which the bacterial benchmark file leaves as
+`doi: ""` until whoever runs it chooses the concrete order and fills it. A RefSeq
+assembly has no data DOI of its own, and `validation/data/PROVENANCE.tsv` likewise has no
+`doi` column. So this record identifies the source by `gtdb_release`, `source_registry`,
+the assembly accessions and the download URLs, and leaves a release DOI to whoever mints
+or cites one; nothing here is guessed. `tests/benchmark/provenance.py` enforces its
+`REQUIRED_FIELDS` on `accessions.yaml` and on the benchmark runners, not on this file.
+
+The manifest's counts and digests are measured from the files themselves; it was written
+by a generator that refuses to emit a record whose counts disagree with Table S6c.
 
 ## What still needs the author
 
