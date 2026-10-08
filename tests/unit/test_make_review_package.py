@@ -35,10 +35,15 @@ SCRIPT = REPO / "scripts" / "make_review_package.py"
 
 NAME_SPACED = "Testperson Testfamily"
 NAME_ONEWORD = "TestpersonTestfamily"
-EMAIL = "testperson@institute.example"
-ORCID = "0000-0001-2345-6789"
+# Assembled at runtime, never written out whole. This file is itself inside the tree the
+# packager scrubs, so a literal e-mail address, ORCID iD or absolute path here would be
+# rewritten in the shipped copy — the fixture would then build a fake repo carrying no
+# identity, the leak gate would correctly fire, and `pytest tests/unit` would fail for the
+# one person who is supposed to be able to run it: the reviewer.
+EMAIL = "testperson" + "@" + "institute.example"
+ORCID = "-".join(["0000", "0001", "2345", "6789"])
 REPO_URL = "https://github.com/testperson/markerfinder"
-ABS_PATH = "/home/testperson/work/markerfinder/run.py"
+ABS_PATH = "/home" + "/testperson/work/markerfinder/run.py"
 
 GIT_ENV = dict(GIT_CONFIG_GLOBAL="/dev/null", GIT_CONFIG_SYSTEM="/dev/null",
                HOME="/tmp", PATH=os.environ.get("PATH", ""))
