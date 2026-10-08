@@ -36,7 +36,8 @@ submit while any of them is still blank.
 Unlike the v0.1.0 work above, the involvement in the v0.1.1 commits is something the
 assistant can state from its own evidence rather than reconstruct from memory:
 
-* **Date:** 2026-10-08 (commits `27eefbe`, `8b653a4`, `90a1b00` and their successors).
+* **Date:** 2026-10-08 (commits `27eefbe`, `8b653a4`, `90a1b00`, `c298cc6`, `38db0f4`
+  and `a5fa98f`).
 * **Application:** Qoder CN agent CLI, application version **0.4.3** (read from the
   installed bundle's `CFBundleShortVersionString`). The bundle does not surface the
   underlying model identifier, so if the journal wants that too it must come from the
@@ -45,11 +46,25 @@ assistant can state from its own evidence rather than reconstruct from memory:
   config-key warning path, `config.example.yaml`, the database-hash notes and self-test
   wording, `scripts/make_review_package.py` and its new tests,
   `scripts/add_llm_markers.py` and this file, `worked_example/README.md`, and the
-  README/MANUAL/TESTING/TEST-REPORT synchronisation. Manuscript, SI and figure text in
+  README/MANUAL/TESTING/TEST-REPORT synchronisation. Two later items in the same round
+  were fixes of mistakes made during it: `worked_example/provenance_manifest.json` (the
+  Supporting Information cited a provenance record that had never existed, so it was
+  built from the six downloaded `.faa` files, with counts cross-checked against the
+  table before writing) and the runtime assembly of the synthetic e-mail / ORCID /
+  absolute-path fixtures in `tests/unit/test_make_review_package.py` (the packager had
+  been scrubbing its own test data, which made five cases fail inside the shipped
+  package while passing in the repository). Manuscript, SI and figure text in
   the accompanying paper were revised in the same session.
 * **Verification:** every code change above was kept only after `python -m pytest tests`
   passed (currently **1039 passed, 1 skipped** — the skip is `NOT EXECUTED: no mypy`),
   and the packager's output was re-scanned for identifiers independently of its own audit.
+  The package was additionally **executed**, not just compared: unpacked, `--version`
+  reports `markerfinder 0.1.1`, `--check` gives 49 PASS / 0 FAIL, `pytest tests/unit`
+  gives 971 passed / 1 skipped, and the documented worked-example command runs to
+  completion with the same marker counts, risk statistics and alignments as the
+  repository tree (the concatenated tree differs only in the seventh decimal of branch
+  lengths, which `validation/cases/test_v15_reproducibility.py` already documents as
+  expected).
 
 This is a record of what the tool did, **not** an author attestation: whether any part of
 the v0.1.0 work was assisted, and the model name/version required by the journal, remain
