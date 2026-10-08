@@ -194,9 +194,14 @@ def identifier_rules(repo: Path, version_module: Path) -> list[tuple[str, re.Pat
     tokens = derived_tokens(repo, version_module)
     for label, literal in tokens:
         rules.append((label, re.compile(re.escape(literal), re.I)))
-    # Split compound names ("Zeng Zichao", "zengzichao@sjtu") into their parts too, so a
+    # Split compound tokens (a name written with a separator inside it, an address
+    # like "user@host") into their parts too, so a
     # README that writes only the surname is still caught. Parts must clear the same
     # acceptability bar as whole tokens, or "com" becomes an author-name rule.
+    # Limitation worth knowing: a rule only exists for a spelling the repository
+    # actually uses. If git metadata stores one concatenated word, a two-word
+    # rendering of the same name is invisible here -- keep name variants out of this
+    # file's own comments, or pass them with --audit-extra.
     for label, literal in tokens:
         for part in re.split(r"[\s_@.\-+]+", literal):
             if not _acceptable(part):
