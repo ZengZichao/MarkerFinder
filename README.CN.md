@@ -3,6 +3,7 @@
 **自适应 HGT 感知的原核生物系统发育基因组学流水线**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/markerfinder)](https://pypi.org/project/markerfinder/)
 [![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#测试)
