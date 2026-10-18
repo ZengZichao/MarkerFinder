@@ -331,7 +331,14 @@ def _build_pipeline_config(args: argparse.Namespace, parser: Optional[argparse.A
             # An explicit preset is an explicit instruction: it must also win
             # Over the Phase-0 adaptive budget, exactly like --max-markers.
             pipeline_config.selection_config.user_max_markers = preset.max_markers
-            pipeline_config.selection_config.selection_strategy = preset.selection_strategy
+            # ``SelectionConfig``'s field is named ``strategy`` (config.py); the
+            # selection module reads ``self.config.strategy``
+            # (modules/marker_selection.py). Writing ``selection_strategy`` here
+            # landed on an undeclared instance attribute, so the log line below
+            # advertised e.g. "strategy=info_max" while selection still ran
+            # GREEDY. Assign the real field (regression test:
+            # tests/unit/test_marker_preset_strategy_regression.py).
+            pipeline_config.selection_config.strategy = preset.selection_strategy
             logger.info(
                 f"  Applied --marker-preset {preset_name}: "
                 f"min_occupancy={preset.min_occupancy}, "

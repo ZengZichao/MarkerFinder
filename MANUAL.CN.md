@@ -2,7 +2,7 @@
 
 **自适应 HGT 感知系统发育基因组学流水线 — 技术参考手册**
 
-版本 0.1.0
+版本 0.1.1
 
 ---
 
@@ -96,9 +96,9 @@ pip install -e ".[dev]"
 ```bash
 # 验证 MarkerFinder
 markerfinder --version
-# 预期输出: markerfinder <版本> git:<8位提交哈希> updated:<日期>
-# 版本串由 setuptools-scm 从当前 checkout 生成，不要把 "0.1.0" 当作常量比对；
-# 非 git 工作副本安装时无 git: 段。
+# 预期输出: markerfinder 0.1.1
+# （版本串是 markerfinder/_version.py 中的常量，因此每条安装路径、每个解包后的源码树
+#   都报告同一个字符串；不依赖 git checkout，也不由 setuptools-scm 生成。）
 
 # 验证外部工具
 hmmsearch -h | head -1         # HMMER 3.3.2+
@@ -341,7 +341,7 @@ markerfinder -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/mar
 3. 组成诊断产物（`composition.tsv`）与 PIS 门槛依赖 `.pis` sidecar，只有走 `gtdb_tk` 基因树构建路径才生成；`hmm` 路径无 sidecar，故这两项在该路径上无产物。
 4. **must-pass 基线的 `markers.ids` 仍是未填骨架**（需按研究对象补全 62 条核糖体标记 id）。门禁本身已实现：ids 为空时改为检验**全部**标记基因树并明确记一条日志；ids 已填但与数据集无交集时直接中止，不报“通过”。
 5. 多宇宙因子评测按 E.3 排在本版本之外。
-6. **任何代码都未读取的配置字段（诚实登记；由 `tests/unit/test_config_surface_ratchet.py` 强制：新增此类字段必须要么接线、要么在此登记）**：`PipelineConfig.verify_db` 与 `PipelineConfig.databases`（数据库哈希校验只在 `--check` 里做，见 run 路径不读这两个字段）；`MAGConfig.min_completeness`（完整度门槛走 Phase 0 自适应占居率路径）；`OrthologConfig.use_diamond` 与 `OrthologConfig.graph_clustering`（DIAMOND/图聚类直系同源解析未接线，Phase 1.5 明确记日志跳过）；`HeterogeneityConfig.min_allele_freq`/`consensus_threshold`/`minor_allele_threshold`/`identity_threshold`（仅供未接入主流水线的 `MAGHeterogeneityHandler` 预留，主流程每标记只取最优命中）。
+6. **任何代码都未读取的配置字段（诚实登记；由 `tests/unit/test_config_surface_ratchet.py` 强制：新增此类字段必须要么接线、要么在此登记）**：`PipelineConfig.verify_db` 与 `PipelineConfig.databases`（这两个开关没有任何代码读取：`--check` 会对照 `db/expected_hashes.json`（见 6.1 节）给哈希比对计分，不符即是一项 FAIL 且退出码非 0；普通运行则重算同样的哈希、在不符时记 WARNING，并把结果写入 `Phase5_metadata/run_config.json`（见 6.4 节），两者都不读这两个字段）；`MAGConfig.min_completeness`（完整度门槛走 Phase 0 自适应占居率路径）；`OrthologConfig.use_diamond` 与 `OrthologConfig.graph_clustering`（DIAMOND/图聚类直系同源解析未接线，Phase 1.5 明确记日志跳过）；`HeterogeneityConfig.min_allele_freq`/`consensus_threshold`/`minor_allele_threshold`/`identity_threshold`（仅供未接入主流水线的 `MAGHeterogeneityHandler` 预留，主流程每标记只取最优命中）。
    注：`HeterogeneityConfig.enable_composition_screen` 与 `composition_warn_threshold` 已不再是死字段——前者现在与 `hgt_steps: composition` 等效（任一为真即开启组成诊断），后者经 `PipelineConfig.heterogeneity_config` 真正传到 `composition.tsv` 的离群判定；`composition_outlier_metric` 取非 `rcv` 值时会记 WARN 说明只实现了 rcv，不再静默忽略。
 
 7. **`--check --db-dir <目录>` 现在按你指定的目录做哈希校验**。此前 `--check` 内部调用哈希检查时不带参数，
@@ -550,8 +550,11 @@ ASTRAL-III 未安装或运行失败时，**不再回退到单棵基因树或 con
 ### 5.5 ASTRAL-III
 
 - **用途：** 从基因树推断合并物种树
-- **命令：** `astral -i <gene_trees> -o <output> -t 2`
+- **命令：** `astral -i <gene_trees> -o <output> -t 1`
 - **输出：** 带局部后验概率（LPP）的物种树
+- **说明：** ASTRAL 以单线程方式调用（`-t 1`），与 `markerfinder/modules/phylogenetic_inference.py`
+  中的固定写法一致。`-t 1` 时 LPP 支持度以常规 Newick 节点标签输出而非 NHX 注释，因此正常路径
+  无需剥离标签；`strip_nhx_annotations` 仅作为防御性后路保留，以防上游被改为多线程的 `-t 2`。
 
 ### 5.6 FastTree2
 
@@ -639,7 +642,7 @@ markerfinder -i genomes/ -o output/ \
 
 ```json
 {
-  "markerfinder_version": "0.1.0",
+  "markerfinder_version": "0.1.1",
   "timestamp": "2025-07-02T10:30:00",
   "run_duration_seconds": 1234.5,
   "parameters": { "mode": "standard", "min_occupancy": 0.75, ... },
@@ -857,7 +860,7 @@ markerfinder -i genomes/ -o output/ --tmp-dir ./my_tmp
 
 | 错误 | 原因 | 解决方案 |
 |------|------|---------|
-| `NoMarkerAvailableError` | 没有标记满足占有率阈值 | 使用 `--mode mag_adaptive` 或 `--mode expanded` |
+| `NoMarkerAvailableError` | 没有标记满足占有率阈值 | 显式降低下限——`--marker-preset expanded` / `--marker-preset mag_adaptive`（同时设定占有率、预算与策略），或 `--min-occupancy 0.5`。注意 `--mode` 本身只改变筛选策略，不改变占有率下限 |
 | `hmmsearch not found` | HMMER 未安装 | `conda install -c bioconda hmmer` |
 | `HMM database not found` | 数据库路径未配置 | 设置 `--marker-hmm-dir` 或将 TIGRFAM/Pfam HMM 文件放入 `db/gtdb_markers/{ar53,bac120}`；或改用 `gtdb_tk` 模式（`--gtdb-markers-dir`） |
 | `gtdb-markers-dir not provided` | `gtdb_tk` 模式缺少必填参数 | 提供 GTDB-TK 提取的每标记 FASTA 目录 |

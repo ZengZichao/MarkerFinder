@@ -27,10 +27,16 @@ class TestCoalescentInference:
         assert r.n_total_genes == 0  # Empty seqs → no gene trees
 
     def test_run_with_seqs(self):
+        # The aligner's absence, not its presence, is what this case is about:
+        # asserting n_total_genes == 0 without pinning _run_mafft made the
+        # outcome depend on whether mafft happened to be installed, so the suite
+        # failed in any environment built from environment.yml. Pin it (the
+        # pattern the iqtree-ufboot case below already uses).
         ci = CoalescentInference(PhylogeneticConfig(use_fasttree=False))
         seqs = [{"id": f"s{i}", "seq": "ACGT" * 30} for i in range(6)]
-        r = ci.run({"C1": seqs}, [])
-        assert r.n_total_genes == 0  # Mafft not available → 0 gene trees
+        with patch("markerfinder.modules.phylogenetic_inference._run_mafft", return_value=False):
+            r = ci.run({"C1": seqs}, [])
+        assert r.n_total_genes == 0  # no alignment → no gene tree is built
 
     def test_gene_tree_respects_config_ufboot(self, tmp_path):
         config = PhylogeneticConfig(

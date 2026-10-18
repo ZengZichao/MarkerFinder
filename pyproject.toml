@@ -10,7 +10,7 @@ name = "markerfinder"
 dynamic = ["version"]
 description = "Adaptive HGT-Aware Phylogenomic Pipeline for Prokaryotic Marker Gene Selection"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.10"
 authors = [
     {name = "Zengzichao", email = "zengzichao@sjtu.edu.cn"},
@@ -20,7 +20,6 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

@@ -113,7 +113,15 @@ class TestDependencyDeclaration:
 
 class TestMarkerPreset:
     def test_preset_overrides_selection_triple(self):
-        """An explicit preset overrides the triple."""
+        """An explicit preset overrides the triple.
+
+        The strategy half of this assertion used to read
+        ``selection_config.selection_strategy`` — an attribute that is not a
+        field of ``SelectionConfig`` and that only existed because the builder
+        typo created it on the instance. It now reads the field the selection
+        module actually consumes (``strategy``); see
+        tests/unit/test_marker_preset_strategy_regression.py.
+        """
         from markerfinder.cli.config_build import _build_pipeline_config
         from markerfinder.cli.parser import _build_parser
         from markerfinder.models.marker import SelectionStrategy
@@ -125,7 +133,9 @@ class TestMarkerPreset:
         cfg = _build_pipeline_config(args)
         assert cfg.selection_config.min_occupancy == 0.90
         assert cfg.selection_config.max_markers == 30
-        assert cfg.selection_config.selection_strategy is SelectionStrategy.INFO_MAX
+        assert cfg.selection_config.strategy is SelectionStrategy.INFO_MAX
+        # No shadow attribute: the preset must write the declared field only.
+        assert "selection_strategy" not in vars(cfg.selection_config)
 
     def test_preset_none_keeps_defaults(self):
         from markerfinder.cli.config_build import _build_pipeline_config

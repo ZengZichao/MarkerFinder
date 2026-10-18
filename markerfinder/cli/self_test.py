@@ -583,8 +583,9 @@ def _test_database_hashes(db_dir: Optional[str] = None) -> List[tuple]:
                 results.append((
                     f"Database hash [{name}]", "FAIL",
                     f"SHA-256 {str(info.get('hash'))[:12]}… != expected "
-                    f"{expected[:12]}… — the database changed since it was "
-                    f"pinned since it was recorded",
+                    f"{expected[:12]}… — the database changed since this hash was "
+                    f"recorded, so it is not the build this release was validated "
+                    f"against",
                 ))
             else:
                 results.append((

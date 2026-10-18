@@ -3,9 +3,9 @@
 **Adaptive HGT-Aware Phylogenomic Pipeline for Prokaryotic Marker Gene Selection**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
+[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-991%20collected-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#testing)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 <!-- The badge count is the live collection total of the fast suite under tests/;
      it is re-measured on every run by tests/unit/test_docs_numbers_are_current.py,

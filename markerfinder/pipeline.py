@@ -118,7 +118,7 @@ class MarkerFinderPipeline:
         runtime_info = RuntimeInfo(start_time=start_time, end_time=end_time, duration=end_time - start_time)
         report_data = self.run_report(scan_data, filter_data, infer_data, context, runtime_info)
 
-        self._write_run_config(start_time, end_time)
+        self._write_run_config(start_time, end_time, context=context)
         # The log has to carry the same declaration the report does —
         # A reader who only kept the terminal output must still learn which
         # Metrics are missing and for what reason.
@@ -1176,7 +1176,10 @@ class MarkerFinderPipeline:
             report_data = self.run_report(scan_data, filter_data, infer_data, context, runtime_info)
             if self.config.save_intermediates:
                 self._save_intermediates()
-            self._write_run_config(start_time, end_time)
+            # ``ctx`` is the context archived by 'scan' — it carries the
+            # Phase-0 adaptive parameters the run applied, which the freshly
+            # built ``context`` of a stepwise invocation does not.
+            self._write_run_config(start_time, end_time, context=ctx)
             state["completed_steps"] = list(dict.fromkeys(completed + ["report"]))
             self._save_state(**state)
             logger.info("  Step 'report' completed. Pipeline finished.")
@@ -1186,12 +1189,16 @@ class MarkerFinderPipeline:
         else:
             raise ValueError(f"Unknown step: {step}. Valid: {self.STEP_ORDER}")
 
-    def _write_run_config(self, start_time: float, end_time: float) -> None:
+    def _write_run_config(self, start_time: float, end_time: float,
+                          context: object = None) -> None:
         """写入 run_config.json，记录完整参数快照和数据库版本哈希，确保可复现性。
 
         路径参数记录为解析后的绝对路径：快照里一个相对路径无法解释（它是相对于谁
         的？），而重放一份快照恰恰需要知道上一次运行用的是哪里。见
         ``_record_paths_resolved``。
+
+        ``parameters`` 只保存*配置值*，Phase 0 会用数据集自适应值替换其中三个
+        （见 ``_effective_parameters``），所以快照另记一份"本次实际生效值"。
         """
         config_dict = self.config.to_dict()
         config_dict = self._record_paths_resolved(config_dict)
@@ -1203,6 +1210,7 @@ class MarkerFinderPipeline:
             # "运行时长", 置 0 表示未知.
             "run_duration_seconds": (end_time - start_time) if start_time else 0.0,
             "parameters": config_dict,
+            "effective_parameters": self._effective_parameters(context),
             "database_versions": self._collect_database_versions(),
         }
 
@@ -1251,6 +1259,40 @@ class MarkerFinderPipeline:
             else:
                 result[k] = v
         return result
+
+    def _effective_parameters(self, context: object = None) -> dict:
+        """Record the selection thresholds this run actually applied.
+
+        ``parameters`` is a dump of the configuration object, but Phase 0
+        replaces three of its values with dataset-adaptive ones
+        (``AdaptiveMarkerSelectionModule.run`` copies
+        ``phase_context.adaptive_params`` onto the selector, and
+        ``run_gtdb_tk`` does the same locally). On a high-quality dataset the
+        bitscore floor in effect was 30.0 while the archived snapshot said
+        ``min_hmm_score = 20.0`` — a reader replaying that file would have
+        expected a different marker pool from the one the run produced.
+
+        The block is a record, not an input: a replay re-derives the adaptive
+        values from Phase 0 (and honours ``user_min_occupancy`` /
+        ``user_max_markers``), so ``config_loader`` drops it as envelope rather
+        than pinning an adaptive default as if it had been requested.
+        """
+        sel = self.config.selection_config
+        configured = {
+            "min_hmm_score": sel.min_hmm_score,
+            "min_occupancy": sel.min_occupancy,
+            "max_markers": sel.max_markers,
+        }
+        adaptive = getattr(context, "adaptive_params", None) if context is not None else None
+        if adaptive is None:
+            return {**configured, "source": "configured_defaults",
+                    "configured": configured}
+        effective = {
+            "min_hmm_score": adaptive.min_hmm_score,
+            "min_occupancy": adaptive.min_occupancy,
+            "max_markers": adaptive.max_markers,
+        }
+        return {**effective, "source": "phase0_adaptive", "configured": configured}
 
     def _collect_database_versions(self) -> dict:
         """收集已配置数据库的 SHA256 哈希。"""

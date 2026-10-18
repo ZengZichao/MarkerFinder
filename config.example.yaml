@@ -149,7 +149,7 @@ report_format: html # Options: html
 # 默认留空时 MarkerFinder 会在系统临时目录下自动创建每趟 run 独立的
 # markerfinder-{uuid8} 子目录, 流程结束自动清理.
 # tmp_dir: /tmp/markerfinder-run
-db_dir:./db
+db_dir: ./db
 
 # 是否保留临时目录. 默认 false,流程结束自动清理; 设为 true 可保留中间文件用于调试.
 keep_tmp: false

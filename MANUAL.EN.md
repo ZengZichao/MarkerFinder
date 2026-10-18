@@ -2,7 +2,7 @@
 
 **Adaptive HGT-Aware Phylogenomic Pipeline — Technical Reference Manual**
 
-Version 0.1.0
+Version 0.1.1
 
 ---
 
@@ -96,7 +96,7 @@ pip install -e ".[dev]"
 ```bash
 # Verify MarkerFinder
 markerfinder --version
-# Expected: markerfinder 0.1.0
+# Expected: markerfinder 0.1.1
 # (the version is a constant in markerfinder/_version.py, so every install path
 #  and every unpacked source tree report the same string)
 
@@ -343,7 +343,7 @@ Controls taxonomy name parsing.
 3. The composition diagnostics artifact (`composition.tsv`) and the PIS floor depend on the `.pis` sidecar, which is only produced on the `gtdb_tk` gene-tree construction path. The `hmm` path has no sidecar, so neither artifact exists there.
 4. **`markers.ids` of the must-pass baseline is still an unfilled skeleton** (fill in the 62 ribosomal-protein marker ids of your own reference set). The gate itself is implemented: with empty ids it checks **all** marker gene trees and says so in the log; with ids that do not intersect the dataset it aborts instead of reporting a pass.
 5. The multi-universe factorial evaluation is out of scope for this version, per E.3.
-6. **Configuration fields that no code reads** (recorded honestly; `tests/unit/test_config_surface_ratchet.py` enforces that any new field is either wired up or listed here): `PipelineConfig.verify_db` and `PipelineConfig.databases` (the database hash check only runs inside `--check`, see; the run path reads neither field); `MAGConfig.min_completeness` (the completeness floor goes through the Phase 0 adaptive occupancy path); `OrthologConfig.use_diamond` and `OrthologConfig.graph_clustering` (DIAMOND/graph-clustering ortholog resolution is not wired up, and Phase 1.5 logs an explicit skip); `HeterogeneityConfig.min_allele_freq`/`consensus_threshold`/`minor_allele_threshold`/`identity_threshold` (reserved for `MAGHeterogeneityHandler`, which is not part of the main pipeline; the main flow keeps only the best hit per marker).
+6. **Configuration fields that no code reads** (recorded honestly; `tests/unit/test_config_surface_ratchet.py` enforces that any new field is either wired up or listed here): `PipelineConfig.verify_db` and `PipelineConfig.databases` (no code reads these two switches: `--check` scores the hash comparison against `db/expected_hashes.json` (§6.1), where a mismatch is a FAIL item and the exit code is non-zero, while an ordinary run recomputes the same hashes, logs a WARNING on a mismatch and records them in `Phase5_metadata/run_config.json` (§6.4) whatever these two fields say); `MAGConfig.min_completeness` (the completeness floor goes through the Phase 0 adaptive occupancy path); `OrthologConfig.use_diamond` and `OrthologConfig.graph_clustering` (DIAMOND/graph-clustering ortholog resolution is not wired up, and Phase 1.5 logs an explicit skip); `HeterogeneityConfig.min_allele_freq`/`consensus_threshold`/`minor_allele_threshold`/`identity_threshold` (reserved for `MAGHeterogeneityHandler`, which is not part of the main pipeline; the main flow keeps only the best hit per marker).
    Note: `HeterogeneityConfig.enable_composition_screen` and `composition_warn_threshold` are no longer dead fields — the first is now equivalent to `hgt_steps: composition` (either one enables the diagnostics), and the second really reaches the outlier test of `composition.tsv` through `PipelineConfig.heterogeneity_config`. A `composition_outlier_metric` other than `rcv` logs WARN stating that only `rcv` is implemented, instead of being silently ignored.
 7. **`--check --db-dir <directory>` now hashes the directory you name**. Previously `--check` called the hash check without arguments, so it always verified the repository's default `db/`, which means `--check --db-dir X` drew a conclusion about the **wrong object**. Behaviour is unchanged when `--db-dir` is omitted (still the repository `db/`). Note also that `--check` runs before `--config` is read, so to have it check a specific database pass `--db-dir` on the command line rather than only in a config file.
 
@@ -531,8 +531,13 @@ Generates two types of output:
 ### 5.5 ASTRAL-III
 
 - **Purpose:** Coalescent species tree from gene trees
-- **Command:** `astral -i <gene_trees> -o <output> -t 2`
+- **Command:** `astral -i <gene_trees> -o <output> -t 1`
 - **Output:** Species tree with local posterior probabilities (LPP)
+- **Note:** ASTRAL is invoked single-threaded (`-t 1`), as pinned in
+  `markerfinder/modules/phylogenetic_inference.py`. At `-t 1` the LPP support values
+  arrive as ordinary Newick node labels rather than NHX annotations, so no label
+  stripping is needed on the normal path; `strip_nhx_annotations` is kept only as a
+  defensive fallback in case the upstream call is changed to a multi-threaded `-t 2`.
 
 ### 5.6 FastTree2
 
@@ -615,7 +620,7 @@ After each run, MarkerFinder writes `Phase5_metadata/run_config.json` to the out
 
 ```json
 {
-  "markerfinder_version": "0.1.0",
+  "markerfinder_version": "0.1.1",
   "timestamp": "2025-07-02T10:30:00",
   "run_duration_seconds": 1234.5,
   "parameters": { "mode": "standard", "min_occupancy": 0.75, ... },
@@ -845,7 +850,7 @@ For users migrating from the original MarkerFinder script:
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| `NoMarkerAvailableError` | No markers meet occupancy threshold | Use `--mode mag_adaptive` or `--mode expanded` |
+| `NoMarkerAvailableError` | No markers meet occupancy threshold | Lower the floor explicitly — `--marker-preset expanded` / `--marker-preset mag_adaptive` (these set occupancy **and** budget **and** strategy), or `--min-occupancy 0.5`. Note that `--mode` alone changes only the selection strategy, not the occupancy floor |
 | `hmmsearch not found` | HMMER not installed | `conda install -c bioconda hmmer` |
 | `HMM database not found` | Database path not configured | Set `--marker-hmm-dir` or place TIGRFAM/Pfam HMM files under `db/gtdb_markers/{ar53,bac120}`; or use `gtdb_tk` mode (`--gtdb-markers-dir`) |
 | `gtdb-markers-dir not provided` | `gtdb_tk` mode missing required argument | Provide the GTDB-TK per-marker FASTA directory |

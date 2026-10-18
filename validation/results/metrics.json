@@ -6,8 +6,8 @@
     "differing_parameters": []
   },
   "v02_verbosity": {
-    "default_lines": 20,
-    "verbose_lines": 64
+    "default_lines": 22,
+    "verbose_lines": 74
   },
   "v03_autodiscovery": {
     "discovered_dir": "<repo>/db/gtdb_markers/ar53"

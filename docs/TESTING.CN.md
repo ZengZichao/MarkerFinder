@@ -1,6 +1,6 @@
 # MarkerFinder 测试方案与验证方法论
 
-适用版本：MarkerFinder 0.1.0
+适用版本：MarkerFinder 0.1.1
 [English version](TESTING.EN.md) · 配套：[TEST-REPORT.CN.md](TEST-REPORT.CN.md)
 
 ---
@@ -22,7 +22,7 @@ doi:10.1126/science.adw9456，2026-02-05 撤稿）正是在这个
 缺口上失败的——所有内部检查都通过，而拓扑在生物学上荒谬。因此测试被拆成：
 
 ```
-tests/       991 个快速用例，不需要外部工具，不下载数据
+tests/       1043 个快速用例，不需要外部工具，不下载数据
 validation/  153 个在真实基因组上用真实工具跑的端到端用例
 ```
 
