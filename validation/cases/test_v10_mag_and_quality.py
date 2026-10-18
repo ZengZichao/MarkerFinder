@@ -100,6 +100,30 @@ def test_a_checkm_table_that_names_no_input_genome_is_not_silently_used(
     )
 
 
+def _mag_named_inputs(data_dir):
+    """Return the ``mag_named`` genome directory, asserting it is usable.
+
+    The four entries are symlinks into ``../../genomes/``, which is gitignored
+    because it holds third-party NCBI proteomes this repository does not
+    redistribute. In a fresh checkout the directory exists but the links do not
+    resolve, and on Windows git materialises them as regular files containing
+    the target path. Both states pass a bare ``is_dir()`` check and would
+    otherwise surface much later as an unparseable-FASTA error from deep inside
+    the pipeline — which reads like a code bug rather than "you skipped
+    ``--prepare``".
+    """
+    genomes = data_dir / "variants" / "mag_named" / "genomes"
+    assert genomes.is_dir(), f"{genomes} missing — re-run 03_build_fixtures.py"
+    unresolved = [p.name for p in sorted(genomes.iterdir()) if not p.exists()]
+    assert not unresolved, (
+        f"unusable genome entries in {genomes}: {unresolved}. They must resolve "
+        f"to real FASTA files in {data_dir / 'genomes'}, which is fetched "
+        f"third-party data and is not in the repository. "
+        f"Run: python validation/run_validation.py --prepare"
+    )
+    return genomes
+
+
 @pytest.mark.capability("mode", "workflow:occupancy-selection")
 def test_mag_named_inputs_are_classified_as_mags(mf, data_dir, record_metric):
     """Filename-based classification (``mag``/``bin`` -> MAG, ``sag`` -> SAG)
@@ -110,8 +134,7 @@ def test_mag_named_inputs_are_classified_as_mags(mf, data_dir, record_metric):
     identifiers, which is exactly what the rule keys on.
     """
     variant = data_dir / "variants" / "mag_named"
-    genomes = variant / "genomes"
-    assert genomes.is_dir(), f"{genomes} missing — re-run 03_build_fixtures.py"
+    genomes = _mag_named_inputs(data_dir)
     names = sorted(p.stem for p in genomes.iterdir())
     assert all(n.startswith("mag_") for n in names), names
 
@@ -144,7 +167,7 @@ def test_mag_adaptive_mode_reports_its_occupancy_floor(mf, data_dir, read_tsv,
     the consequence: every marker the run kept has an occupancy at or above it.
     """
     variant = data_dir / "variants" / "mag_named"
-    run = mf(variant / "genomes", markers=variant / "markers",
+    run = mf(_mag_named_inputs(data_dir), markers=variant / "markers",
              taxonomy=variant / "taxonomy" / "taxonomy_mag_named.tsv",
              extra=["--mode", "mag_adaptive", "--force", "-v"])
     run.assert_ok()

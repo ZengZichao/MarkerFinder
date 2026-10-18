@@ -201,7 +201,9 @@ class TestEte3Differential:
 
     _NOT_EXECUTED = (
         "ete3 unavailable in this interpreter — DIFFERENTIAL TEST NOT "
-        "EXECUTED (must run in a 3.10–3.12 environment)"
+        "EXECUTED (every supported interpreter, Python >=3.10, can import "
+        "ete3 once `markerfinder` is imported, so this means a broken "
+        "install rather than an unsupported interpreter)"
     )
 
     @staticmethod

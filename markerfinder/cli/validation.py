@@ -7,6 +7,7 @@ that argument checks, exit codes, and warnings are unchanged.
 
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 import sys

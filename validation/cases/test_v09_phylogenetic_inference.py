@@ -12,6 +12,7 @@ their units and their absence must be observable, not assumed.
 from __future__ import annotations
 
 import re
+import shutil
 
 import pytest
 
@@ -75,6 +76,12 @@ def test_iqtree_built_trees_carry_support_and_fasttree_built_ones_are_labelled(
     FastTree SH is 0-1), and the pipeline documents that mix as a hazard:
     a threshold must be compared in the right units or reported as NOT
     MEASURABLE, never against a placeholder."""
+    if shutil.which("iqtree3") is None:
+        pytest.skip(
+            "iqtree3 is not on PATH: it is the optional ML builder "
+            "(--gene-tree-builder iqtree, environment.yml iqtree>=3.0.0), and "
+            "this case cannot compare the two builders' support scales without it"
+        )
     runs = {}
     for builder in ("fasttree", "iqtree"):
         run = mf(extra=["--gene-tree-builder", builder,

@@ -2,9 +2,9 @@
 
 Finding: ``tests/unit/test_mad_root_regression.py`` and
 ``tests/unit/test_taxonomy_regression.py`` once did a bare module-level
-``from ete3 import Tree``. ete3 imports the stdlib ``cgi`` module, which was
-removed in Python 3.13, so on an interpreter outside the supported range (3.14)
-collection aborted with
+``from ete3 import Tree``. ete3 imports the stdlib ``cgi`` module at
+package-import time, so on any interpreter where that import fails, collection
+aborted with
 
     Interrupted: 2 errors during collection
     ============================== 2 errors in 2.24s ==============================
@@ -23,7 +23,10 @@ Three gates here, because they fail in different environments:
 * the skip-labelling ratchet keeps every ete3-driven skip readable as
   NOT EXECUTED in a CI summary;
 * the collect-only subprocess proves the property end to end on the interpreter
-  that actually matters — the one where ete3 is unimportable.
+  that actually matters — the one where ete3 is unimportable. (On Python 3.13+
+  ``markerfinder._cgi_compat`` normally makes ete3 importable again, so this
+  guard is reached by simulating a missing ete3 rather than by waiting for a
+  particular interpreter version.)
 """
 
 from __future__ import annotations

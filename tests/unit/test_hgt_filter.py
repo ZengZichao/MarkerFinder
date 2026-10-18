@@ -15,9 +15,13 @@ from markerfinder.modules.hgt_filter import (
 def _ete3_available() -> bool:
     """MAD rooting needs ete3; monophyly-screen assertions are
     environment-aware (documented NOT_MEASURABLE behaviour without it).
-    Uses a real import probe, NOT find_spec — a broken install (e.g. ete3
-    on Python ≥3.13, which fails at `import cgi`) still has a spec."""
+    Uses a real import probe, NOT find_spec — a broken install still has a
+    spec. `markerfinder` is imported first because it is what installs the
+    stdlib `cgi` stand-in that ete3 needs on Python 3.13+; probing ete3 in a
+    bare namespace would report every supported interpreter as unusable."""
     try:
+        import markerfinder  # Noqa: F401  -- installs the cgi shim when needed
+
         import ete3  # Noqa: F401
         return True
     except Exception:

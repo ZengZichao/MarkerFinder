@@ -67,7 +67,7 @@ per-case outputs and temp directories. It is disposable and git-ignored.
 
 ## Running it
 
-Requirements: the MarkerFinder environment (Python 3.10–3.12 plus
+Requirements: the MarkerFinder environment (Python 3.10 or newer plus
 `hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`, `iqtree3`), and
 `pip install -e ".[dev]"`.
 

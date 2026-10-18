@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use MarkerFinder in published work, please cite it as below."
+
+title: "MarkerFinder"
+abstract: >-
+  An adaptive, horizontal-gene-transfer-aware pipeline for prokaryotic marker
+  gene selection and species tree inference. Marker sets are chosen per dataset
+  rather than fixed, horizontal gene transfer is screened phylogenetically by
+  MAD rooting and monophyly proportion or by comparison against a reference
+  species tree, and species trees are inferred by both concatenation
+  (IQ-TREE3 / FastTree2) and coalescence (ASTRAL-III) with normalised
+  Robinson-Foulds and quartet-conflict detection. The marker-level
+  marker-consistency idea is methodologically derived from Steenwyk & King
+  (2025), Science 390, 751-756, doi:10.1126/science.adw9456, a paper retracted
+  at the authors' own request on 2026-02-05 (retraction notice: Science 391,
+  564, doi:10.1126/science.aef5589). The retraction concerns that paper's
+  biological conclusion, not its methodological framework; MarkerFinder borrows
+  only the latter and implements, evaluates and defends it independently. If
+  you rely on the marker-consistency framing, please read the retraction notice
+  alongside this citation.
+
+authors:
+  - family-names: Zeng
+    given-names: Zichao
+    orcid: "https://orcid.org/0000-0001-6553-970X"
+    email: zengzichao@sjtu.edu.cn
+
+version: 0.1.0
+date-released: "2026-09-30"
+
+license: MIT
+
+repository-code: "https://github.com/ZengZichao/MarkerFinder"
+url: "https://github.com/ZengZichao/MarkerFinder"
+
+keywords:
+  - phylogenomics
+  - marker-genes
+  - horizontal-gene-transfer
+  - metagenome-assembled-genomes
+  - prokaryotes
+  - species-tree-inference
+  - coalescent
+  - concatenation
+  - bio-informatics

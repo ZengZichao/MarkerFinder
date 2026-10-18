@@ -1,0 +1,146 @@
+name: Validation (acceptance layer)
+
+# The acceptance layer runs the real pipeline on real genomes with real external
+# tools (validation/run_validation.py, 153 cases). It is deliberately NOT part of
+# ci.yml and NOT a pull-request gate:
+#
+#   * it downloads 12 RefSeq proteomes from NCBI on every run, so a rate limit
+#     or a network blip would turn an unrelated pull request red;
+#   * MAFFT / trimAl / FastTree / ASTRAL over 12 genomes is minutes of CPU, not
+#     seconds, and the slow planted-chimera case is much worse;
+#   * its job is to catch scientific regressions in the real pipeline, which the
+#     fast layer mocks out. Running it on every commit would mostly re-measure
+#     NCBI, not the code.
+#
+# It was previously a job inside ci.yml, where it could never have succeeded:
+# that workflow installed only `pip install -e ".[dev]"`, while the harness
+# preflight exits 2 unless hmmsearch, mafft, trimal, FastTree and astral are all
+# on PATH.
+on:
+  schedule:
+    # 04:17 UTC. Deliberately not :00 — every scheduled workflow that fires on
+    # the hour competes for the same runner pool.
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: validation-nightly
+  # Do NOT cancel: a run that is half an hour into a 153-case pipeline is worth
+  # more than the next one starting early.
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    name: real genomes, real tools
+    runs-on: ubuntu-latest
+    # Bounded, because the alternative is the 6-hour default: a stalled NCBI
+    # download or a wedged MAFFT must not hold a runner all day.
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Miniconda
+        uses: conda-incubator/setup-miniconda@be893c923ea9cf1cf7cd510fbdde27c7e18cbdcb # v4.1.0
+
+      - name: Install the external tools the acceptance layer requires
+        shell: bash -el {0}
+        run: |
+          # Only what the harness preflight demands, not the full
+          # environment.yml: checkm-genome alone pulls a ~1.4 GB data package
+          # that no case needs. Package names mirror environment.yml so the
+          # binary names (FastTree, astral) match what the preflight looks for.
+          # iqtree is here despite not being in run_validation's
+          # REQUIRED_TOOLS: it is an optional builder to the pipeline, but the
+          # v09 support-scale case exercises --gene-tree-builder iqtree
+          # directly and cannot measure anything without iqtree3 on PATH.
+          #
+          # The channels are not optional. setup-miniconda configures only
+          # `defaults`, and every one of these packages lives in bioconda or
+          # conda-forge — without -c the solver fails with
+          # PackagesNotFoundInChannelsError on `astral-tree`. Channel order
+          # matches environment.yml.
+          conda create -y -n acceptance \
+            -c bioconda -c conda-forge -c defaults \
+            python=3.12 \
+            hmmer mafft trimal fasttree astral-tree ncbi-datasets-cli \
+            'iqtree>=3.0.0'
+          conda activate acceptance
+          python -m pip install -e ".[dev]"
+
+          # Check the binaries here, not after the data download. A missing or
+          # renamed binary should cost seconds, not the 40 minutes it takes to
+          # pull 12 proteomes from NCBI.
+          missing=0
+          for tool in hmmsearch mafft trimal FastTree astral datasets iqtree3; do
+            if ! command -v "$tool" >/dev/null 2>&1; then
+              echo "MISSING from PATH: $tool" >&2
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+
+      - name: Build validation data from NCBI
+        shell: bash -el {0}
+        # Every `run:` block is a fresh shell, so the `conda activate` in the
+        # install step does NOT carry over. Without this line the harness ran
+        # under the runner's /usr/bin/python in a base environment where
+        # `datasets` was absent, and 01_fetch_genomes.py died in one second
+        # with "NCBI datasets CLI not found on PATH" — a misleading message,
+        # because the binary *was* installed, just in another environment.
+        run: |
+          conda activate acceptance
+          # Print what is actually in use before doing 40 minutes of work, so
+          # environment drift is visible in the first ten log lines rather than
+          # after a download.
+          echo "python : $(command -v python)"
+          echo "PATH   : ${PATH%%:*}"
+          for tool in datasets hmmsearch mafft trimal FastTree astral; do
+            command -v "$tool" >/dev/null || {
+              echo "::error::$tool is not on PATH in the 'acceptance' env" >&2
+              exit 1
+            }
+          done
+          # Only the genomes, NOT `--prepare`.
+          #
+          # `--prepare` runs 01 → 02 → 03, but only 01 is needed here. 02 rebuilds
+          # `validation/data/markers/` from `db/gtdb_markers/`, which is
+          # gitignored because it holds third-party GTDB-Tk HMM profiles this
+          # repository does not redistribute — so 02 died with "no HMM profiles
+          # found", and every run since would too. 03 rebuilds taxonomy/ and
+          # trees/ from PROVENANCE.tsv, and those are already committed (the
+          # 241-entry MANIFEST.sha256 covers them).
+          #
+          # `validation/data/genomes/` is the only committed-bundle gap: those
+          # 12 RefSeq proteomes are fetched by 01 on demand. So fetch exactly
+          # that, then let the harness run against the committed fixtures --
+          # its preflight without --prepare only requires MANIFEST.sha256, which
+          # is in the repository.
+          python validation/scripts/01_fetch_genomes.py
+
+      - name: Run the acceptance cases
+        shell: bash -el {0}
+        # Same reason as the step above: fresh shell, activate again.
+        run: |
+          conda activate acceptance
+          # -m "not slow" is applied by the harness unless --all, which keeps the
+          # 12-genome planted-chimera detection case out of the nightly.
+          python validation/run_validation.py -n 4
+
+      - name: Archive the run record
+        # The run rewrites validation/results/* inside the runner's checkout and
+        # commits nothing, so without this the measured environment, the JUnit
+        # report and the metrics are lost when the job ends. `if: always()` so a
+        # failed run still uploads the evidence of how it failed.
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: validation-results-${{ github.run_number }}
+          path: |
+            validation/results/
+            validation/capability_matrix.tsv
+          retention-days: 30
+          if-no-files-found: warn

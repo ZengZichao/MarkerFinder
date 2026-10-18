@@ -78,13 +78,19 @@ def _summary_rows(run):
 
 @pytest.mark.capability("marker_db_source", "db_dir", "marker_mode",
                         "workflow:provenance-recorded")
-def test_hmm_mode_auto_discovers_the_bundled_library(mf, record_metric):
+def test_hmm_mode_auto_discovers_the_bundled_library(mf, record_metric,
+                                                     hmm_library):
     """Omitting ``--marker-hmm-dir`` is the documented no-GTDB-Tk route: the
     bundled TIGRFAM/Pfam library under ``--db-dir`` must be found by domain
     (``--marker-db-source auto``, the default) and the directory actually used
     must be recorded, because a run that silently scanned nothing would still
     print a report.``
     """
+    if hmm_library is None:
+        pytest.skip(
+            "db/gtdb_markers is absent: the bundled library is fetched, not "
+            "committed (db/README.md), so there is nothing here to discover"
+        )
     run = mf(omit=("--gtdb-markers-dir",),
              extra=["--marker-mode", "hmm", "--db-dir", "db", "--force"])
     run.assert_ok(

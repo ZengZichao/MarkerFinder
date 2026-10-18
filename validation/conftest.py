@@ -163,8 +163,34 @@ def markers_dir(data_dir: Path):
 @pytest.fixture(scope="session")
 def hmm_dir(data_dir: Path):
     def _get(name: str = "core") -> Path:
-        return _require(data_dir / "hmms" / name, "run 02_build_marker_sets.py")
+        target = data_dir / "hmms" / name
+        if not target.exists():
+            pytest.skip(
+                f"{target} is absent: the TIGRFAM/Pfam profiles are third-party "
+                "work and are not redistributed (db/README.md). Build them with "
+                "scripts/fetch_marker_db.py, then 02_build_marker_sets.py. The "
+                "cases that need them are not measurable on this checkout and "
+                "are reported as skipped rather than failed."
+            )
+        return target
     return _get
+
+
+@pytest.fixture(scope="session")
+def hmm_library(repo_root: Path) -> Optional[Path]:
+    """``db/gtdb_markers`` when a usable profile library is on disk, else None.
+
+    The bundled library is git-ignored on purpose, so a fresh checkout never
+    has it. Cases whose assertions can only hold once it exists consult this
+    fixture and skip explicitly, with the reason, instead of failing in a way
+    that looks like a regression.
+    """
+    root = repo_root / "db" / "gtdb_markers"
+    for candidate in (root / "ar53", root / "bac120"):
+        if candidate.is_dir() and any(
+                p.suffix.lower() == ".hmm" for p in candidate.iterdir()):
+            return root
+    return None
 
 
 @pytest.fixture(scope="session")

@@ -128,9 +128,16 @@ def test_unsupported_report_formats_are_refused_at_parse_time(
 @pytest.mark.capability("product:Phase5_metadata.run_config.json",
                         "workflow:provenance-recorded")
 def test_run_config_records_the_inputs_the_run_actually_used(mf, data_dir,
-                                                             record_metric):
+                                                             record_metric,
+                                                             hmm_library):
     """Reproducibility needs the recorded paths to be the ones that were used,
     including which marker source produced the numbers ('s pairing)."""
+    if hmm_library is None:
+        pytest.skip(
+            "database_versions is only non-empty when db/gtdb_markers exists; "
+            "the library is fetched, not committed (db/README.md), so a fresh "
+            "checkout cannot record one"
+        )
     run = mf(extra=["--force"])
     run.assert_ok()
     payload = run.product("Phase5_metadata/run_config.json").read_text(

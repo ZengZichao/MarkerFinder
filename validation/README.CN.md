@@ -69,7 +69,7 @@ validation/
 
 ## 如何运行
 
-前置条件：MarkerFinder 环境（Python 3.10–3.12，外加 `hmmsearch`、`mafft`、
+前置条件：MarkerFinder 环境（Python 3.10 及以上，外加 `hmmsearch`、`mafft`、
 `trimal`、`FastTree`/`fasttree`、`astral`、`iqtree3`），并执行
 `pip install -e ".[dev]"`。
 

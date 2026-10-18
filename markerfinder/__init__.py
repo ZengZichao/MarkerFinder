@@ -19,6 +19,13 @@ from markerfinder._version import (
     __version__,
     get_version_string,
 )
+
+# Must precede any ete3 import: Python 3.13 removed the stdlib ``cgi`` module
+# that ete3 imports at package-import time. Importing the package installs a
+# minimal stand-in so that `import ete3` works on 3.13+ for every caller
+# (including third-party and test code that imports ete3 directly).
+from markerfinder import _cgi_compat as _cgi_compat  # noqa: F401
+
 from markerfinder.taxonomy import (
     parse_taxonomy,
     is_monophyletic,

@@ -341,6 +341,14 @@ def _build_one_gene_tree(
             # (与项目其它处 FastTree 调用风格统一).
             ft_candidates = ["fasttree", "FastTree"]
             ft_ok = False
+            # Why the last attempt failed. The summary warning below has to be
+            # able to name a cause, and it used to interpolate `ft_last_err` --
+            # a name that was never assigned on any path. So the "FastTree
+            # unavailable" branch, which is the normal branch when fasttree is
+            # not installed, raised NameError instead of warning: a degradation
+            # that was supposed to be quiet and recoverable turned into a crash
+            # inside the logger call that was supposed to describe it.
+            ft_last_err = "no FastTree candidate ran"
             for ft_exe in ft_candidates:
                 try:
                     if ft_exe == "fasttree":
@@ -355,9 +363,11 @@ def _build_one_gene_tree(
                         )
                     ft_ok = True
                     break
-                except FileNotFoundError:
+                except FileNotFoundError as e:
+                    ft_last_err = f"{ft_exe} is not on PATH ({e})"
                     continue
                 except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+                    ft_last_err = f"{ft_exe} failed ({e})"
                     logger.warning(
                         f"  FastTree({ft_exe}) gene-tree build failed for "
                         f"{marker_id}: {e}"

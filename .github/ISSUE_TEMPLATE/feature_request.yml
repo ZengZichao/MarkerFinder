@@ -1,0 +1,33 @@
+name: Feature request
+description: A capability or documented behaviour that is missing
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Chinese descriptions are welcome (中文描述也可以).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: |
+        The scientific or workflow need — not only the solution you have in
+        mind. What can you not measure or express today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: |
+        What would the CLI or the report do? Include the flags you would
+        expect to type and what the recorded run_config / report should show.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways to get the same result, and why they fall short.
+    validations:
+      required: false

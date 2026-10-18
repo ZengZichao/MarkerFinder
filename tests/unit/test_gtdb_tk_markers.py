@@ -78,3 +78,66 @@ class TestSplitUserMsa:
         m2 = (out_dir / "M2.faa").read_text(encoding="utf-8")
         assert ">G1\nABC\n>G2\n123" in m1
         assert ">G1\nDEFGH\n>G2\n45678" in m2
+
+
+class TestGeneTreeFastTreeUnavailable:
+    """The "FastTree unavailable" branch must degrade, not crash.
+
+    The summary warning interpolated ``ft_last_err`` -- a name that was never
+    assigned on any code path. So the branch taken whenever fasttree is simply
+    not installed, which is the most ordinary reason to lack a gene tree, raised
+    ``NameError`` from inside the logger call whose whole job was to describe
+    that degradation. A recoverable loss became a crash.
+
+    Must-fail control: with ``ft_last_err`` unbound, the assertion on "not on
+    PATH" below is unreachable because the call raises first.
+    """
+
+    @staticmethod
+    def _seqs(n=4):
+        return [
+            {"genome_id": f"G{i}", "seq": "ACDEFGHIKLMNPQRSTVWY" * 2}
+            for i in range(n)
+        ]
+
+    def _run_without_fasttree(self, tmp_path, monkeypatch, caplog):
+        import subprocess as real_subprocess
+
+        from markerfinder.utils import gtdb_tk_markers as g
+
+        marker_id = "M1"
+        trimmed = tmp_path / f"{marker_id}.aln.trim.faa"
+
+        def fake_run(cmd, **kwargs):
+            exe = cmd[0]
+            if exe == "mafft":
+                # MAFFT writes the alignment into the file object it was given.
+                kwargs["stdout"].write(">G0\nACDE\n")
+                return real_subprocess.CompletedProcess(cmd, 0)
+            if exe == "trimal":
+                trimmed.write_text(">G0\nACDE\n", encoding="utf-8")
+                return real_subprocess.CompletedProcess(cmd, 0)
+            # Both "fasttree" and "FastTree" are absent.
+            raise FileNotFoundError(2, "No such file or directory", exe)
+
+        monkeypatch.setattr(g.subprocess, "run", fake_run)
+        with caplog.at_level("WARNING", logger=g.logger.name):
+            return g._build_one_gene_tree(marker_id, self._seqs(), str(tmp_path))
+
+    def test_missing_fasttree_returns_no_tree_instead_of_raising(
+        self, tmp_path, monkeypatch, caplog
+    ):
+        marker_id, path = self._run_without_fasttree(tmp_path, monkeypatch, caplog)
+        assert marker_id == "M1"
+        assert path is None, "no tree can be produced without FastTree"
+
+    def test_the_degradation_names_the_real_cause(self, tmp_path, monkeypatch, caplog):
+        self._run_without_fasttree(tmp_path, monkeypatch, caplog)
+        warned = [
+            r.getMessage() for r in caplog.records if "FastTree unavailable" in r.getMessage()
+        ]
+        assert warned, (
+            "a skipped gene tree must be reported, got: "
+            f"{[r.getMessage() for r in caplog.records]}"
+        )
+        assert "not on PATH" in warned[0], warned[0]

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import List
+from typing import List, Optional
 
 from markerfinder.exceptions import PhyloToolUnavailable
 
@@ -21,21 +21,30 @@ from markerfinder.cli.constants import EXIT_SUCCESS, EXIT_RUNTIME_ERROR
 
 logger = logging.getLogger(__name__)
 
-# Mirrors ``requires-python = ">=3.10,<3.13"`` in pyproject.toml.
-# Running outside the declared range is an environment error and must be
-# Visible in ``--check`` ( ②).
+# Mirrors ``requires-python = ">=3.10"`` in pyproject.toml: the floor is the
+# only bound. The former ``<3.13`` ceiling was retired once
+# ``markerfinder._cgi_compat`` restored the stdlib ``cgi`` module that ete3
+# still imports at package-import time (PEP 594 removed it in 3.13), so ete3 --
+# and with it every MAD / monophyly measurement -- works on newer interpreters.
+# Falling below the floor is still an environment error and must be Visible in
+# ``--check`` ( ②).
 SUPPORTED_PY_MIN = (3, 10)
-SUPPORTED_PY_MAX_EXCLUSIVE = (3, 13)
+#: ``None`` means "no upper bound", mirroring the unbounded ``requires-python``.
+#: Pass an explicit ``max_exclusive`` to :func:`interpreter_in_range` to bound a
+#: single check; the module default is deliberately open-ended.
+SUPPORTED_PY_MAX_EXCLUSIVE: tuple | None = None
 
 
 def interpreter_in_range(
     version_tuple: tuple,
     *,
     min_version: tuple = SUPPORTED_PY_MIN,
-    max_exclusive: tuple = SUPPORTED_PY_MAX_EXCLUSIVE,
+    max_exclusive: tuple | None = SUPPORTED_PY_MAX_EXCLUSIVE,
 ) -> bool:
     """True iff the interpreter version lies in the declared support range."""
     v = tuple(int(x) for x in version_tuple[:2])
+    if max_exclusive is None:
+        return v >= min_version
     return min_version <= v < max_exclusive
 
 
@@ -50,6 +59,21 @@ def _version_tuple(version: str) -> tuple:
     return tuple(int(p) for p in parts[:3]) if parts else (0,)
 
 
+def _declared_range_label() -> str:
+    """Render the declared range from the constants, never from a literal.
+
+    This label used to be a hardcoded ``">=3.10,<3.13"`` while pyproject had
+    already dropped the ceiling, so ``--check`` reported a bound the manifest no
+    longer declared. Deriving the text from the constants is what stops the two
+    from drifting apart again.
+    """
+    floor = ".".join(str(x) for x in SUPPORTED_PY_MIN)
+    if SUPPORTED_PY_MAX_EXCLUSIVE is None:
+        return f">={floor}"
+    ceiling = ".".join(str(x) for x in SUPPORTED_PY_MAX_EXCLUSIVE)
+    return f">={floor},<{ceiling}"
+
+
 def _test_dependencies() -> List[tuple]:
     results: List[tuple] = []
     # Interpreter version must lie inside the declared support range.
@@ -58,12 +82,15 @@ def _test_dependencies() -> List[tuple]:
     # (major, minor, micro) tuple — keeps the must-fail control patchable.
     triplet = (v[0], v[1], v[2])
     in_range = interpreter_in_range(triplet)
+    declared = _declared_range_label()
+    floor = ".".join(str(x) for x in SUPPORTED_PY_MIN)
     results.append((
-        f"Interpreter {triplet[0]}.{triplet[1]}.{triplet[2]} in >=3.10,<3.13",
+        f"Interpreter {triplet[0]}.{triplet[1]}.{triplet[2]} in {declared}",
         "PASS" if in_range else "FAIL",
         "supported" if in_range else (
-            "out of range: pyproject.toml requires-python = \">=3.10,<3.13\"; "
-            "create a 3.10–3.12 environment (conda env create -f environment.yml)"
+            f"below the declared floor: pyproject.toml requires-python = "
+            f"\"{declared}\"; create a >= {floor} environment "
+            f"(conda env create -f environment.yml)"
         ),
     ))
     # The declared runtime imports, version-checked. A library the package does

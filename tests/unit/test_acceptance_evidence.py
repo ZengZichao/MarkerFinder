@@ -112,8 +112,10 @@ class TestStringencyLadder:
             if not measured:
                 pytest.skip(
                     "NOT EXECUTED: RF/quartet unmeasurable in this interpreter "
-                    "(needs ete3, i.e. Python 3.10-3.12) — a vacuous monotonicity "
-                    "check would be meaningless."
+                    "(needs ete3, which is importable on every supported "
+                    "interpreter once `markerfinder` is loaded — so this means a "
+                    "broken install) — a vacuous monotonicity check would be "
+                    "meaningless."
                 )
             counts.append(
                 sum(1 for r in results

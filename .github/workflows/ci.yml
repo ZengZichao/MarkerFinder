@@ -1,0 +1,118 @@
+name: CI
+
+# The fast layer. Every test under tests/ is pure-Python and needs no external
+# binaries and no data download, so it is safe to make a pull-request gate.
+# The acceptance layer (real genomes, real tools) lives in
+# validation-nightly.yml instead -- see the comment there for why.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Superseded runs are cancelled: on a PR with a few pushes in flight the older
+# commits cannot become interesting again.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Nothing in this workflow writes to the repository, reads a secret, or calls a
+# third-party API, so the token gets the narrowest scope that still works.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest + self-check (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    # The suite takes ~10 s. This bound is not about slowness, it is about a
+    # hung job: without it a wedged test can occupy a runner for the 6-hour
+    # default while reporting nothing.
+    timeout-minutes: 25
+    strategy:
+      # One interpreter failing must not hide the state of the other four --
+      # the whole point of the matrix is knowing WHICH version broke.
+      fail-fast: false
+      matrix:
+        # One entry per version claimed in pyproject classifiers and the README
+        # badge. Adding a version to those without adding it here leaves the
+        # claim untested; that is the drift this matrix exists to prevent.
+        # 3.13+ only works because markerfinder/_cgi_compat.py restores the
+        # stdlib `cgi` module ete3 imports, which is why the smoke check below
+        # imports markerfinder BEFORE ete3.
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install package with dev extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      # Kept as three steps rather than one `pytest tests`: an early failure
+      # still shows the later layers' state, which is the difference between
+      # "unit broke" and "everything is unknown".
+      - name: Unit tests
+        run: python -m pytest tests/unit -q
+
+      - name: Integration tests
+        run: python -m pytest tests/integration -q
+
+      # tests/benchmark was previously in no workflow at all, so the contract
+      # tests for scripts/smoketest.py and probe_zero_discrimination.py had
+      # zero regression protection while still counting toward the README badge.
+      - name: Benchmark tests
+        run: python -m pytest tests/benchmark -q
+
+      - name: Import smoke check
+        run: |
+          # markerfinder first on purpose: importing it installs the cgi shim
+          # that ete3 needs on 3.13+. Probing ete3 on its own would report
+          # every supported interpreter as broken.
+          python -c "import markerfinder, ete3; print('markerfinder', markerfinder.__version__, '| ete3 importable')"
+
+      - name: Self-check
+        # --check is the gate that keeps the declared support range honest: it
+        # reports the interpreter check from SUPPORTED_PY_MIN, so a manifest and
+        # a runtime that disagree turns CI red instead of quietly lying in the
+        # README.
+        run: python -m markerfinder --check
+
+  # The single job branch protection points at.
+  #
+  # "Require status checks to pass" matches on check *name*, and the names of a
+  # matrix job contain its version ("pytest + self-check (py3.13)"). Requiring
+  # all five would break the moment the matrix is edited — a required check
+  # that GitHub cannot find is a required check that can never be satisfied, and
+  # the safe-looking response is to turn the requirement off again. This job has
+  # a fixed name and an explicit dependency on the whole matrix, so the branch
+  # rule survives any change to the versions under test.
+  required:
+    name: ci-required
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: test
+    # Runs even when the matrix failed or was cancelled, so the branch rule
+    # always gets an answer. Without `always()` this job is skipped on failure
+    # and a skipped required check is reported as pending, not as a failure.
+    if: always()
+    steps:
+      - name: Fail if any interpreter did not pass
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          echo "matrix result: ${TEST_RESULT}"
+          if [ "${TEST_RESULT}" != "success" ]; then
+            echo "::error::ci-required gate: the test matrix reported" \
+                 "'${TEST_RESULT}', not 'success'. Merging is blocked." >&2
+            exit 1
+          fi
+          echo "all interpreters passed"
