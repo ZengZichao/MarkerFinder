@@ -25,7 +25,7 @@ every internal check passed, and
 the topology was biologically absurd. So the suite is split:
 
 ```
-tests/       1040 fast cases, no external tools required, no data download
+tests/       1043 fast cases, no external tools required, no data download
 validation/  153 end-to-end cases on real genomes with real tools
 ```
 

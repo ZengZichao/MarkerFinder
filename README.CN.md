@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](https://github.com/ZengZichao/MarkerFinder/releases)
 [![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1040%20collected-brightgreen.svg)](#测试)
+[![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#测试)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
 [English](README.EN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
@@ -536,8 +536,8 @@ markerfinder --check
 python validation/run_validation.py --all -n 8
 ```
 
-**测试覆盖（实测值，不再是估计值）：** 测试共 91 个模块，收集 **1040** 个用例，
-其中 `tests/unit/` 972 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
+**测试覆盖（实测值，不再是估计值）：** 测试共 91 个模块，收集 **1043** 个用例，
+其中 `tests/unit/` 975 个、`tests/integration/` 17 个、`tests/benchmark/` 51 个
 （三个目录之和 == 徽章数字，由 `tests/unit/test_docs_numbers_are_current.py` 双向复核）。
 用例总数以顶部徽章为准（`python3 -m pytest tests --collect-only -q`），每次提交随实跑结果刷新。
 快速层在 CI 中对每个受支持解释器（3.10、3.11、3.12、3.13、3.14）运行

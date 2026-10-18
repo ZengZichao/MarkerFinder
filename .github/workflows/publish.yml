@@ -1,0 +1,68 @@
+# Publish MarkerFinder to PyPI from a tagged GitHub release.
+#
+# Authentication is PyPI Trusted Publishing (OpenID Connect): the workflow
+# exchanges its runner identity for a short-lived upload token, so no API
+# token is stored in this repository. For that to work, a pending publisher
+# must exist on PyPI naming this exact repository, workflow filename and
+# environment:
+#
+#   PyPI -> Account settings -> Publishing -> Add a new pending publisher
+#     PyPI project name:  markerfinder
+#     Owner:              ZengZichao
+#     Repository:         MarkerFinder
+#     Workflow name:      publish.yml
+#     Environment name:   pypi
+#
+# Consequences: any release published in this repository uploads whatever that
+# commit builds, and every action is pinned by commit SHA for the same reason
+# the CI workflow is.
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build sdist and wheel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install build
+        run: python -m pip install --upgrade build
+      - name: Build distributions
+        run: python -m build
+      - name: Metadata sanity check
+        run: |
+          python -m pip install --upgrade twine
+          python -m twine check dist/*
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: Upload to PyPI
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: pypi
+    permissions:
+      # The only permission the OIDC exchange needs: mint and present the
+      # workload identity token to PyPI.
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: dist
+          path: dist/
+      - name: Publish distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@7f25271a4aa483500f742f9492b2ab5648d61011  # v1.12.4

@@ -4,13 +4,33 @@ All notable changes to MarkerFinder are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.1] - 2026-10-18
 
 This release is user-visible in two ways: it widens the supported interpreter
 range, and it adds a required runtime dependency. Both were previously wrong in
-the manifest, in the code and in the documentation at the same time.
+the manifest, in the code and in the documentation at the same time. It is also
+the first release published to PyPI (`pip install markerfinder`), shipped from
+the tagged GitHub release through an OIDC trusted-publisher workflow rather
+than a long-lived API token.
 
 ### Added
+
+- **PyPI distribution.** `.github/workflows/publish.yml` builds the sdist and
+  wheel on a tagged release and uploads them to PyPI with
+  `pypa/gh-action-pypi-publish` under `permissions: id-token: write` — no
+  API token is stored in the repository. The `license` field moved to the SPDX
+  expression form (`license = "MIT"`) and the redundant license classifier was
+  dropped, clearing the setuptools deprecation from the build log.
+- `scripts/make_review_package.py` builds a genuinely anonymous peer-review
+  package: identifiers (name, e-mail, ORCID iD, own-repository URLs, BibTeX
+  fields) are derived from the repository itself and scrubbed, the build fails
+  on any residual identifying-string hit, and the script's own source is
+  written so it cannot re-leak what it removes. `tests/unit/test_make_review_package.py`
+  covers detection and removal agreement.
+- `worked_example/provenance_manifest.json` ships the provenance record the
+  manuscript cites, and the worked-example recipe states the correct severity
+  for a manifest hash mismatch (integrity signal, not a reproducibility
+  blocker).
 
 - **Continuous integration.** `.github/workflows/ci.yml` runs the full fast
   suite on CPython 3.10, 3.11, 3.12, 3.13 and 3.14, with `permissions:
