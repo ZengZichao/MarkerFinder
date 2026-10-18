@@ -83,11 +83,12 @@ conda install -c bioconda -c conda-forge \
 # 如未来使用 OrthologResolver 接口，可额外安装 diamond
 # conda install -c bioconda diamond>=2.1.0
 
-# 安装 Python 依赖
-pip install biopython>=1.81 pandas>=2.0 numpy>=1.24 \
-    scipy>=1.10 rich>=13.0
+# 从 PyPI 安装 MarkerFinder —— 运行时依赖（biopython、pyyaml、ete3、six）会随之
+# 自动安装。pandas / numpy / scipy / rich 被刻意排除在依赖之外：包内没有任何
+# 代码导入它们。
+pip install markerfinder
 
-# 安装 MarkerFinder
+# 或从源码做开发安装 —— 运行时依赖相同，另含 pytest/mypy 开发附加项。
 pip install -e ".[dev]"
 ```
 

@@ -83,11 +83,13 @@ conda install -c bioconda -c conda-forge \
 # Install diamond only if you plan to use the OrthologResolver interface in future versions
 # conda install -c bioconda diamond>=2.1.0
 
-# Install Python dependencies
-pip install biopython>=1.81 pandas>=2.0 numpy>=1.24 \
-    scipy>=1.10 rich>=13.0
+# Install MarkerFinder from PyPI — its runtime dependencies (biopython,
+# pyyaml, ete3, six) are pulled in automatically. pandas / numpy / scipy /
+# rich are deliberately NOT dependencies; nothing in the package imports them.
+pip install markerfinder
 
-# Install MarkerFinder
+# Or a development install from a source checkout — same runtime deps plus
+# the pytest/mypy dev extra.
 pip install -e ".[dev]"
 ```
 
