@@ -122,12 +122,12 @@ assembly accession. What is preserved is exactly what the pipeline reads (file
 layout, marker ids, unaligned protein sequences, per-marker occupancy). What is
 **not** reproduced is GTDB-Tk's taxonomy-aware best-hit choice, so these files
 must not be read as a GTDB-Tk release output. `OCCUPANCY_ALL.tsv` records the
-occupancy of all 121 scanned profiles; each marker directory carries its own
+occupancy of all 120 scanned profiles; each marker directory carries its own
 `OCCUPANCY.tsv`.
 
 Two derived sets exist for deliberate reasons:
 
-* `markers/<set>` (20 markers spanning occupancy 0.875–1.0) versus
+* `markers/<set>` (20 markers spanning occupancy 0.75–1.0) versus
   `markers/<set>_core` (8 complete markers) — a threshold cannot be shown to
   reject on data where everything is complete, and the core set keeps runs fast;
 * `markers/degenerate/` — a 2-tip and a 1-tip marker carved out of a real one by
@@ -158,9 +158,10 @@ would inflate apparent sensitivity. Two quantities are reported:
    exit code, or a measured difference. "The function was called" is not
    accepted as evidence for a behavioural claim.
 2. **Differential over absolute.** Most cases run the pipeline twice with one
-   factor changed and compare (`--max-markers 2` vs `8`, threshold 0.0 vs 1.01,
-   floor 0 vs 100000). An absolute expected value would silently encode the
-   dataset; a difference isolates the knob.
+   factor changed and compare (`--max-markers 2` vs `8`, threshold 0.0 vs 1.0,
+   floor 0 vs 100000, plus a single-arm case that sets
+   `--require-evidence-coverage` to 1.01). An absolute expected value would
+   silently encode the dataset; a difference isolates the knob.
 3. **A knob that changes nothing is a failure.** `test_l2l3_boundary_decides_exclusion`,
    `test_occupancy_floor_rejects_markers_below_it`,
    `test_informative_site_floor_marks_markers_inconclusive_and_says_so` and
@@ -231,8 +232,8 @@ asserts `--check` agrees with it).
 The measured outcome of the published run — pass/fail counts, timings, coverage
 figures, detection metrics, and every product/schema defect the suite exposed
 during this rework — is in
-**[docs/TEST-REPORT.EN.md](TEST-REPORT.EN.md)** (中文:
-[docs/TEST-REPORT.CN.md](TEST-REPORT.CN.md)).
+**[TEST-REPORT.EN.md](TEST-REPORT.EN.md)** (中文:
+[TEST-REPORT.CN.md](TEST-REPORT.CN.md)).
 
 Known limits, stated rather than left implicit:
 
@@ -245,6 +246,8 @@ Known limits, stated rather than left implicit:
   epidemiologically representative HGT sample; the wider external benchmark in
   `tests/benchmark/` (30 genomes, GTDB r53 truth) is the route to a stronger
   estimate and is user-triggered because of its download size.
-* The 20-marker occupancy span reaches 0.875 at the low end: the bundled
+* The 20-marker occupancy span reaches 0.75 at the low end
+  (`validation/data/markers/bench12/OCCUPANCY.tsv`: `TIGR02012` 9/12 = 0.7500): the bundled
   library is a conserved-marker library, so very sparse markers do not occur on
-  this (closely related) genome set and are simulated by subsetting instead.
+  this (closely related) genome set and are simulated by subsetting instead,
+  and are labelled as such.

@@ -12,7 +12,7 @@ file is the primary version.
 > **Mixed-vintage warning.** The two layers in §2 are measured on different trees.
 > The fast layer (`tests/`, 1043 collected / 1043 passed + 0 skipped) is measured on this 0.1.1
 > tree after merging the remote CI/dependency fixes (PR #2–#8), in an interpreter that has the
-> `dev` extra installed.
+> `dev` extra installed (which provides mypy).
 > The validation layer and the run identity in §1 are the **archived** run recorded
 > in `validation/results/` — `environment.txt` there stamps `version : 0.1.0`,
 > because that end-to-end run was executed on the 0.1.0 tag and has not been
@@ -28,12 +28,12 @@ file is the primary version.
 |---|---|
 | Software | MarkerFinder `0.1.0` |
 | Interpreter | CPython 3.11.9, conda environment `markerfinder` |
-| Host / CPUs | Linux x86-64, 96 CPUs (`platform.platform` in the artefact) |
+| Host / CPUs | Linux x86-64, 96 CPUs (`platform` and `cpu_count` lines in `environment.txt`) |
 | Validation run | `python validation/run_validation.py --all -n 16` (16 pytest workers) |
 | Case count | 153 collected / 153 executed |
-| Result | **152 passed · 0 failed · 0 errors · 1 xfailed** (expected failure, see §5.7) |
+| Result | **152 passed · 0 failed · 0 errors · 1 xfailed** (expected failure, see `v08_criteria` in §5.2) |
 | Wall clock | see `validation/results/junit.xml` (`time` attribute of the suite) |
-| External tools | hmmsearch 3.4, mafft v7.525, trimal v1.5.rev1, FastTree 2.2.0, IQ-TREE 3.1.3, ASTRAL 5.7.8, CheckM 1.2.2, ncbi-datasets 18.38.0 |
+| External tools | hmmsearch 3.4, mafft v7.525, trimal v1.5.rev1, FastTree 2.2.0, IQ-TREE 3.1.3, ASTRAL 5.7.8, CheckM (`environment.txt` records only its `usage: checkm` line, no version), ncbi-datasets 18.38.0 |
 | Archived artefacts | `validation/results/{junit.xml,metrics.json,capability_matrix.tsv,environment.txt,chimera_metrics.json}` |
 
 The full environment inventory — interpreter path, each declared dependency's
@@ -61,7 +61,7 @@ The surface is enumerated from the code, not from a hand-kept list
 | Source of truth | Entries | Covered by at least one case |
 |---|---|---|
 | `--options` in `_build_parser` (incl. deprecated aliases and their recording attributes) | 68 | 68 |
-| Stepwise subcommands (`scan` / `filter` / `infer` / `report`) | 5 | 5 |
+| Stepwise subcommands (`scan` / `filter` / `infer` / `report`, plus the no-subcommand aggregate run `aggregate-run`) | 5 | 5 |
 | Distinct exit codes in `markerfinder.cli.constants` | 7 | 7 |
 | Output products (reports, evidence, trees, alignments, state) | 19 | 19 |
 | Workflow properties (selection, grading, provenance, determinism, loudness…) | 9 | 9 |
@@ -83,7 +83,7 @@ weakened snapshot.
 | Cross-order positive control | 3 planted transfers (recipient *Bacillus anthracis* Ames ← donor *Lactococcus lactis* Il1403), drawn from a recorded candidate pool with `random.Random(20260929)` | `validation/data/markers/chimera_ground_truth_bench12.json` |
 | Functional-category map | the profiles' own `DESC` annotation lines (8/8 markers annotated) — **not** COG biology | `validation/data/cog/marker_category_map.tsv` |
 | Reference trees | built from the recorded lineages; every internal node resolved (a polytomy would make the reference untestable) and validated at build time | `validation/data/trees/`, `03_build_fixtures.py::_validate_reference` |
-| Integrity | SHA-256 of every shipped data file | `validation/data/MANIFEST.sha256` (241 files), verified by `test_shipped_data_matches_the_manifest` |
+| Integrity | SHA-256 of every shipped data file | `validation/data/MANIFEST.sha256` (241 files), verified by `test_manifest_checksums_match_the_shipped_files` |
 | Organism identity | the genus recorded for each assembly must be the majority `[organism]` in that proteome's own FASTA headers | `test_shipped_genomes_are_the_organisms_the_provenance_claims` |
 
 Two data defects were found while building this bundle and are fixed in it:
@@ -120,11 +120,12 @@ testable per marker:
 |---|---|---|
 | Taxa tested per marker (`n_total`) at order rank | 2 | `hgt_evaluation.tsv` |
 | Monophyly proportion distribution | 0.0 and 0.5 among the 4 scored markers | `hgt_evaluation.tsv` |
-| `--monophyly-threshold 0.0` vs `1.0` | 3 markers flagged vs 3 flagged (floor at 0 flags nothing extra; at 1 nothing survives) | `v04_monophyly` |
+| `--monophyly-threshold 0.0` vs `1.0` | 3 markers flagged vs 3 flagged (a stricter floor can only move markers down; on this data both thresholds flag the same three) | `v04_monophyly` |
 | `--hgt-threshold-l2l3 0.9` vs `0.1` | 0 excluded → 2 excluded | `v06_l2l3` |
 | `--hgt-threshold` (deprecated alias of L1/L2) | Level-1 count 4 → 2, Level-3 count unchanged | `v06_alias` |
 | `--hgt-adaptive-thresholds` | `level2_max` 0.6 → 0.95, announced as far-distance; default run says nothing | `v06_adaptive` |
-| Ranking-only demotion (consistency criterion) | `--cog-category-map` fills `functional_category` on profiled markers; without it the column reads `NA` with a note | `v06_cog` |
+| Ranking-only demotion (consistency criterion) | `--cog-category-map` fills `functional_category` in the excluded-marker profile (`markerfinder.excluded_profile.tsv`); without the map that column reads `NA` with the reason in `category_note` | `v06_cog` |
+| `--hgt-mode risk / consistency / hybrid` | all three criteria kept exactly the same marker set on this data (`PF01025.20` alone), so this dataset cannot discriminate them; the case is recorded as xfail and the report does not claim a separation | `v08_criteria` |
 
 Three behaviours of this screen were wrong and are fixed, because the validation
 data exposed them: the monophyly verdict depended on where MAD put the root (the
@@ -144,8 +145,8 @@ turn off. Default is now `auto` (derive from the tree); naming a rank means it.
 | `--taxonomy-mustpass` violated (split-genus twin table) | run aborts, violation named | 4 (`EXIT_ASSERTION_FAILED`) |
 | `--taxonomy-mustpass` pointing at a missing baseline | refuses rather than passing | 4 |
 | `--allow-assertion-failure` bypass | bypass is recorded in the products | 4 → run completes with the bypass flagged |
-| Recommendation inconclusive | documented exit 5 reachable and labelled | 5 |
-| Argument errors (`-t 0`, `--min-occupancy 1.5`, `-o` onto a file) | refused with a message, no traceback | 2 |
+| Recommendation inconclusive | driven with the 3-tip dataset: the run exits 3 (`EXIT_DATA_ERROR`) and says what is missing; the documented 5 was not reached by this data, it is pinned only at constant and unit level | 3 |
+| Argument errors (`-t 0`, `--min-occupancy 1.5`, `-o` onto an existing file) | refused with a message, no traceback | 2 |
 
 The must-pass gate used to read the *path* of the gene-tree cache file as if it
 were Newick, so it tested zero relations and printed "all required relations
@@ -227,8 +228,10 @@ cannot "rise", so demanding a rise from all three would either be unsatisfiable
 or would force the baseline error rate out of sight. The case therefore asserts
 that every planted marker is excluded, that the bystanders are silent, and that
 the baseline is not saturated — and it publishes the baseline number. `xfail`
-is reserved for what the suite knows it cannot yet claim; nothing in this run
-depends on an expected failure to look green.
+is reserved for what the suite knows it cannot yet claim; nothing in this
+detection case depends on an expected failure to look green, and the run's one
+and only xfail is the three-criteria case of §5.2 (the criteria are not
+distinguishable on this dataset).
 
 ## 6. Defects found by this validation and fixed
 
@@ -271,9 +274,10 @@ depends on an expected failure to look green.
 * **COG biology.** The functional-category column is filled from the fetched
   profiles' own annotation lines, so it exercises the `--cog-category-map` path.
 * **Occupancy extremes.** The fetched profile set is a conserved-marker set, so the
-  sparsest natural marker over these related genomes still sits at occupancy
-  0.875; sparser inputs had to be truncated (2-tip / 1-tip) and are labelled as
-  such in `validation/data/markers/degenerate/README`.
+  sparsest natural marker over the 12-genome benchmark set sits at occupancy
+  0.75 (`TIGR02012`, 9/12, `validation/data/markers/bench12/OCCUPANCY.tsv`);
+  sparser inputs had to be truncated (2-tip / 1-tip) and are labelled as
+  such in `validation/data/markers/degenerate/README.txt`.
 * **Python 3.13 and newer.** ete3 imports the stdlib `cgi` module at
   package-import time and CPython removed `cgi` in 3.13 (PEP 594), which used to
   make ete3 — and every MAD / monophyly measurement — unusable on newer
@@ -283,7 +287,7 @@ depends on an expected failure to look green.
   upper bound is itself under test rather than asserted in prose. Residual risk:
   the shim covers only the one symbol ete3 touches (`cgi.FieldStorage`) and raises
   `NotImplementedError` if anything actually calls it. MarkerFinder never uses
-  the ete3 web plugin, so that path is not exercised.
+  the ete3 web plugin, and no case in this run exercises that path either.
 * **A writable `/tmp`.** MAFFT creates scratch with `mktemp -dt` and, when that
   fails, continues with an empty path and produces no alignment — which the
   pipeline then reported as "no markers could be aligned". The suite pins

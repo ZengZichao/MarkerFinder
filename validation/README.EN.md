@@ -8,6 +8,10 @@ the real pipeline against real genomes and real HMM profiles — nothing here is
 mocked, and nothing here is a unit test. The fast, mock-based layer lives in
 [`../tests/`](../tests).
 
+> English is the primary version of this repository's documentation; the
+> Chinese file is a parallel translation, and where the two disagree the
+> English version governs.
+
 ---
 
 ## What it establishes
@@ -16,7 +20,7 @@ mocked, and nothing here is a unit test. The fast, mock-based layer lives in
 |---|---|---|
 | 1 | Every capability the command line advertises has a case | `cases/test_v90_capability_coverage.py`, `results/capability_matrix.tsv` |
 | 2 | The whole workflow runs, step by step and in one shot, with the same result | `cases/test_v12_stepwise_workflow.py` |
-| 3 | Every documented output file exists, with the documented columns | `cases/test_v14_product_audit.py` |
+| 3 | Every documented output file exists, with the documented columns and content | `cases/test_v14_product_audit.py` |
 | 4 | Detection performance is measured against a positive control with a known answer | `cases/test_v17_benchmark_detection.py` |
 | 5 | Two runs on the same input give the same answer | `cases/test_v15_reproducibility.py` |
 | 6 | Failure paths fail loudly, in the right exit code, without a traceback | `cases/test_v16_robustness_edges.py` |
@@ -51,7 +55,8 @@ validation/
 ├── scripts/                      how the data was built, from public sources
 │   ├── 01_fetch_genomes.py       NCBI download + authoritative lineage
 │   ├── 02_build_marker_sets.py   per-marker FASTA, occupancy, planted chimeras
-│   └── 03_build_fixtures.py      tables, trees, quality files, configs, manifest
+│   ├── 03_build_fixtures.py      tables, trees, quality files, configs, manifest
+│   └── 04_record_environment.py  measured interpreter, packages and tool versions
 └── results/                      archived outputs of the published run
     ├── metrics.json              every number quoted by the test report
     ├── capability_matrix.tsv     capability → covering cases
@@ -60,7 +65,7 @@ validation/
     └── environment.txt           interpreter, packages and tool versions measured
 ```
 
-`data/.work/` (actually `.work/`) is scratch: materialised input directories,
+`validation/.work` is scratch: materialised input directories,
 per-case outputs and temp directories. It is disposable and git-ignored.
 
 ---
@@ -91,16 +96,23 @@ pytest validation/cases/test_v06_hgt_screening.py -k composition
 ```
 
 The suite pins its own environment: the interpreter's `bin` is prepended to
-`PATH`, and `TMPDIR`/`MAFFT_TMPDIR` point inside `validation/.work`, so a
-read-only or full `/tmp` cannot turn into a misleading "no markers could be
-aligned".
+`PATH`, and `TMPDIR`/`MAFFT_TMPDIR` point inside `validation/.work`. Otherwise,
+with a read-only or full `/tmp`, MAFFT fails silently and shows up as "no
+markers could be aligned" — disguising an environment problem as a scientific
+conclusion.
 
 ### Runtime
 
-Measured on 96 cores with `-n 14`: the non-slow suite completes in about 15
-minutes. A single pipeline run on the default four-genome, four-marker
-configuration costs roughly 40 seconds; the same dataset over 30 markers costs
-7 m 19 s, which is why feature-level cases run on small marker budgets and only
+`results/environment.txt` records the measured machine as 96 cores
+(`cpu_count: 96`). The measured total duration of the whole suite is in
+`results/junit.xml`: the testsuite `time` is 1682.956 s (about 28 minutes, 153
+cases), of which the only `slow`-marked module
+`cases/test_v17_benchmark_detection.py` accounts for 1367.2 s; that artifact
+does not record the degree of parallelism, so only the measured total is
+reported here, not a worker count for a single run. As recorded in
+`conftest.py`, a single pipeline run measured 1 m 34 s
+for 4 genomes over 6 markers, and 7 m 19 s for the same dataset over 30
+markers, which is why feature-level cases run on small marker budgets and only
 the occupancy and detection cases use the larger sets.
 
 ---
@@ -167,6 +179,6 @@ is a labelling experiment and is recorded as one.
 * Differential assertions (run A vs run B, one factor changed) are preferred
   over absolute thresholds, because an absolute threshold silently encodes the
   dataset.
-* Skips are loud and reasoned; a skip is never presented as a pass.
+* Every skip must state its reason; a skip is never presented as a pass.
 * Numbers that the report quotes are written to `results/metrics.json` by the
   cases themselves, so a stale number in prose becomes a diff in the record.

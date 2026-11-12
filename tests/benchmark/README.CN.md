@@ -2,37 +2,37 @@
 
 [English version](README.EN.md)
 
-目的：让 MarkerFinder 有能力用**外部**数据发现自身的偏差（G6）。本目录不会自动
-下载任何内容——GB 量级的下载与生信工具都由用户显式触发。
+目的：让 MarkerFinder 有能力用**外部**数据发现自身的偏差。本目录不会自动
+下载任何内容——GB 量级的下载与生信工具都必须由用户显式触发。
 
 ## 目录内容
 
 | 路径 | 作用 |
 |---|---|
-| `expected/accessions.yaml` | GTDB ar53 目水平集合：30 个基因组（25 个目内 + 5 个外群），依 |
+| `expected/accessions.yaml` | GTDB ar53 目阶元集合：30 个基因组（25 个目内 + 5 个外群），依据见[来源 / 许可证 / 引用](#来源--许可证--引用) |
 | `expected/chimera_positives.yaml` | 植入型嵌合体真值模板（位置已知的 HGT 阳性） |
 | `expected/taxonomy_mustpass.yaml` | “must-pass” 分类学关系骨架 |
 | `fetch_datasets.sh` | 从 NCBI 下载该 accession 集合到 `downloads/`（不入库） |
-| `make_chimeras.py` | 构造嵌合体 FASTA：把基因组 A 的标记 X 替换为远缘基因组 B 的同源序列 |
+| `make_chimeras.py` | 构造嵌合体 FASTA：把基因组 A 的标记 X 替换为远缘基因组 B 的直系同源序列 |
 | `run_benchmark.py` | 运行流水线、读取决策卡、计算指标 |
 | `metrics.py` | precision / recall / F1 + 块自助法置信区间（块 = 基因组） |
-| `provenance.py` | ：DOI / 许可证 / 获取日期 / 校验和记录；不完整时 `run_benchmark` 拒绝运行 |
-| `ablation.py` | ****：反向消融——只允许两个排序在**唯一一个**因子上不同，否则拒绝 |
-| `perf_probe.py` | 运行时长/规模探针，作用于随包的骨架数据 |
+| `provenance.py` | [`expected/accessions.yaml`](expected/accessions.yaml) 的 `provenance:` 段：DOI / 许可证 / 获取日期 / 校验和记录；不完整时 `run_benchmark` 拒绝运行 |
+| `ablation.py` | **[如何运行](#如何运行由用户触发)第 4 步的反向消融**：只允许两个排序在**唯一一个**因子上不同，否则拒绝 |
+| `perf_probe.py` | 运行时间/规模探针，作用于随包的骨架 |
 | `test_metrics_selfcheck.py` | pytest：指标自检，含 must-fail 对照 |
-| `test_provenance_contract.py` | pytest： 门禁是双向的（随包文件必须 FAIL，填好的必须 PASS） |
-| `test_ablation_contract.py` | pytest： 拒绝规则 + tau 对照 + 驱动接线 |
+| `test_provenance_contract.py` | pytest：[`provenance.py`](provenance.py) 门禁是双向的（随包文件必须 FAIL，填好的必须 PASS） |
+| `test_ablation_contract.py` | pytest：[`ablation.py`](ablation.py) 拒绝规则 + tau 对照 + 驱动接线 |
 
 ## 如何运行（由用户触发）
 
 ```bash
-# 1. 下载基因组（GB 量级，需要网络 + 约 2 GB 磁盘）
+# 1. 下载基因组（GB 量级，需要网络 + 至少 5 GB 磁盘余量；低于 5 GB 时脚本拒绝运行并以 2 退出）
 bash tests/benchmark/fetch_datasets.sh
 
 # 2. 构造植入型嵌合体
 python tests/benchmark/make_chimeras.py --downloads tests/benchmark/downloads
 
-# 3. 运行基准（需要 mafft/trimal/FastTree/ASTRAL 在 PATH 中）
+# 3. 运行基准测试（需要 mafft/trimal/FastTree/fasttree/astral 在 PATH 中；iqtree3 不在这个必需列表里）
 python tests/benchmark/run_benchmark.py --downloads tests/benchmark/downloads
 
 # 4. 反向消融——两次已完成的运行，且只声明一个改变因子。
@@ -47,20 +47,27 @@ python tests/benchmark/run_benchmark.py --ablation-a ... --ablation-b ... \
     --ablation-factor hgt_filter=on:off
 ```
 
-值得了解的 规则：省略 `--factor` 会被拒绝（没有指明原因的排序差异不构成
+[`ablation.py`](ablation.py) 值得了解的规则：省略 `--factor` 会被拒绝（没有指明原因的排序差异不构成
 消融）；传两个 `--factor` 同样被拒绝——差异将无法归因。声明的设置完全相同也会
 被拒绝，因为在本代码库中这种情形历史上意味着该开关是死的。分歧以“平局校正后的
 Kendall tau-b”以及逐标记的秩位移报告在 `<prefix>.ablation.tsv` 中；得分为 `NA`
 的标记会被剔除并在 stderr 上点名，而不会被当作零分参与排序。
 
-如果缺少 mafft/trimal/FastTree/ASTRAL，`run_benchmark` 会逐阶段打印
-`NOT EXECUTED` 并以非零码退出——一个在缺少工具时仍悄悄“通过”的基准，正是
-中我们绝不可复现的失败模式。
+如果缺少 mafft/trimal/FastTree/fasttree/astral 中的任何一个，`run_benchmark` 会逐阶段打印
+`NOT EXECUTED` 并以非零退出码退出——一个在缺少工具时仍悄悄“通过”的基准测试，正是
+我们绝不可复现的失败模式。
 
 ## 来源 / 许可证 / 引用
 
 * 基因组：`expected/accessions.yaml` 中列出的 NCBI RefSeq accession
-  （选取规则见：一个 GTDB ar53 目，目内 25 个代表基因组 + 目外 5 个外群代表）。
+  （选取规则见 [`expected/accessions.yaml`](expected/accessions.yaml)：一个 GTDB ar53 目，目内 25 个代表基因组 + 目外 5 个外群代表）。
+* 前置条件：随包的 `expected/accessions.yaml` 目前是占位模板——`order` 仍为
+  `REPLACE_WITH_ORDER_NAME`，且 `provenance:` 下五项（`source_registry`、`doi`、
+  `license`、`retrieved_utc`、`checksum_sha256`）均为空。选定具体的 GTDB ar53 目、
+  填入 accession 与这五项之前，`fetch_datasets.sh` 会直接拒绝下载并以 2 退出，
+  `run_benchmark` 同样会因溯源记录不完整而拒绝运行。
 * 分类学真值：GTDB r53（Parks 等 2021，doi:10.1038/s41587-021-00960-6）。
 * 下载得到的数据**不进入版本库**；`downloads/` 已被 git 忽略，
-  `fetch_datasets.sh` 会把每个文件的 SHA-256 记入 `downloads/manifest.sha256`。
+  `fetch_datasets.sh` 会把每个文件的 SHA-256 记入 `downloads/manifest.sha256`
+  （该脚本调用 `shasum -a 256`；Linux 上通常没有这个命令，需改用 `sha256sum`，
+  否则清单这一步会失败）。

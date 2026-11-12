@@ -7,7 +7,7 @@
 
 ## 1. 测什么，以及为什么是这种形状
 
-MarkerFinder 公开发布的论断有三类，每类需要不同的instrument（检验手段）：
+MarkerFinder 公开发布的论断有三类，每类需要不同的检验手段：
 
 | 论断类别 | 例子 | 检验手段 |
 |---|---|---|
@@ -16,7 +16,7 @@ MarkerFinder 公开发布的论断有三类，每类需要不同的instrument（
 | 结论层 | “HGT 筛选能去除系统发育上误导性的标记” | **针对阳性对照的真实端到端运行**，`validation/` |
 
 结论层论断无法靠 mock 建立：一旦 mock 掉 MAFFT，比对结果就是 mock 想返回什么就
-是什么。促成本项目自检层的正是撤稿事件：*Science* 2025 年的海绵/栉水母研究
+是什么。促成本项目自检层的正是撤稿事件：*Science* 2025 年的海绵研究
 （Steenwyk & King 2025, *Science* 390:751-756,
 doi:10.1126/science.adw9456，2026-02-05 撤稿）正是在这个
 缺口上失败的——所有内部检查都通过，而拓扑在生物学上荒谬。因此测试被拆成：
@@ -29,19 +29,19 @@ validation/  153 个在真实基因组上用真实工具跑的端到端用例
 两层都随发布包提供；`validation/` 还额外提供其**数据**、**溯源记录**以及发布那次
 运行的**归档结果**。
 
-## 2. 能力面：什么叫“覆盖全部声称支持的功能”
+## 2. 能力面：“全部支持”是如何定义的
 
-“覆盖所有功能与全流程”只有在被声称的东西存在一个权威清单时才是可检验的。这个
+“覆盖全部声称支持的功能与整个流程”只有在被声称的东西存在一个权威清单时才是可检验的。这个
 权威清单就是代码：
 
 * `markerfinder.cli.parser._build_parser` → 68 个命令行选项（含 4 个已文档化
   的废弃别名与 1 个已文档化的空操作开关）；
-* `markerfinder.cli.parser._SUBCOMMAND_SPEC` → 4 个可续跑的分步命令；
+* `markerfinder.cli.parser._SUBCOMMAND_SPECS` → 4 个可续跑的分步命令；
 * `markerfinder.cli.constants` → 7 个互不相同的退出码；
 * `validation/capabilities.py` 中的产物清单 → 19 类输出产物
   （`Phase5_reports/*`、`Phase5_evidence/*`、`Phase4_trees/*`、
   `Phase4_alignments/*`、`Phase4_intermediate/*`、`.markerfinder/*`）；
-* 9 条流程/数据性质：占居率选择、HGT 分级、状态持久化、确定性、溯源记录、
+* 9 条流程/数据性质：占有率选择、HGT 分级、状态持久化、确定性、溯源记录、
   不可测不得写成占位值、失败必须大声、数据溯源完整性、清单校验和。（分步与
   一次性运行的等价性由相关选项的用例断言，不单独列为一条性质。）
 
@@ -97,8 +97,8 @@ Enterobacterales 目。由于 taxonomy 表直接驱动 MAD 定根 + 单系性筛
 现在有两道对策：
 
 * lineage 由 `01_fetch_genomes.py` 从 NCBI 获取，没有 `tax_id` 就无法产表；
-* `test_shipped_genomes_are_the_organisms_the_provenance_claims` 会读取每个蛋白质
-  组自身的 FASTA 头（NCBI 为每个蛋白写入 `[organism]`），并要求记录的属名是其中
+* `test_shipped_genomes_are_the_organisms_the_provenance_claims` 会读取每个随包蛋白
+  质组自身的 FASTA 头（NCBI 为每个蛋白写入 `[organism]`），并要求记录的属名是其中
   的多数物种。
 
 ### 3.3 标记输入是“布局重构”，并且如实标注
@@ -108,14 +108,14 @@ Enterobacterales 目。由于 taxonomy 表直接驱动 MAD 定根 + 单系性筛
 重构**：对 `db/gtdb_markers/bac120` 中每个 profile，取每个基因组 bitscore ≥ 20
 的最佳 hmmsearch 命中；一 marker 一文件，文件名主干即 marker id，tip 名为组装
 accession。被保留的恰是流水线真正读取的东西（文件布局、marker id、未比对蛋白
-序列、逐 marker 占居率）；**未**复现的是 GTDB-Tk 那套结合分类学的最佳命中选择，
-因此这些文件不能被当作 GTDB-Tk 的发布输出。`OCCUPANCY_ALL.tsv` 记录了全部 121
-个被扫描 profile 的占居率；每个 marker 目录另有本目录的 `OCCUPANCY.tsv`。
+序列、逐 marker 占有率）；**未**复现的是 GTDB-Tk 那套结合分类学的最佳命中选择，
+因此这些文件不得被当作 GTDB-Tk 的发布输出。`OCCUPANCY_ALL.tsv` 记录了全部
+120 个被扫描 profile 的占有率；每个 marker 目录另有本目录的 `OCCUPANCY.tsv`。
 
 两个派生集合的存在有明确理由：
 
-* `markers/<set>`（20 个 marker，占居率跨 0.875–1.0）与
-  `markers/<set>_core`（8 个满占居 marker）——在“一切都满”的数据上无法证明阈值
+* `markers/<set>`（20 个 marker，占有率跨 0.75–1.0）与
+  `markers/<set>_core`（8 个满占有率的 marker）——在“一切都满”的数据上无法证明阈值
   会拒绝；core 集合则保证运行够快；
 * `markers/degenerate/`——从真实 marker 中截取出的 2-tip 与 1-tip 文件，并附
   README 说明其来历，用于“低于可建树最小信息量”的健壮性用例。
@@ -124,14 +124,14 @@ accession。被保留的恰是流水线真正读取的东西（文件布局、ma
 
 `markers/chimera_bench12/` 与干净集合仅有三个文件不同。每一处都把
 *Bacillus anthracis* Ames（Caryophanales 目）的序列替换为 *Lactococcus lactis*
-Il1403（Lactobacillales 目）的同源序列——一次位置已知的跨目转移，从被记录的候选
+Il1403（Lactobacillales 目）的直系同源序列——一次位置已知的跨目转移，从被记录的候选
 池中用 `random.Random(20260929)` 抽取。其余字节完全一致，因此干净运行就是这同
 12 个基因组的成对阴性对照。
 
 检测在**排除**判定处计分（`hgt_risk_level == level_3`），因为 Level 2 是流水线
 仍然保留的“可疑”档：把它算作命中会虚增表观灵敏度。报告两个量：
 
-* **差示判定**——在嵌合运行中被排除、而在干净运行中未被排除的 marker，从而背景排
+* **差示判定**——在嵌合运行中被排除、而在干净运行中*未*被排除的 marker，从而背景排
   除率是被测出的，不是被假设的；
 * **方向性**——每个植入 marker 在嵌合运行中的风险必须高于它在干净运行中的风险，
   且任何未植入的 marker 都不得变化。
@@ -140,9 +140,10 @@ Il1403（Lactobacillales 目）的同源序列——一次位置已知的跨目�
 
 1. **只断言可观测结果。** 用例只对产物、列、退出码或实测差异下断言。“函数被调用
    过”不能作为行为论断的证据。
-2. **优先差示断言。** 多数用例把流水线跑两遍、只改一个因子再比较
-   （`--max-markers 2` 对 `8`，阈值 0.0 对 1.01，下限 0 对 100000）。绝对期望值会
-   把数据集悄悄编码进去，差异才能隔离出旋钮本身。
+2. **差示优先于绝对值。** 多数用例把流水线跑两遍、只改一个因子再比较
+   （`--max-markers 2` 对 `8`，阈值 0.0 对 1.0，下限 0 对 100000，另有单臂用例把
+   `--require-evidence-coverage` 设为 1.01）。绝对期望值会把数据集悄悄编码
+   进去，差异才能隔离出旋钮本身。
 3. **不改变任何东西的旋钮即失败。**
    `test_l2l3_boundary_decides_exclusion`、
    `test_occupancy_floor_rejects_markers_below_it`、
@@ -155,7 +156,7 @@ Il1403（Lactobacillales 目）的同源序列——一次位置已知的跨目�
 6. **报告引用的数值由测试自己写入** `validation/results/metrics.json`，因此文档无
    法悄悄偏离实测。
 7. **skip 必须有理由，且永不等于通过。** 被门禁挡下的判据会带着拒绝原文 skip；能
-   面矩阵仍要求该选项被某个用例覆盖。
+   力面矩阵仍要求该选项被某个用例覆盖。
 
 ## 5. 环境
 
@@ -182,7 +183,7 @@ tomli），以及外部工具 `hmmsearch`、`mafft`、`trimal`、`FastTree`/`fas
 ```bash
 # 快速层
 pytest tests                      # 约 35 秒，不需要外部工具
-pytest tests/benchmark            # 外部基准驱动的契约测试
+pytest tests/benchmark            # 基准驱动脚本的契约测试
 
 # 验收层（真实流水线、真实数据）
 python validation/run_validation.py -n 8            # 不含慢速用例
@@ -201,8 +202,8 @@ manifest 不带上界，`tests/unit/test_self_test_environment.py` 断言 `--che
 
 发布那次运行的实测结果——通过/失败计数、耗时、覆盖率数字、检测指标，以及本轮重构
 中套件暴露出的每一项产物/结构缺陷——见
-**[docs/TEST-REPORT.CN.md](TEST-REPORT.CN.md)**（英文：
-[docs/TEST-REPORT.EN.md](docs/TEST-REPORT.EN.md)）。
+**[TEST-REPORT.CN.md](TEST-REPORT.CN.md)**（英文：
+[TEST-REPORT.EN.md](TEST-REPORT.EN.md)）。
 
 已声明的边界（写出来，而不是藏着）：
 
@@ -213,5 +214,6 @@ manifest 不带上界，`tests/unit/test_self_test_environment.py` 断言 `--che
 * 检测性能建立在 12 基因组上的 3 个植入嵌合体之上。它是带已知答案的阳性对照并有
   实测背景率，但绝不是具有流行病学代表性的 HGT 样本；更强的估计要走
   `tests/benchmark/`（30 基因组、GTDB r53 真值），因其下载体量而由用户触发。
-* 20-marker 的占居率跨度下界只到 0.875：自带库是保守标记库，在这组亲缘较近的基因
+* 20-marker 的占有率跨度下界只到 0.75（`validation/data/markers/bench12/OCCUPANCY.tsv`：
+  `TIGR02012` 9/12 = 0.7500）：自带库是保守标记库，在这组亲缘较近的基因
   组上不存在极稀疏的 marker，因此此类输入只能靠截取模拟，并已如实标注。

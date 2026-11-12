@@ -4,11 +4,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/markerfinder)](https://pypi.org/project/markerfinder/)
-[![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10–3.14 (CI matrix)](https://img.shields.io/badge/python-3.10--3.14%20CI-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#testing)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
-[中文文档](README.CN.md) | [详细手册（EN）](MANUAL.EN.md) | [详细手册（CN）](MANUAL.CN.md)
+[Chinese](README.CN.md) | [Manual (EN)](MANUAL.EN.md) | [Manual (CN)](MANUAL.CN.md)
 
 ---
 
@@ -33,35 +33,38 @@ Genome Input (.faa)
 ┌─────────────────────────────────────────────────────┐
 │  Phase 0: Quality-Aware Preprocessing               │
 │  CheckM assessment → Quality stratification         │
-│  → Adaptive parameter computation                    │
+│  → Adaptive parameter computation                   │
 └───────────────────────┬─────────────────────────────┘
                         ▼
 ┌─────────────────────────────────────────────────────┐
-│  Phase 1: GTDB-TK Marker Loading & Selection          │
+│  Phase 1: GTDB-TK Marker Loading & Selection        │
 │  Consume GTDB-TK ar53/bac120 per-marker seqs → occupancy │
-│  → Occupancy-based marker subset selection            │
+│  → Occupancy-based marker subset selection          │
 └───────────────────────┬─────────────────────────────┘
                         ▼
 ┌─────────────────────────────────────────────────────┐
-│  Phase 2: HGT Screening                              │
+│  Phase 2: HGT Screening (Phylogenetic)              │
 │  Phylogenetic step: RF distance, quartet consistency, │
 │  MAD rooting + monophyly proportion                 │
 │  → Level 1 (clean) / Level 2 (suspect) / Level 3 (excl)│
 └───────────────────────┬─────────────────────────────┘
                         ▼
 ┌─────────────────────────────────────────────────────┐
-│  Phase 3: Dual-Mode Phylogenetic Inference           │
-│  Mode A: MAFFT → trimAl → IQ-TREE3 (Supermatrix, default; FastTree2 fallback) │
+│  Phase 3: Dual-Mode Phylogenetic Inference          │
+│  Mode A: MAFFT → trimAl → IQ-TREE3 (Supermatrix,    │
+│          default; FastTree2 fallback)               │
 │  Mode B: MAFFT → trimAl → Gene Trees → ASTRAL-III   │
-│  → Conflict detection (RF distance, quartet)         │
+│  → Conflict detection (RF distance, quartet)        │
 └───────────────────────┬─────────────────────────────┘
                         ▼
 ┌─────────────────────────────────────────────────────┐
-│  Phase 4: Report Generation                          │
-│  Static HTML report + plain text outputs             │
+│  Phase 4: Report Generation                         │
+│  Static HTML report + plain text outputs            │
 │  (TSV, Newick, Nexus) + Phase5_metadata/run_config.json     │
 └─────────────────────────────────────────────────────┘
 ```
+
+> Note: in coalescence mode (Mode B), the gene trees are built with FastTree + WAG by default; pass `--gene-tree-builder iqtree` to switch to IQ-TREE3.
 
 ---
 
@@ -73,7 +76,7 @@ Genome Input (.faa)
 |------------|-----------------|---------------------------------------------------------------------|
 | Biopython | >= 1.81 | Sequence parsing |
 | PyYAML | >= 6.0 | Config file parsing |
-| ete3 | >= 3.1 | Phylogenetic tree ops (every supported interpreter) |
+| ete3 | >= 3.1 | Phylogenetic tree ops (every supported interpreter; on 3.13+ the `cgi` stand-in comes from `_cgi_compat`) |
 | six | >= 1.16 | Required by ete3's webapp module, which ete3 itself does not declare |
 | tomli | >= 2.0 | TOML config parsing (Python < 3.11) |
 
@@ -141,11 +144,11 @@ all** (exit code 2).
 
 | Tool | Minimum Version | Purpose |
 |------------|-----------------|----------------------------|
-| MAFFT | >= 7.520 | Multiple sequence alignment (per-marker trimming) |
+| MAFFT | >= 7.520 | Multiple sequence alignment (per-marker alignment of the species within a marker) |
 | trimAl | >= 1.4 | Alignment trimming |
 | IQ-TREE3 | >= 3.0.0 | Maximum likelihood tree |
 | ASTRAL-III | >= 5.7.0 | Coalescent species tree |
-| FastTree2 | >= 2.1.11 | Fast gene-tree building |
+| FastTree2 | >= 2.1.11 | Fast gene-tree building (FastTree + WAG by default) |
 | DIAMOND | >= 2.1.0 | BBH ortholog resolution (skipped in current main flow; interface reserved) |
 | CheckM | >= 1.2 | Genome quality assessment (optional) |
 
@@ -223,7 +226,7 @@ pytest tests/unit -q
 ### Minimum Runnable Example
 
 ```bash
-# 1. Prepare input directory with protein FASTA files (.faa)
+# 1. Prepare input directory with protein FASTA files (.faa/.fasta/.fa)
 mkdir -p example/genomes
 # Each file should contain protein sequences for one genome
 # The example below uses gtdb_tk mode; --gtdb-markers-dir must be prepared with GTDB-Tk
@@ -271,12 +274,13 @@ markerfinder \
 
 ### GTDB-TK Conserved-Protein Mode (gtdb_tk)
 
-No reliance on MarkerFinder's bundled HMM library, and **no genome-internal pairwise
-comparison** (no DIAMOND blastp self-search): it consumes the ar53 (archaea) / bac120
+MarkerFinder runs downstream of GTDB-TK: it consumes the ar53 (archaea) / bac120
 (bacteria) per-marker raw sequences that GTDB-TK extracts for your genome set as the
-candidate marker set. Note that GTDB-TK's ar53/bac120 output is **unaligned/untrimmed**
-raw sequence, so the software first runs MAFFT alignment + trimal trimming per marker
-before building the gene tree. The HGT Phylogenetic step can be judged in two ways:
+candidate marker set, with **no reliance on MarkerFinder's bundled HMM library and no
+genome-internal pairwise comparison** (no DIAMOND blastp self-search). Note that
+GTDB-TK's ar53/bac120 output is **unaligned/untrimmed** raw sequence, so the software
+first runs MAFFT alignment + trimal trimming per marker before building the gene tree.
+The HGT Phylogenetic step can be judged in two ways:
 
 Because MarkerFinder requires protein sequences (`.faa`), HGT screening is performed with the Phylogenetic step only.
 
@@ -295,8 +299,8 @@ Because MarkerFinder requires protein sequences (`.faa`), HGT screening is perfo
 
 ```bash
 # 1) Extract conserved-protein sequences + concatenated species tree with GTDB-TK
-gtdb-tk align    --genome_dir genomes/ --out_dir gtdbtk_out/ --cpus 8 --extension gz
-gtdb-tk classify --genome_dir genomes/ --out_dir gtdbtk_out/ --cpus 8
+gtdbtk align --genome_dir genomes/ --out_dir gtdbtk_out/ --cpus 8 --extension gz
+gtdbtk classify --genome_dir genomes/ --out_dir gtdbtk_out/ --cpus 8
 
 # 2a) Recommended: supply a taxonomy table; Phylogenetic step uses MAD rooting + monophyly (no species tree)
 markerfinder \
@@ -304,7 +308,7 @@ markerfinder \
     -o output/ \
     -t 8 \
     --mode standard \
-        --gtdb-markers-dir gtdbtk_out/align/marker_genes \
+    --gtdb-markers-dir gtdbtk_out/align/marker_genes \
     --taxonomy-table gtdbtk_out/classify/gtdbtk.bac120.summary.tsv \
     --monophyly-rank auto \
     --monophyly-threshold 0.5 \
@@ -316,7 +320,7 @@ markerfinder \
     -o output/ \
     -t 8 \
     --mode standard \
-        --gtdb-markers-dir gtdbtk_out/align/marker_genes \
+    --gtdb-markers-dir gtdbtk_out/align/marker_genes \
     --species-tree gtdbtk_out/classify/gtdbtk.bac120.classify.tree \
     --hgt-steps phylogenetic
 ```
@@ -344,7 +348,9 @@ See [MANUAL.EN.md](MANUAL.EN.md) for details.
 
 ## Input Format
 
-MarkerFinder accepts **protein FASTA files** (`.faa`, `.fasta`, `.fa`) in the input directory. You can explicitly skip CheckM at any time with `--skip-checkm`.
+The input directory must contain at least one **protein FASTA file**, with extension `.faa`, `.fasta` or `.fa`.
+Nucleotide-only (`.fna`) input is no longer supported. Each `.faa` file holds the predicted protein sequences of one genome.
+CheckM quality assessment is optional and can be skipped explicitly with `--skip-checkm`.
 
 ```
 input_dir/
@@ -355,6 +361,7 @@ input_dir/
 ```
 
 **File naming convention:**
+
 - Files containing `mag` or `bin` in the name are automatically classified as MAGs
 - Files containing `sag` are classified as single-amplified genomes (SAGs)
 - All other files are classified as isolate genomes
@@ -380,7 +387,7 @@ input_dir/
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `--tree` | — | Alias for `--species-tree`; reference species tree (Newick/Nexus) for the HGT Phylogenetic-step RF/quartet comparison |
+| `--tree` | — | Deprecated alias for `--species-tree`; reference species tree (Newick/Nexus/NHX) for the HGT Phylogenetic-step RF/quartet comparison |
 | `--sequences` | — | Reference sequence file (FASTA) |
 | `--taxonomy-table` | — | External taxonomy table (TSV/CSV) |
 | `--taxonomy-format` | `table` | Taxonomy format: `table`, `embedded` |
@@ -402,13 +409,13 @@ input_dir/
 | `--hgt-steps` | `phylogenetic` | Comma-separated list of active HGT screening steps. `phylogenetic` = RF/quartet against a reference species tree, or MAD rooting + monophyly proportion with a taxonomy table. `composition` = RCV/GC composition-bias diagnostics, written as PARALLEL evidence columns in `Phase5_reports/{prefix}.composition.tsv` and **never** merged into the risk score. Default: `phylogenetic` only |
 | `--marker-mode` | `gtdb_tk` | Marker discovery mode: `gtdb_tk` (default, consumes GTDB-TK ar53/bac120 per-marker FASTA) or `hmm` (TIGRFAM/Pfam HMM scanning). Only `gtdb_tk` and `hmm` are accepted; `denovo` is not supported |
 | `--gtdb-markers-dir` | — | **Required** for `gtdb_tk` mode: GTDB-TK per-marker FASTA directory (one file per conserved protein; filename stem = marker id; GTDB-TK output is unaligned/untrimmed raw sequence, the software runs MAFFT alignment + trimal trimming automatically before tree building) |
-| `--marker-hmm-dir` | — | **Required** for `hmm` mode when auto-discovery is disabled: directory of TIGRFAM/Pfam per-marker HMM profiles (one `.HMM`/`.hmm` file per marker, filename stem = marker id). Auto-discovered under `--db-dir` when omitted |
-| `--species-tree` | (empty) | GTDB-TK concatenated species tree (Newick) used as the HGT Phylogenetic-step RF/quartet reference. **Recommended** to use `--taxonomy-table` instead so the Phylogenetic step uses MAD rooting + monophyly proportion |
+| `--marker-hmm-dir` | — | **Required** for `hmm` mode (auto-discovery is attempted according to `--marker-db-source` when it is omitted): directory of TIGRFAM/Pfam per-marker HMM profiles (one `.HMM`/`.hmm` file per marker, filename stem = marker id) |
+| `--species-tree` | (empty) | Optional in `gtdb_tk` mode: GTDB-TK concatenated species tree (Newick) used as the HGT Phylogenetic-step RF/quartet reference. **Recommended** to use `--taxonomy-table` instead so the Phylogenetic step uses MAD rooting + monophyly proportion |
 | `--taxonomy-table` | (empty) | Recommended external taxonomy table (TSV/CSV, first column = genome id), used with MAD rooting + monophyly proportion for the Phylogenetic step |
-| `--monophyly-rank` | `auto` | Rank at which the Phylogenetic-step monophyly proportion is measured when `--taxonomy-table` is used. `auto` (default) derives it from the gene tree's taxonomic scope (one rank below the scope; `genus` when the tips are not cohesive at any rank). Naming a rank — `domain`/`phylum`/`class`/`order`/`family`/`genus`/`species` — measures at exactly that rank; if no taxon there has an informative split (≥ 2 representatives on both sides) the walk moves upward and the result is reported as a cross-rank comparison (graded UNKNOWN), never as a proportion comparable with `--monophyly-threshold` |
+| `--monophyly-rank` | `auto` | Rank at which the Phylogenetic-step monophyly proportion is measured when `--taxonomy-table` is used. `auto` (default) derives it from the gene tree's taxonomic scope (one rank below the scope: domain→phylum, phylum→class, class→order, order→family, family→genus, genus→species; `genus` when the tips are not cohesive at any rank). Naming a rank — `domain`/`phylum`/`class`/`order`/`family`/`genus`/`species` — measures at exactly that rank; if no taxon there has an informative split (≥ 2 representatives on both sides) the walk moves upward and the result is reported as a cross-rank comparison (graded UNKNOWN), never as a proportion comparable with `--monophyly-threshold` |
 | `--monophyly-threshold` | `0.5` | Lower bound on monophyly proportion; below this value the tree is phylogenetically incongruent (HGT-prone). Phylogenetic-step risk = `1 − monophyly_proportion` |
 | `--hgt-threshold` | `0.25` | HGT risk threshold for level classification |
-| `--hgt-adaptive-thresholds` | `false` | Enable far-distance adaptive relaxation (**default off**; when on, `level2_max` is relaxed to 0.95 on cross-family / cross-order datasets where phylogenetic HGT risk saturates) |
+| `--hgt-adaptive-thresholds` | `false` | Enable far-distance adaptive relaxation (**default off**; when on, `level2_max` is relaxed to 0.95 on cross-family / cross-order datasets where phylogenetic HGT risk saturates, so the pipeline does not discard every marker as Level 3) |
 | `--no-hgt-adaptive-thresholds` | `false` | Explicitly disable far-distance adaptive relaxation (same as the default; placeholder flag) |
 
 ### Phylogenetic Inference Parameters
@@ -417,7 +424,7 @@ input_dir/
 |-----------|---------|-------------|
 | `--ufboot` | `1000` | UFBOOT replicates for IQ-TREE3 |
 | `--fast-tree` | `false` | Use FastTree2 instead of IQ-TREE3 for coalescent gene trees (legacy alias, equivalent to `--gene-tree-builder fasttree`, now also the default) |
-| `--gene-tree-builder` | `fasttree` | Coalescent gene-tree builder: `fasttree` (FastTree2 + WAG, fast, default) or `iqtree` (IQ-TREE3, thorough, via `--gene-tree-builder iqtree`) |
+| `--gene-tree-builder` | `fasttree` | Coalescent gene-tree builder: `fasttree` (FastTree2 + WAG, fast, default) or `iqtree` (IQ-TREE3, thorough) |
 | `--coalescent-mode` | `post-filter` | Coalescent inference: `off`, `post-filter`, `always` |
 
 ### MAG & Output Parameters
@@ -426,7 +433,7 @@ input_dir/
 |-----------|---------|-------------|
 | `--checkm-results` | — | Pre-computed CheckM quality report |
 | `--skip-checkm` | `false` | Force skip CheckM and use default quality estimates |
-| `--min-occupancy` | (empty) | Explicit minimum marker-occupancy floor (0-1) for marker selection; overrides the Phase-0 adaptive threshold when set |
+| `--min-occupancy` | (empty) | Explicit minimum marker-occupancy floor (0-1) for marker selection; overrides the Phase-0 adaptive threshold when set, and the adaptive stratification result is used when it is not |
 | `--min-marker-coverage` | (empty) | **Deprecated** alias of `--min-occupancy` (kept for compatibility) |
 | `--db-dir` | `./db` | Database directory |
 | `--report-format` | `html` | Report format (only `html` is supported) |
@@ -493,7 +500,7 @@ untouched.
 
 ### Plain Text Outputs
 
-Output files are organized into phase-prefixed subdirectories to reflect the pipeline steps:
+Output files are organized into `PhaseN_`-prefixed subdirectories to reflect the pipeline steps:
 
 | File | Format | Description |
 |------|--------|-------------|
@@ -512,7 +519,7 @@ Output files are organized into phase-prefixed subdirectories to reflect the pip
 | `Phase4_intermediate/supermatrix/markerfinder.concat.fasta` | FASTA | Concatenated alignment saved when `--save-intermediates` is enabled |
 | `Phase4_intermediate/quality/checkm.tsv` | TSV | CheckM quality results saved when `--save-intermediates` is enabled |
 
-> **Phase prefix legend**: MarkerFinder creates the `Phase4_*` (phylogenetic inference and intermediates) and `Phase5_*` (reports and metadata) subdirectories in the output directory. Phase 0 to Phase 3 are internal logical phases and are **not** emitted as directories.
+> **Phase prefix legend**: MarkerFinder creates the `Phase4_*` (Phase 2 gene trees, Phase 3 alignments/trees, and intermediates) and `Phase5_*` (Phase 4 reports, metadata and evidence) subdirectories in the output directory. Phases 0–1 are internal logical phases and are **not** emitted as directories; Phase 3 writes into `Phase4_*`, and Phase 4 writes into `Phase5_*`.
 
 ---
 
@@ -554,7 +561,7 @@ python validation/run_validation.py --all -n 8
 `tests/benchmark/` (the three directories sum to the badge; both sides are re-checked
 by `tests/unit/test_docs_numbers_are_current.py`).
 The badge carries the collected total (`python3 -m pytest tests --collect-only -q`)
-and is refreshed with every commit. The suite runs in CI on every supported
+and is refreshed with every commit. The fast layer runs in CI on every supported
 interpreter (3.10 through 3.14) via `.github/workflows/ci.yml`; the
 acceptance layer, which needs real external tools and downloaded genomes, runs
 separately on a schedule (`.github/workflows/validation-nightly.yml`) so a slow
