@@ -4,6 +4,12 @@ All notable changes to MarkerFinder are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+_No releases since the last tag. User-visible changes go here before they are
+folded into a version section (see `CONTRIBUTING.md` and the pull-request
+checklist)._
+
 ## [0.1.1] - 2026-10-18
 
 This release is user-visible in two ways: it widens the supported interpreter
@@ -58,6 +64,15 @@ than a long-lived API token.
 
 ### Fixed
 
+- **`--marker-preset` now dispatches the preset's selection strategy.** The preset
+  wrote its strategy to `SelectionConfig.selection_strategy`, a name that is not a
+  declared field of the dataclass (the field is `strategy`, and `modules/marker_selection.py`
+  reads `self.config.strategy`), so the assignment landed on an ad-hoc instance attribute:
+  the log line advertised e.g. `strategy=info_max` while marker selection still ran
+  `GREEDY`. `--marker-preset` therefore set only the occupancy floor and the marker budget,
+  not the triple the README documents; the archived 0.1.0 behaved that way, and the
+  shipped tree now matches the documented semantics. Regression test:
+  `tests/unit/test_marker_preset_strategy_regression.py` (`markerfinder/cli/config_build.py:334-341`).
 - **A clean install produced an unimportable `ete3`.** ete3 3.1.3 declares no
   requirements at all, yet `ete3/webplugin/webapp.py` does
   `import six.moves.cPickle` and `ete3/__init__.py` star-imports that module.

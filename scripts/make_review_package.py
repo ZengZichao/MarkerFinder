@@ -512,9 +512,10 @@ that script cannot re-leak what it removes.
 * The word "ORCID" as a field label, and the `__orcid__` attribute name. The iD is what
   identifies a person, and the iD is gone.
 
-A reviewer-side check that greps for the bare host string `github.com` or for the word
-`orcid` will still find those retained references. `--audit-extra REGEX` reports such
-counts at build time without gating on them, so the numbers are known before sending.
+A reviewer-side check that greps for the bare host string of a code-hosting site or for
+the word `orcid` will still find those retained references. `--audit-extra REGEX`
+reports such counts at build time without gating on them, so the numbers are known
+before sending.
 
 ## What the builder could not know
 

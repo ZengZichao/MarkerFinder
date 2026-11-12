@@ -1,0 +1,10 @@
+date_utc: 2026-11-10T06:35:46Z
+host: Linux Nature 6.8.0-111-generic #111~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 14 17:13:45 UTC  x86_64 x86_64 x86_64 GNU/Linux
+cpu: Model name:                              AMD EPYC 9654 96-Core Processor
+python: Python 3.11.0
+hmmsearch: # HMMER 3.4 (Aug 2023); http://hmmer.org/
+mafft: v7.526 (2024/Apr/26)
+trimal: trimAl v1.5.rev0 build[2024-05-27]
+FastTree: FastTree 2.1.11 Double precision (No SSE3):
+iqtree3: IQ-TREE version 3.0.1 for Linux x86 64-bit built Jul  9 2025
+astral: This is ASTRAL version 5.7.8

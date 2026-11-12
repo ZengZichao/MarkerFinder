@@ -56,11 +56,14 @@ assistant can state from its own evidence rather than reconstruct from memory:
   package while passing in the repository). Manuscript, SI and figure text in
   the accompanying paper were revised in the same session.
 * **Verification:** every code change above was kept only after `python -m pytest tests`
-  passed (currently **1039 passed, 1 skipped** — the skip is `NOT EXECUTED: no mypy`),
+  passed (currently **1042 passed, 1 skipped — 1043 collected**, matching the README and
+  TEST-REPORT totals: 975 `tests/unit` + 17 `tests/integration` + 51 `tests/benchmark`;
+  the skip is `NOT EXECUTED: no mypy`, so the count is 1043 passed / 0 skipped only in an
+  environment that has `mypy` installed),
   and the packager's output was re-scanned for identifiers independently of its own audit.
   The package was additionally **executed**, not just compared: unpacked, `--version`
   reports `markerfinder 0.1.1`, `--check` gives 49 PASS / 0 FAIL, `pytest tests/unit`
-  gives 971 passed / 1 skipped, and the documented worked-example command runs to
+  gives 974 passed / 1 skipped (975 collected), and the documented worked-example command runs to
   completion with the same marker counts, risk statistics and alignments as the
   repository tree (the concatenated tree differs only in the seventh decimal of branch
   lengths, which `validation/cases/test_v15_reproducibility.py` already documents as

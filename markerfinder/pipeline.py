@@ -412,8 +412,9 @@ class MarkerFinderPipeline:
             mustpass_rules = load_mustpass(mustpass_path)
             if not mustpass_rules:
                 raise AssertionFailureError(
-                    f"--taxonomy-mustpass 指向的对照集无法加载或不含 must_pass "
-                    f"条目（{mustpass_path}）。门禁无法执行时不得当作通过。"
+                    "The must-pass reference set pointed at by --taxonomy-mustpass could "
+                    f"not be loaded or contains no must_pass entries ({mustpass_path}). "
+                    "A gate that cannot run must not be treated as passed."
                 )
             mustpass_scope = mustpass_marker_scope(mustpass_path)
             if mustpass_scope:
@@ -430,8 +431,8 @@ class MarkerFinderPipeline:
                 )
                 if not mustpass_trees:
                     raise AssertionFailureError(
-                        "--taxonomy-mustpass 的 markers.ids 与本数据集无交集："
-                        "门禁一个标记都没测到，不得当作通过。"
+                        "--taxonomy-mustpass: its markers.ids do not intersect this dataset: "
+                        "the gate tested not a single marker, so it must not be treated as passed."
                     )
             else:
                 logger.info(

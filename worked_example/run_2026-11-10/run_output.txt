@@ -1,0 +1,46 @@
+
+ __  __       _ _     _ _____           _   _ _           _
+|  \/  | __ _| (_) __| |  _ \ ___  ___| |_(_) |__  _   _| |_
+| |\/| |/ _` | | |/ _` | |_) / _ \/ __| __| | '_ \| | | | __|
+| |  | | (_| | | | (_| |  _ <  __/\__ \ |_| | |_) | |_| | |_
+|_|  |_|\__,_|_|_|\__,_|_| \_\___||___/\__|_|_.__/ \__,_|\__|
+  ___  _                    _       _
+ | _ \| |__  __ _ _  _ __ _| |_  __| |___ _ _
+ |  _/| '_ \/ _` | || / _` | ' \/ _` / -_) '_|
+ |_|  |_.__/\__, |\_,_\__,_|_||_\__,_\___|_|
+            |___/  Finder
+
+  MIT License
+  Version: 0.1.1
+  Author: [withheld for anonymous review]
+  Runtime dependencies (declared):
+    Biopython            BSD-3-Clause
+    PyYAML               MIT
+    ete3                 GPL-3.0
+    tomli                MIT
+
+2026-11-10T06:52:15.235 | WARNING  | [dependency_check/check_external_tools] [Dependency Check] WARNING: 'checkm' not found on PATH. Purpose: MAG completeness/contamination (Phase 0, optional; missing falls back to default quality estimates). Tried: checkm.
+2026-11-10T06:56:13.537 | WARNING  | [pipeline/_collect_database_versions]   Database 'gtdb_markers' hash mismatch: computed 84cf08b9d5cd... but expected 67e931f36515... — results may not be reproducible against previously published runs.
+	Command being timed: "python3 -m markerfinder -i genomes/ -o output/ --marker-mode hmm --taxonomy-table taxonomy.tsv --mode standard -t 4"
+	User time (seconds): 870.70
+	System time (seconds): 33.61
+	Percent of CPU this job got: 377%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:59.24
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 144332
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 17
+	Minor (reclaiming a frame) page faults: 3000051
+	Voluntary context switches: 40463
+	Involuntary context switches: 14091
+	Swaps: 0
+	File system inputs: 328
+	File system outputs: 18928
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

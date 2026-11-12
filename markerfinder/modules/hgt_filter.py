@@ -302,18 +302,18 @@ class PhylogeneticHGTDetector:
             gene_id=marker_id,
             rf_distance=None,
             normalized_rf=None,
-            quartet_consistency=prop,
+            quartet_consistency=None,
             monophyly_proportion=prop,
             monophyly_state=MeasureState.MEASURED,
-            # This detector never computes an RF distance: the species tree is
-            # absent by construction, so ``rf`` is reported as ``NA``. Leaving
-            # the class default (MEASURED) there made
-            # ``hgt_evaluation.tsv`` and the decision cards say "no value, but
-            # we measured it" for every marker of a taxonomy-table run.
+            # This detector never computes an RF distance or a quartet
+            # agreement: the species tree is absent by construction, so both
+            # are reported as ``NA``. Overloading ``quartet_consistency`` with
+            # the monophyly proportion made ``hgt_evaluation.tsv`` and the
+            # decision cards label a monophyly value as quartet agreement.
             # NOT_APPLICABLE is the state that means "this decision path has no
-            # such signal" (``quartet_consistency`` deliberately carries the
-            # monophyly proportion here, so its MEASURED default stays true).
+            # such signal".
             rf_state=MeasureState.NOT_APPLICABLE,
+            quartet_state=MeasureState.NOT_APPLICABLE,
             rf_reason="monophyly detector: no reference species tree, RF not part of this screen",
             overall_risk=risk,
             is_suspicious=risk > threshold,

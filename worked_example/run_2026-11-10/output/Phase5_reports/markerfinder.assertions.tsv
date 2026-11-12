@@ -1,0 +1,15 @@
+assertion_id	name	severity	result	detail	provisional
+A-01	None rendered as number	fail	PASS		false
+A-02	normalized_rf in [0,1] and finite	fail	PASS		false
+A-03	no quartet value below 4 shared tips	fail	PASS		false
+A-04	monophyly n_total >= 2	fail	PASS		false
+A-05	overall_risk in [0,1]	fail	PASS		false
+A-06	placeholder/saturation distribution probe	fail	PASS		false
+A-07	trimmed alignment non-empty	fail	PASS		false
+A-08	ASTRAL LPP in (0,1], not degenerate	warn	PASS		false
+A-09	UFBoot in [0,100]	fail	PASS		false
+A-10	|dlnL| magnitude guard (reserved)	fail	PASS		true
+A-11	evidence coverage >= 0.5 (provisional)	warn	PASS		true
+A-12	zero-discrimination probe	fail	PASS		false
+A-13	thresholds 0 <= L1 < L2 <= 1	fail	PASS		false
+A-14	far mode recorded on affected cards	fail	PASS		false

@@ -40,7 +40,13 @@ python -m markerfinder --check
 
 The acceptance layer additionally needs `hmmsearch`, `mafft`, `trimal`,
 `FastTree`, `astral` and (for the v09 support-scale case) `iqtree3` on
-`PATH`; `environment.yml` installs exactly that set.
+`PATH`. `environment.yml` installs that set, and more than that set: it also
+carries `checkm-genome` (the pipeline's optional Phase 0 quality tool) and
+`ncbi-datasets-cli`, which the pipeline never calls but which
+`python validation/run_validation.py --prepare` needs — `01_fetch_genomes.py`
+resolves the fixture lineages through the `datasets` CLI. So `environment.yml`
+is a superset of the tool surface in
+`markerfinder/utils/dependency_check.py` (`EXTERNAL_TOOLS`), not an exact match.
 
 ### The third-party HMM library
 

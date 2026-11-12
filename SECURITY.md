@@ -30,9 +30,17 @@ holds no secrets, so the realistic exposure is input handling:
   use, or a write outside the output directory.
 - Shell-out behavior: the pipeline invokes third-party binaries
   (`hmmsearch`, `mafft`, `trimal`, `FastTree`, `iqtree3`, `astral`,
-  `datasets`, `checkm`) with paths derived from configuration and file
-  names. Reports about argument injection or unexpected execution via those
-  paths are in scope.
+  `checkm`) with paths derived from configuration and file names. Reports
+  about argument injection or unexpected execution via those paths are in
+  scope. That list is the pipeline's complete shell-out surface, read off the
+  call sites in `markerfinder/utils/dependency_check.py` (`EXTERNAL_TOOLS`, 7
+  entries; `diamond` is deliberately absent because the Phase 1.5
+  ortholog-resolution path is not run).
+- Not the pipeline: the NCBI Datasets CLI (`datasets`) is shelled out to only
+  by `validation/scripts/01_fetch_genomes.py`, a build-time helper that
+  downloads validation fixtures. It is not invoked by `markerfinder` at
+  runtime, and reports about it are triaged as a development-tool issue, not a
+  pipeline exposure.
 
 ## What is not in scope
 

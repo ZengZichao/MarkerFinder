@@ -165,7 +165,11 @@ def _default_quality_estimates(genomes: List[Genome]) -> Dict[str, GenomeQuality
     """默认质量估计（无 CheckM 时使用）。"""
     results: Dict[str, GenomeQuality] = {}
     for g in genomes:
-        if g.source_type == GenomeSource.MAG:
+        # MAGs and SAGs are both incomplete single-genome assemblies, so they
+        # share the conservative 75/5 default. Isolates keep 98/1. This matches
+        # the manuscript's "MAG/SAG pattern" rule; previously SAG fell through
+        # to the isolate default.
+        if g.source_type in (GenomeSource.MAG, GenomeSource.SAG):
             results[g.id] = GenomeQuality(
                 completeness=DEFAULT_MAG_COMPLETENESS,
                 contamination=DEFAULT_MAG_CONTAMINATION,

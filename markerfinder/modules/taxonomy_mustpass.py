@@ -257,8 +257,8 @@ def enforce_mustpass(report: MustPassReport) -> None:
     )
     raise AssertionFailureError(
         f"taxonomy must-pass benchmark FAILED: {len(report.violations)} required "
-        f"relationship(s) violated — {preview}{more}. 流水线判定为不通过并中止 "
-        "这不是风险分扣分项：修复输入或参照集后重跑。"
+        f"relationship(s) violated — {preview}{more}. The pipeline verdict is FAIL and aborts; "
+        "this is not a risk-score deduction — fix the inputs or the reference set and re-run."
     )
 
 
