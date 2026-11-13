@@ -31,7 +31,7 @@
 ```
 validation/
 ├── README.EN.md / README.CN.md   本文件（以英文版为主）
-├── capabilities.py               能力清单，直接从代码读取
+├── capabilities.py               能力面，直接从代码读取
 ├── conftest.py                   fixture：运行器、输入、每用例独立输出
 ├── run_validation.py             一键执行入口
 ├── cases/                        test_vNN_*.py，按功能域编号
@@ -71,8 +71,10 @@ validation/
 ## 如何运行
 
 前置条件：MarkerFinder 环境（Python 3.10 及以上，外加 `hmmsearch`、`mafft`、
-`trimal`、`FastTree`/`fasttree`、`astral`、`iqtree3`），并执行
-`pip install -e ".[dev]"`。
+`trimal`、`FastTree`/`fasttree`、`astral`），并执行
+`pip install -e ".[dev]"`。`run_validation.py` 在 `PATH` 上缺少 `hmmsearch`、
+`mafft`、`trimal`、`FastTree` 或 `astral` 时直接拒绝运行；`iqtree3` 不在该门禁
+之内，唯一用到它的用例会在它缺失时 skip。
 
 ```bash
 # 除慢速 12 基因组检测用例外的全部用例，8 个并行 worker
@@ -89,7 +91,7 @@ python validation/run_validation.py --prepare
 
 ```bash
 pytest validation/cases -m "not slow" -n 8
-pytest validation/cases -m slow            # 检测指标，约 10 分钟
+pytest validation/cases -m slow            # 检测指标，约 23 分钟
 pytest validation/cases/test_v06_hgt_screening.py -k composition
 ```
 
@@ -104,8 +106,8 @@ MAFFT 会静默失败并表现为“没有 marker 可比对”，把一个环境
 其中唯一标记为 `slow` 的 `cases/test_v17_benchmark_detection.py` 占 1367.2 秒；该产物
 没有记录并行度，所以这里只报实测总时长，不报单次运行的 worker 数。单次流水线运行按
 `conftest.py` 记录的实测值为：4 个基因组 / 6 个 marker 用时 1 分 34 秒，同一
-数据集换成 30 个 marker 用时 7 分 19 秒。因此功能级用例只使用小 marker 预算，仅占有率与检测性能用例使用较大
-集合。
+数据集换成 30 个 marker 用时 7 分 19 秒。因此功能级用例只使用小 marker 预算，
+较大的集合只被标记选择、产物审计与检测性能这三类用例使用。
 
 ---
 
@@ -132,8 +134,9 @@ GTDB-Tk 本身需要约 100 GB 的参考树数据包，无法随测试包发布�
 profile 对每个基因组做 hmmsearch，取 bitscore ≥ 20 的最佳命中；一 marker 一文件，
 文件名主干即 marker id，tip 名为组装 accession。被保留的是流水线真正读取的一切；
 未被复现的是 GTDB-Tk 自身那套结合分类学的最佳命中筛选。
-`markers/OCCUPANCY_ALL.tsv` 记录了所有被扫描 profile 的占有率，每个目录另有
-自己的 `OCCUPANCY.tsv`。
+`markers/OCCUPANCY_ALL.tsv` 记录了所有被扫描 profile 的占有率，每个命名标记集合
+另会写出本集合自己的 `OCCUPANCY.tsv`——`markers/degenerate/` 是 1-tip/2-tip
+对照而不是标记集合，因此没有该文件。
 
 **植入型嵌合体（`markers/chimera_bench12`）。** 在 3 个 marker 中，把
 *Bacillus anthracis* Ames 的序列替换为 *Lactococcus lactis* Il1403 的直系同源序列，
@@ -144,9 +147,10 @@ profile 对每个基因组做 hmmsearch，取 bitscore ≥ 20 的最佳命中；
 **质量数值（`checkm/`）。** 完整度与污染率取自 NCBI 每个组装自己的 `checkm_info`
 数值，不是编造的。NCBI 未记录数值的组装会被省略，且省略原因写入文件本身。
 
-**功能类别（`cog/`）。** 类别文本取自该 marker 的 HMM profile 的 `# DESCRIPTION`
-行。它验证的是 `--cog-category-map` 的通路是否真的接通，并不对 COG 生物学做任何
-断言，文件里也这样写明。
+**功能类别（`cog/`）。** 类别文本取自该 marker 的 HMM profile 的 `DESC` 行
+（构建脚本也接受 `DESCRIPTION`、`# DESCRIPTION` 与 `NAME`）。它验证的是
+`--cog-category-map` 的通路是否真的接通，并不对 COG 生物学做任何断言，
+`03_build_fixtures.py` 中也这样写明。
 
 **MAG 命名变体（`variants/mag_named/`）。** 把 quad4 的 4 个基因组改名为
 `mag_01..mag_04`，并同步改写 marker 头部与 taxonomy 表。序列完全未变——分类规则
@@ -157,10 +161,10 @@ profile 对每个基因组做 hmmsearch，取 bitscore ≥ 20 的最佳命中；
 ## 用例遵循的约定
 
 * 每个用例都有独立输出目录，因此套件可安全地以 `-n` 并行执行。
-* 用例只断言**可观测**的结果：某个产物、某列、某个退出码，或“只改一个旋钮”的
+* 用例断言**可观测**的结果：某个产物、某列、某个退出码，或“只改一个旋钮”的
   两次运行之间的差异。若某个旋钮不改变任何东西，就被记为失效对照，而不是通过。
 * 优先使用差示断言（A/B 两次运行，只差一个因子），而不是绝对阈值，因为绝对阈值
   会把数据集本身悄悄编码进期望值。
-* skip 必须写明理由；skip 永远不会被当作 pass。
+* skip 必须写明理由；skip 永远不会被当作通过。
 * 报告引用的数值由各用例自己写入 `results/metrics.json`，因此文档里出现陈旧数字
-  会表现为机读记录中的差异，而不是无人察觉的漂移。
+  会表现为机读记录中的差异。

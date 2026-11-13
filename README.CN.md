@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/markerfinder)](https://pypi.org/project/markerfinder/)
-[![Python 3.10–3.14（CI 实测矩阵）](https://img.shields.io/badge/python-3.10--3.14%20CI-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10–3.14（CI 矩阵）](https://img.shields.io/badge/python-3.10--3.14%20CI-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#测试)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
@@ -18,7 +18,7 @@ MarkerFinder 是一条面向原核生物的系统发育基因组学流水线，�
 
 1. **标记基因集僵化** — 根据输入数据集动态选择最优标记组合
 2. **HGT 污染未处理** — 仅用系统发育步骤做水平基因转移筛查（Phylogenetic-only），剔除会误导系统发育分析的标记
-3. **MAG 支持不足** — 用质量感知的自适应参数，稳定处理不完整的宏基因组组装基因组
+3. **MAG 支持不足** — 用质量感知的自适应参数处理不完整的宏基因组组装基因组
 
 **生物学领域：** 原核生物系统学、系统发育基因组学、宏基因组组装基因组（MAG）分类、微生物分类学。
 
@@ -30,38 +30,38 @@ MarkerFinder 是一条面向原核生物的系统发育基因组学流水线，�
 蛋白序列输入 (.faa)
         │
         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 0: 质量感知预处理                            │
-│  CheckM 质量评估 → 质量分层                         │
-│  → 自适应参数计算                                   │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 0: 质量感知预处理                                        │
+│  CheckM 质量评估 → 质量分层                                     │
+│  → 自适应参数计算                                               │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 1: GTDB-TK 标记基因加载与筛选                │
-│  消费 GTDB-TK ar53/bac120 每标记序列 → 占有率矩阵   │
-│  → 基于占有率选择标记子集                           │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 1: GTDB-TK 标记基因加载与选择                            │
+│  GTDB-TK ar53/bac120 每标记序列 → 占有率矩阵                    │
+│  → 基于占有率选择标记子集                                       │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 2: HGT 筛查（系统发育）                      │
-│  系统发育步骤: MAD 定根 + 单系比例                  │
-│  或 RF距离 / Quartet一致性与物种树比较              │
-│  → 等级 1（清洁）/ 等级 2（可疑）/ 等级 3（排除）   │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 2: HGT 筛查（系统发育）                                  │
+│  系统发育步骤（二选一）：与物种树的 RF/quartet 不一致，         │
+│  或 MAD 定根 + 单系比例                                         │
+│  → 等级 1（清洁）/ 等级 2（可疑）/ 等级 3（排除）               │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 3: 双策略系统发育推断                        │
-│  模式A: MAFFT → trimAl → IQ-TREE3 (串联法, 默认;    │
-│         IQ-TREE3 失败时回退 FastTree2)              │
-│  模式B: MAFFT → trimAl → 基因树 → ASTRAL-III(合并法)│
-│  → 冲突检测 (RF距离、Quartet分析)                   │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 3: 双策略系统发育推断                                    │
+│  模式 A: MAFFT → trimAl → IQ-TREE3（串联法, 默认;               │
+│         IQ-TREE3 失败时回退 FastTree2）                         │
+│  模式 B: MAFFT → trimAl → 基因树 → ASTRAL-III（合并法）         │
+│  → 冲突检测（RF 距离、Quartet 分析）                            │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 4: 报告生成                                  │
-│  HTML 静态报告 + 纯文本输出                         │
-│  (TSV、Newick、Nexus) + Phase5_metadata/run_config.json       │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 4: 报告生成                                              │
+│  HTML 静态报告 + 纯文本输出                                     │
+│  （TSV、Newick、Nexus） + Phase5_metadata/run_config.json       │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 > 注：合并法（模式 B）的基因树默认由 FastTree + WAG 构建；可通过 `--gene-tree-builder iqtree` 切换为 IQ-TREE3。
@@ -119,11 +119,11 @@ ete3 是可导入的。若**单独**安装 `ete3`，仍需 `pip install ete3 six
 | CPython 3.12 | ete3 在该版本会打印大量 `SyntaxWarning: invalid escape sequence`。这些警告与被测代码无关，但会干扰用户阅读 |
 | CPython 3.13 / 3.14 + ete3 | 依赖 ete3 的模块通过 `markerfinder/_cgi_compat` 提供的 `cgi` 替身正常导入，**不会**以 `NOT EXECUTED` 理由 skip；`--check` 解释器检查 PASS、退出码 0 |
 
-ete3 差分测试（把纯 Python split-set 的 RF/quartet 结果与 ete3 逐树对比）**只要
+ete3 差示测试（把纯 Python split-set 的 RF/quartet 结果与 ete3 逐树对比）**只要
 ete3 可导入就会真正执行**——即所有受支持的解释器。在 ete3 确实装坏的环境里，它们以含
 `NOT EXECUTED` 的理由显式 skip，不计为通过。
 
-声明范围没有上界这一点本身就在测试之内（`test_supported_range_is_earned.py` 断言
+声明范围**没有**上界这一点本身就在测试之内（`test_supported_range_is_earned.py` 断言
 manifest 不带 `<3.13`，`test_self_test_environment.py` 断言 `--check` 与之一致），
 这样一条边界条件就不会退化成靠记忆维持的约定。
 
@@ -174,7 +174,7 @@ conda install -c bioconda -c conda-forge \
     mafft trimal iqtree astral fasttree \
     diamond checkm-genome ete3
 
-# 1. 先用 GTDB-TK 对基因组集提取保守蛋白序列与物种树 (一次运行, MarkerFinder 不调用 GTDB-TK)
+# 1. 先用 GTDB-TK 对基因组集提取每标记保守蛋白 FASTA 与物种树 (一次运行, MarkerFinder 不调用 GTDB-TK)
 #    https://ecogenomics.github.io/GTDBTk/
 
 # 安装 MarkerFinder
@@ -233,9 +233,9 @@ markerfinder \
 
 # 3. 查看结果
 ls example/output/
-# Phase5_reports/markerfinder.report.html         — 静态 HTML 报告
-# Phase5_reports/markerfinder.marker_summary.tsv  — 标记基因汇总表
-# Phase4_trees/markerfinder.species_tree_concat.newick — 物种树 (Newick)
+# Phase5_reports/markerfinder.report.html                — 静态 HTML 报告
+# Phase5_reports/markerfinder.marker_summary.tsv         — 标记基因汇总表
+# Phase4_trees/markerfinder.species_tree_concat.newick   — 物种树 (Newick)
 ```
 
 ### MAG 分析示例
@@ -262,7 +262,7 @@ markerfinder \
     --skip-checkm
 ```
 
-> `--skip-checkm` 会跳过 CheckM 质量评估，直接使用默认质量估计继续流程。`pipeline_summary.txt` 中 `Quality source` 会显示为 `skipped`。
+> `--skip-checkm` 会跳过 CheckM 质量评估，直接使用默认质量估计继续流程。`pipeline_summary.txt` 会报告 `Quality source: skipped`。
 
 ### GTDB-TK 保守蛋白模式（gtdb_tk）
 
@@ -319,7 +319,7 @@ markerfinder \
 ### 分步运行
 
 MarkerFinder 支持把流程拆分为 4 个子命令（`scan`、`filter`、`infer`、`report`）逐步执行。
-运行状态在输出目录之间自动传递：
+运行状态通过输出目录自动传递：
 
 ```bash
 markerfinder scan     -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/marker_genes
@@ -340,9 +340,9 @@ CheckM 质量评估为可选项，可用 `--skip-checkm` 显式跳过。
 
 ```
 input_dir/
-├── genome_1.faa     # 基因组1的预测蛋白序列
-├── genome_2.faa     # 基因组2的预测蛋白序列
-├── mag_bin1.faa     # MAG蛋白序列（自动识别为MAG）
+├── genome_1.faa     # 基因组 1 的预测蛋白序列
+├── genome_2.faa     # 基因组 2 的预测蛋白序列
+├── mag_bin1.faa     # MAG 蛋白序列（自动识别为 MAG）
 └── ...
 ```
 
@@ -352,7 +352,7 @@ input_dir/
 - 文件名包含 `sag` 的，归类为单细胞扩增基因组（SAG）
 - 其余文件归类为分离株基因组
 
-**序列格式：** 标准 FASTA 格式。每个文件内，每个基因只保留一条蛋白序列，
+**序列格式：** 标准 FASTA 格式。每个文件内，每个基因应只保留一条蛋白序列，
 标题行格式为 `>sequence_id [optional description]`。
 
 ---
@@ -366,7 +366,7 @@ input_dir/
 | `-i, --input` | *必填* | 包含 `.faa` 文件的输入目录 |
 | `-o, --output` | *必填* | 输出目录 |
 | `-t, --threads` | `min(8, CPU count)` | CPU 线程数 |
-| `--mode` | `standard` | 仅选择筛选策略：`conservative`、`standard`、`expanded`、`mag_adaptive`（不设置占有率/预算，见“分析模式”） |
+| `--mode` | `standard` | 只决定标记选择策略：`conservative`、`standard`、`expanded`、`mag_adaptive`（不设置占有率/预算，见“分析模式”） |
 | `--marker-preset` | `none` | 一次设定占有率 / 预算 / 策略三元组：`none`、`conservative`、`standard`、`expanded`、`mag_adaptive` |
 | `--config` | — | YAML/TOML/JSON 配置文件路径（CLI 参数优先于配置文件） |
 
@@ -393,15 +393,15 @@ input_dir/
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
-| `--hgt-steps` | `phylogenetic` | 逗号分隔的启用筛查步骤列表。`phylogenetic` = 基因树与参照物种树的 RF/Quartet 不一致，或在提供分类学表时用 MAD 定根 + 单系比例。`composition` = RCV/GC 组成偏差诊断，以**平行证据列**写入 `Phase5_reports/{prefix}.composition.tsv`，**永不**并入风险分。默认仅 `phylogenetic` |
-| `--marker-mode` | `gtdb_tk` | 标记发现模式：`gtdb_tk`（默认，直接消费 GTDB-TK ar53/bac120 每标记 FASTA）或 `hmm`（基于 TIGRFAM/Pfam HMM 扫描）。只接受 `gtdb_tk` 与 `hmm` 这两个值，无 `denovo` |
+| `--hgt-steps` | `phylogenetic` | 逗号分隔的启用筛查步骤列表。`phylogenetic` = 基因树与参考物种树的 RF/Quartet 不一致，或在提供分类学表时用 MAD 定根 + 单系比例。`composition` = RCV/GC 组成偏差诊断，以**平行证据列**写入 `Phase5_reports/{prefix}.composition.tsv`，**永不**并入风险分。默认仅 `phylogenetic` |
+| `--marker-mode` | `gtdb_tk` | 标记发现模式：`gtdb_tk`（默认，直接消费 GTDB-TK ar53/bac120 每标记 FASTA）或 `hmm`（基于 TIGRFAM/Pfam HMM 扫描）。只接受 `gtdb_tk` 与 `hmm` 这两个值，不支持 `denovo` |
 | `--gtdb-markers-dir` | — | `gtdb_tk` 模式**必填**：GTDB-TK 提取的每标记 FASTA 目录（每保守蛋白一个文件，文件名主干即标记 id）；GTDB-TK 输出为未对齐/未修剪原始序列，软件会自动 MAFFT 比对 + trimal 修剪后再建树 |
 | `--marker-hmm-dir` | — | `hmm` 模式**必填**（未指定时尝试按 `--marker-db-source` 自动发现）：TIGRFAM/Pfam 单标记 HMM 目录，每个标记一个 `.HMM`/`.hmm` 文件，文件名主干即标记 id |
 | `--species-tree` | （空） | `gtdb_tk` 模式可选项：GTDB-TK 串联物种树（Newick），作为 HGT 系统发育步骤的 RF/quartet 参照。**推荐**改用 `--taxonomy-table` 让系统发育步骤走 MAD 定根 + 单系比例 |
 | `--taxonomy-table` | （空） | 推荐的外部分类学表（TSV/CSV，首列=基因组 id），配合 MAD 定根 + 单系比例用于系统发育步骤筛查 |
 | `--monophyly-rank` | `auto` | 使用 `--taxonomy-table` 时系统发育步骤单系比例的**测量阶元**。`auto`（默认）由基因树的分类学范围推导（取 scope 的下一阶元：域→门、门→纲、纲→目、目→科、科→属、属→种；tip 在任何阶元都不一致时取 `genus`）。显式命名阶元（`domain`/`phylum`/`class`/`order`/`family`/`genus`/`species`）则就在该阶元测量；若该阶元上没有分类单元具备信息量充分的 split（两侧各 ≥ 2 代表），回退向更高阶元，并将结果作为跨阶元比较报为 UNKNOWN，而不用作可与 `--monophyly-threshold` 比较的比例 |
 | `--monophyly-threshold` | `0.5` | 单系比例下限，低于该值视为系统发育不一致（HGT 倾向），系统发育步骤风险 = `1 − monophyly_proportion` |
-| `--hgt-threshold` | `0.25` | HGT 风险阈值（等级分级） |
+| `--hgt-threshold` | `0.25` | `--hgt-threshold-l1l2` 的**已废弃别名**（两者均未给出时取 `0.25`）：只移动 Level1/Level2 边界，不影响 Level2/Level3；请改用 `--hgt-threshold-l1l2` / `--hgt-threshold-l2l3` |
 | `--hgt-adaptive-thresholds` | `false` | 启用自适应远缘放宽（**默认关闭**；跨科/跨目等远缘数据集因系统发育 HGT 风险趋于饱和，开启后把 `level2_max` 放宽至 0.95，以免流水线把所有标记都误判为 Level 3） |
 | `--no-hgt-adaptive-thresholds` | `false` | 显式禁用自适应远缘放宽（与默认行为一致，仅供显式表达） |
 
@@ -436,7 +436,7 @@ input_dir/
 
 ### 分析模式
 
-`--mode` 只选择标记**筛选策略**，不设置占有率下限与标记预算：`min_occupancy` 与
+`--mode` 只决定标记的**选择策略**，不设置占有率下限与标记预算：`min_occupancy` 与
 `max_markers` 保持配置默认值（0.75 / 60），除非用户显式给出
 `--min-occupancy`/`--min-marker-coverage`、`--max-markers`、`--marker-preset` 或配置文件；
 Phase 0 仍可能按数据集自适应，而任何显式用户取值都会覆盖自适应结果。下表读取自
@@ -455,7 +455,7 @@ Phase 0 仍可能按数据集自适应，而任何显式用户取值都会覆盖
 （`markerfinder/models/marker.py` 中的 `RESOLUTION_PRESETS`）。它的四个具名预设与上面
 四个模式同名，但作用不止策略：预设还会写入 `min_occupancy`、`max_markers` 与
 `user_max_markers`，因此会覆盖 Phase 0 的自适应预算。预设的策略赋值落在
-`SelectionConfig.strategy` 字段上——即筛选模块真正读取的字段
+`SelectionConfig.strategy` 字段上——即选择模块真正读取的字段
 （回归测试：`tests/unit/test_marker_preset_strategy_regression.py`）。
 
 | 预设 | 最低占有率 | 最大标记数 | 选择策略 | 适用场景 |
@@ -476,7 +476,7 @@ Phase 0 仍可能按数据集自适应，而任何显式用户取值都会覆盖
 - `Phase5_reports/markerfinder.report.html` — 自包含静态 HTML 报告，包含：
   - 执行摘要仪表盘
   - 标记基因汇总表与 HGT 风险表
-  - 输出文件路径说明
+  - 所有输出文件的路径说明
   - 物种树来源说明
 
 > 当前仅支持 HTML 静态报告，不支持 Plotly 交互式可视化或 PDF。
@@ -491,13 +491,13 @@ Phase 0 仍可能按数据集自适应，而任何显式用户取值都会覆盖
 | `Phase5_reports/markerfinder.hgt_evaluation.tsv` | TSV | 每个标记的 HGT 风险评分与等级 |
 | `Phase5_reports/markerfinder.pipeline_summary.txt` | TXT | 人类可读的运行摘要 |
 | `Phase5_reports/markerfinder.report.html` | HTML | 静态 HTML 报告 |
-| `Phase4_trees/markerfinder.species_tree_concat.newick` | Newick | 串联法物种树（主要使用 IQ-TREE3；IQ-TREE3 失败时自动回退至 FastTree2） |
+| `Phase4_trees/markerfinder.species_tree_concat.newick` | Newick | 串联法物种树（默认使用 IQ-TREE3；IQ-TREE3 失败时自动回退至 FastTree2） |
 | `Phase4_trees/markerfinder.species_tree_astral.newick` | Newick | 合并法物种树（仅在 ASTRAL-III 成功时输出；失败时不输出空树文件，仅记录 ERROR 日志） |
 | `Phase4_trees/markerfinder.gene_trees.newick` | Newick | 各标记基因树集合（标准 multi-newick，每行一棵树），启用合并法时生成 |
 | `Phase4_trees/gene_trees/{marker_id}.nwk` | Newick | 单棵基因树缓存（`filter` 与 `infer` 复用） |
 | `Phase4_alignments/markerfinder.partition.nex` | Nexus | 用于模型选择的分区文件 |
 | `Phase5_metadata/run_config.json` | JSON | 完整参数快照与数据库版本哈希（`gtdb_markers` 或 `marker_hmm_dir`），用于复现 |
-| `.markerfinder/.pipeline_state.json` | JSON | 分步运行时的显式步骤索引（分步模式使用） |
+| `.markerfinder/.pipeline_state.json` | JSON | 分步执行时的显式步骤索引 |
 | `Phase4_intermediate/markers/{marker_id}.{faa,aln,aln.trim}` | FASTA | `--save-intermediates` 开启时保存的标记序列与比对 |
 | `Phase4_intermediate/supermatrix/markerfinder.concat.fasta` | FASTA | `--save-intermediates` 开启时保存的串联比对 |
 | `Phase4_intermediate/quality/checkm.tsv` | TSV | `--save-intermediates` 开启时保存的 CheckM 质量结果 |
@@ -551,13 +551,13 @@ python validation/run_validation.py --all -n 8
 覆盖范围包括核心配置、模型、标记选择策略、HGT 决策引擎、GTDB-TK 标记加载、MAD 定根、
 分类学解析、树与序列验证、报告生成。此外还包含三类专项测试：
 
-- 各模块行为等价性的回归测试（`tests/unit/test_module_regressions.py`）
+- 代码审查发现项的行为回归测试（`tests/unit/test_module_regressions.py`，发现项编号 F1-F21）
 - must-fail 控制矩阵
 - 产物级验收（`tests/integration/test_products_acceptance.py`）：在 mock 工具下真实运行流水线，
   再读回产物逐项核对
 
-集成测试与基准测试均已有用例：`tests/integration/` 负责产物级验收，`tests/benchmark/` 提供
-取数、嵌合阳性对照、度量、取证与反向消融脚本，以及对应的契约测试。仍然缺少的，是真实建树工具链
+集成测试 `tests/integration/` 与基准测试 `tests/benchmark/` 都已有真实用例：后者提供取数、
+嵌合阳性对照、度量、溯源记录与反向消融脚本，以及对应的契约测试。仍然缺少的，是真实建树工具链
 与真实基因组下的端到端数值正确性（见 MANUAL 的限制说明）。
 
 > **Python 版本说明：** 3.10 及以上全部受支持。这条注记原先附带的 `< 3.13` 上界，已在

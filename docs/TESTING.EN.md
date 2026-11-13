@@ -12,7 +12,7 @@ different instrument:
 
 | Claim kind | Example | Instrument |
 |---|---|---|
-| Value-level | `rf_distance` of two topologies is in 0–1 | unit tests, `tests/unit/` |
+| Value-level | `normalized_rf` of two topologies is in 0–1 | unit tests, `tests/unit/` |
 | Structure-level | `run_config.json` records the database version | integration tests with mocked tools, `tests/integration/` |
 | Consequence-level | "HGT screening removes phylogenetically misleading markers" | **real end-to-end runs against a positive control**, `validation/` |
 
@@ -42,7 +42,7 @@ claim is enumerated from a source of truth. That source is the code:
 * `markerfinder.cli.parser._SUBCOMMAND_SPECS` → the four resumable steps;
 * `markerfinder.cli.constants` → seven distinct exit codes;
 * the product inventory in `validation/capabilities.py` → 19 output artefacts
-  (`Phase5_reports/*`, `Phase5_evidence/*`, `Phase4_trees/*`,
+  (`Phase5_reports/*`, `Phase5_evidence/*`, `Phase5_metadata/*`, `Phase4_trees/*`,
   `Phase4_alignments/*`, `Phase4_intermediate/*`, `.markerfinder/*`);
 * nine workflow/data properties: occupancy-based selection, HGT grading, state
   persistence, determinism, provenance recorded, unknown-not-placeholder,
@@ -91,8 +91,8 @@ All sequence data is public and re-derivable; nothing was typed by hand.
 
 Three build scripts reproduce the whole bundle from NCBI (`01_fetch_genomes.py`,
 `02_build_marker_sets.py`, `03_build_fixtures.py`); they are idempotent and
-`--force`-able, and `validation/data/.hit_cache/` holds the HMM scan cache they
-derive from.
+`--force`-able, and `validation/data/markers/.hit_cache/` holds the HMM
+scan cache they derive from.
 
 ### 3.2 An error the data layer caught
 
@@ -182,7 +182,7 @@ would inflate apparent sensitivity. Two quantities are reported:
 ## 5. Environment
 
 Required: Python 3.10 or newer, with no upper bound. The declared runtime
-dependencies (biopython, pyyaml, ete3, tomli), and the external tools
+dependencies (biopython, pyyaml, ete3, six, tomli), and the external tools
 `hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`, plus `iqtree3`
 for ML gene trees and `checkm` if quality assessment is not skipped.
 
@@ -239,7 +239,7 @@ Known limits, stated rather than left implicit:
 
 * Marker inputs are a GTDB-Tk **layout** reconstruction (§3.3), so end-to-end
   results here do not measure GTDB-Tk's own marker choice.
-* The functional-category map's text is each profile's `# DESCRIPTION` line: it
+* The functional-category map's text is each profile's `DESC` line: it
   exercises the `--cog-category-map` plumbing, not COG biology.
 * Detection metrics rest on three planted chimeras over 12 genomes. That is a
   positive control with a known answer and a measured background rate, not an
@@ -247,7 +247,7 @@ Known limits, stated rather than left implicit:
   `tests/benchmark/` (30 genomes, GTDB r53 truth) is the route to a stronger
   estimate and is user-triggered because of its download size.
 * The 20-marker occupancy span reaches 0.75 at the low end
-  (`validation/data/markers/bench12/OCCUPANCY.tsv`: `TIGR02012` 9/12 = 0.7500): the bundled
-  library is a conserved-marker library, so very sparse markers do not occur on
-  this (closely related) genome set and are simulated by subsetting instead,
-  and are labelled as such.
+  (`validation/data/markers/bench12/OCCUPANCY.tsv`: `TIGR02012` 9/12 =
+  0.7500): the bundled library is a conserved-marker library, so very sparse
+  markers do not occur on this (closely related) genome set and are simulated
+  by subsetting instead, and are labelled as such.

@@ -17,9 +17,16 @@
 [English README](README.EN.md) | [中文说明](README.CN.md) | [Manual (EN)](MANUAL.EN.md) | [Manual (CN)](MANUAL.CN.md)
 
 > Documentation in this repository ships in both languages, with the **English
-> version as the primary text**. `tests/unit/test_docs_are_bilingual.py` fails if
-> a document exists in only one language, if an "English" file is written in
-> Chinese, or if the two versions diverge in shape.
+> version as the primary text**. `tests/unit/test_docs_are_bilingual.py` guards
+> that structurally: a page named `*.EN.md` must have its `*.CN.md` twin and the
+> other way round, an English half may not drift into Chinese prose, the two
+> halves must stay parallel in shape (heading structure and overall length), and
+> this index must be English and link both versions. A few pages deliberately
+> ship in English only and carry no language suffix — `SECURITY.md`,
+> `CONTRIBUTING.md`, `CHANGELOG.md`, `AI_ASSISTANCE.md`,
+> `ai-annotation-checklist.md`, `db/README.md`, `worked_example/README.md`
+> and `worked_example/run_2026-11-10/README.md` — so they fall outside that
+> pairing rule.
 
 ---
 

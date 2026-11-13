@@ -2,7 +2,7 @@
 
 **Adaptive HGT-Aware Phylogenomic Pipeline — Technical Reference Manual**
 
-Version 0.1.1
+Version 0.1.1 · [中文版本](MANUAL.CN.md)
 
 ---
 
@@ -528,19 +528,19 @@ Generates two types of output:
 ### 5.2 MAFFT
 
 - **Purpose:** Multiple sequence alignment
-- **Command:** `mafft --auto --quiet --thread N <input>`
-- **Mode:** Auto-selects algorithm based on input size
+- **Command:** `mafft --auto --quiet --thread 1 <input>`
+- **Mode:** Auto-selects algorithm based on input size. Threads are deliberately pinned to 1 (not `--cpu N`): MAFFT's multi-threaded alignment is not reproducible, so per-marker parallelism is provided by the pipeline's own task pool instead
 
 ### 5.3 trimAl
 
 - **Purpose:** Automated alignment trimming
 - **Command:** `trimal -automated1 -in <input> -out <output>`
-- **Method:** Automated1 heuristic (gap threshold based on alignment statistics)
+- **Method:** Automated1 heuristic (gap threshold based on alignment statistics). The `gtdb_tk` per-marker gene-tree path trims by gap fraction instead: `trimal -in <input> -out <output> -gt 0.2`
 
 ### 5.4 IQ-TREE3
 
 - **Purpose:** Maximum likelihood tree inference
-- **Command:** `iqtree3 -s <aln> -m MFP -B 1000 -bnni -nt N -pre <prefix>`
+- **Command:** `iqtree3 -s <aln> -m MFP -B 1000 -bnni -nt N -pre <prefix> --quiet -seed 1`
 - **Features:** ModelFinder Plus for model selection, UFBOOT for branch support
 
 ### 5.5 ASTRAL-III
@@ -562,12 +562,12 @@ Generates two types of output:
 ### 5.7 DIAMOND
 
 - **Purpose:** Fast protein homology search. Used by the `OrthologResolver` BBH ortholog-resolution interface (currently skipped by the main pipeline; interface reserved for future use)
-- **Command:** `diamond blastp --query <faa> --db <db> --evalue <e> --max-target-seqs N --outfmt 6...`
+- **Command:** `diamond makedb --in <faa> -d <db> --quiet`, then `diamond blastp --query <faa> -d <db> --outfmt 6 qseqid sseqid bitscore --out <out> --quiet` (no `--evalue`/`--max-target-seqs` is passed; best hits are picked in Python by bit score)
 
 ### 5.8 CheckM
 
 - **Purpose:** Genome quality assessment (completeness, contamination)
-- **Command:** `checkm lineage_wf -t N -x fna --tablename checkm.tsv <input_dir> <output_dir>`
+- **Command:** `checkm lineage_wf -t N -x fna --tab_table -f checkm.tsv <input_dir> <output_dir>`
 - **Output:** TSV with Bin Id, Completeness, Contamination columns
 - **Input note:** the current version requires protein input (`.faa`/`.fasta`/`.fa`); `.fna-only` input is no longer supported. **On protein input MarkerFinder skips CheckM proactively** (completeness prediction is unreliable without nucleotide sequences) and uses the default quality estimates (completeness 98% / contamination 1% / quality score 93%; 75% / 5% / 50% for MAG/SAG sources), reported as `Quality source = default_no_nucleotide`.
   - Supply a pre-computed quality file via `--checkm-results` (derived from the matching `.fna`) to override; `Quality source = precomputed`.
@@ -721,7 +721,7 @@ Human-readable text file with key statistics.
 
 > **Not-measured declaration.** Every metric this run could not produce because an external tool or dependency is unavailable is listed at the top of `pipeline_summary.txt` — metric name, cause, affected markers — and the same block is written to the log at WARNING level. Those metrics render as `NA` in the tables and never as a neutral 0 or 0.5. `Evidence coverage` only answers *how many* markers were measured; this declaration answers *which* metric is missing and *why*, and the two are not interchangeable.
 
-Sample content:
+Sample content (the shipped worked-example run; in the real file these fields are grouped by section):
 
 ```
 ============================================================
@@ -729,11 +729,11 @@ MarkerFinder Pipeline Summary
 ============================================================
 
 Genomes: 6
-Markers: 60
-HGT L1: 0 L2: 30 L3: 30
-Species tree source: concat
+Markers: 44
+HGT L1: 43 L2: 0 L3: 1
+Species tree source: astral
 Quality source: default_no_nucleotide
-Runtime: 57.8s
+Runtime: 238.1s
 ```
 
 - `Species tree source`: `concat` (Mode A supermatrix) / `astral` (Mode B ASTRAL-III succeeded) / `none` (ASTRAL-III failed or coalescent not run). The current implementation does **not** generate `consensus` or `first_gene_tree` files on ASTRAL-III failure. See §4.4.
@@ -747,7 +747,7 @@ Runtime: 57.8s
 
 ### 7.8 Gene Tree Collection (`Phase4_trees/markerfinder.gene_trees.newick`)
 
-Per-marker gene trees in standard multi-newick format (one tree per line), **no** `>gene_id` separators. Generated when coalescent inference is enabled. Single-gene tree cache lives at `Phase4_trees/gene_trees/{marker_id}.nwk`.
+Per-marker gene trees in standard multi-newick format (one tree per line), **no** `>gene_id` separators. Generated only when coalescent inference is enabled. Single-gene tree cache lives at `Phase4_trees/gene_trees/{marker_id}.nwk`.
 
 ### 7.9 Run Configuration Snapshot (`Phase5_metadata/run_config.json`)
 

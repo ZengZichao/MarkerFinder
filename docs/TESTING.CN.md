@@ -1,7 +1,7 @@
 # MarkerFinder 测试方案与验证方法论
 
 适用版本：MarkerFinder 0.1.1
-[English version](TESTING.EN.md) · 配套：[TEST-REPORT.CN.md](TEST-REPORT.CN.md)
+[English version](TESTING.EN.md) · 配套报告：[TEST-REPORT.CN.md](TEST-REPORT.CN.md)
 
 ---
 
@@ -11,7 +11,7 @@ MarkerFinder 公开发布的论断有三类，每类需要不同的检验手段�
 
 | 论断类别 | 例子 | 检验手段 |
 |---|---|---|
-| 数值层 | 两个拓扑的 `rf_distance` 落在 0–1 | 单元测试，`tests/unit/` |
+| 数值层 | 两个拓扑的 `normalized_rf` 落在 0–1 | 单元测试，`tests/unit/` |
 | 结构层 | `run_config.json` 记录了数据库版本 | 集成测试（mock 外部工具），`tests/integration/` |
 | 结论层 | “HGT 筛选能去除系统发育上误导性的标记” | **针对阳性对照的真实端到端运行**，`validation/` |
 
@@ -39,7 +39,7 @@ validation/  153 个在真实基因组上用真实工具跑的端到端用例
 * `markerfinder.cli.parser._SUBCOMMAND_SPECS` → 4 个可续跑的分步命令；
 * `markerfinder.cli.constants` → 7 个互不相同的退出码；
 * `validation/capabilities.py` 中的产物清单 → 19 类输出产物
-  （`Phase5_reports/*`、`Phase5_evidence/*`、`Phase4_trees/*`、
+  （`Phase5_reports/*`、`Phase5_evidence/*`、`Phase5_metadata/*`、`Phase4_trees/*`、
   `Phase4_alignments/*`、`Phase4_intermediate/*`、`.markerfinder/*`）；
 * 9 条流程/数据性质：占有率选择、HGT 分级、状态持久化、确定性、溯源记录、
   不可测不得写成占位值、失败必须大声、数据溯源完整性、清单校验和。（分步与
@@ -75,7 +75,7 @@ def test_threshold_scan_writes_its_own_artifact(...):
 
 | 项目 | 来源 | 记录位置 |
 |---|---|---|
-| 12 个蛋白质组 | NCBI RefSeq，`datasets download genome accession … --include protein` ——由 `01_fetch_genomes.py` 下载；`genomes/` 不入库，由 `MANIFEST.sha256` 校验 | `validation/data/genomes/` + `PROVENANCE.tsv` |
+| 12 个蛋白质组 | NCBI RefSeq，`datasets download genome accession … --include protein`——由 `01_fetch_genomes.py` 下载；`genomes/` 不入库，由 `MANIFEST.sha256` 校验 | `validation/data/genomes/` + `PROVENANCE.tsv` |
 | 物种名 + 7 个分类阶元 | NCBI `datasets summary genome accession` → `datasets summary taxonomy taxon <tax_id>` | `PROVENANCE.tsv` 的 `domain…species`、`tax_id` 列 |
 | 组装统计（contig 数、长度、GC、蛋白数） | 同上 NCBI 报告 | `PROVENANCE.tsv` |
 | 完整度 / 污染率 | NCBI 为每个组装记录的 `checkm_info` | `PROVENANCE.tsv`，并导出为 `data/checkm/*.tsv` |
@@ -84,7 +84,7 @@ def test_threshold_scan_writes_its_own_artifact(...):
 
 三个构建脚本（`01_fetch_genomes.py`、`02_build_marker_sets.py`、
 `03_build_fixtures.py`）可从 NCBI 重建整个数据包；它们幂等且支持 `--force`，
-`validation/data/.hit_cache/` 保存其依赖的 HMM 扫描缓存。
+`validation/data/markers/.hit_cache/` 保存其依赖的 HMM 扫描缓存。
 
 ### 3.2 数据层抓出的一个错误
 
@@ -160,12 +160,12 @@ Il1403（Lactobacillales 目）的直系同源序列——一次位置已知的�
 
 ## 5. 环境
 
-必需：Python 3.10 及以上，不设上界。声明的运行期依赖（biopython、pyyaml、ete3、
+必需：Python 3.10 及以上，不设上界。声明的运行期依赖（biopython、pyyaml、ete3、six、
 tomli），以及外部工具 `hmmsearch`、`mafft`、`trimal`、`FastTree`/`fasttree`、`astral`；
-若使用 ML 基因树还需 `iqtree3`，若不跳过质量评估则需 `checkm`。
+ML 基因树还需 `iqtree3`，若不跳过质量评估则需 `checkm`。
 
 这个区间此前止于 3.12：ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除
-`cgi`（PEP 594），导致 ete3 —— 以及所有 MAD / 单系性测量 —— 在更新的解释器上不可用。
+`cgi`（PEP 594），导致 ete3——以及所有 MAD / 单系性测量——在更新的解释器上不可用。
 `markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 ete3 在
 3.13+ 可以导入，上界也就没有继续存在的理由。
 
@@ -187,7 +187,7 @@ pytest tests/benchmark            # 基准驱动脚本的契约测试
 
 # 验收层（真实流水线、真实数据）
 python validation/run_validation.py -n 8            # 不含慢速用例
-python validation/run_validation.py --all -n 8      # 含检测性能指标
+python validation/run_validation.py --all -n 8      # 含检测指标
 python validation/run_validation.py --prepare       # 先从 NCBI 重建数据
 
 # 单个功能域
@@ -209,9 +209,9 @@ manifest 不带上界，`tests/unit/test_self_test_environment.py` 断言 `--che
 
 * marker 输入是 GTDB-Tk 的**布局**重构（§3.3），因此这里的端到端结果并不度量
   GTDB-Tk 自身的 marker 选择。
-* 功能类别映射的文本取自各 profile 的 `# DESCRIPTION` 行：它检验的是
+* 功能类别映射的文本取自各 profile 的 `DESC` 行：它检验的是
   `--cog-category-map` 的通路，不是 COG 生物学。
-* 检测性能建立在 12 基因组上的 3 个植入嵌合体之上。它是带已知答案的阳性对照并有
+* 检测指标建立在 12 基因组上的 3 个植入嵌合体之上。它是带已知答案的阳性对照并有
   实测背景率，但绝不是具有流行病学代表性的 HGT 样本；更强的估计要走
   `tests/benchmark/`（30 基因组、GTDB r53 真值），因其下载体量而由用户触发。
 * 20-marker 的占有率跨度下界只到 0.75（`validation/data/markers/bench12/OCCUPANCY.tsv`：

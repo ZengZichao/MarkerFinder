@@ -30,38 +30,38 @@ MarkerFinder is a phylogenomic pipeline for prokaryotic marker gene selection an
 Genome Input (.faa)
         │
         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 0: Quality-Aware Preprocessing               │
-│  CheckM assessment → Quality stratification         │
-│  → Adaptive parameter computation                   │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 0: Quality-Aware Preprocessing                           │
+│  CheckM assessment → Quality stratification                     │
+│  → Adaptive parameter computation                               │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 1: GTDB-TK Marker Loading & Selection        │
-│  Consume GTDB-TK ar53/bac120 per-marker seqs → occupancy │
-│  → Occupancy-based marker subset selection          │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 1: GTDB-TK Marker Loading & Selection                    │
+│  GTDB-TK ar53/bac120 per-marker seqs → occupancy matrix         │
+│  → Occupancy-based marker subset selection                      │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 2: HGT Screening (Phylogenetic)              │
-│  Phylogenetic step: RF distance, quartet consistency, │
-│  MAD rooting + monophyly proportion                 │
-│  → Level 1 (clean) / Level 2 (suspect) / Level 3 (excl)│
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 2: HGT Screening (Phylogenetic)                          │
+│  Phylogenetic step, one of two: RF/quartet incongruence         │
+│  vs species tree, OR MAD rooting + monophyly proportion         │
+│  → Level 1 (clean) / Level 2 (suspicious) / Level 3 (excluded)  │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 3: Dual-Mode Phylogenetic Inference          │
-│  Mode A: MAFFT → trimAl → IQ-TREE3 (Supermatrix,    │
-│          default; FastTree2 fallback)               │
-│  Mode B: MAFFT → trimAl → Gene Trees → ASTRAL-III   │
-│  → Conflict detection (RF distance, quartet)        │
-└───────────────────────┬─────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 3: Dual-Mode Phylogenetic Inference                      │
+│  Mode A: MAFFT → trimAl → IQ-TREE3 (Supermatrix, default;       │
+│          FastTree2 if IQ-TREE3 fails)                           │
+│  Mode B: MAFFT → trimAl → Gene Trees → ASTRAL-III (coalescent)  │
+│  → Conflict detection (RF distance, quartet)                    │
+└────────────────────────┬────────────────────────────────────────┘
                         ▼
-┌─────────────────────────────────────────────────────┐
-│  Phase 4: Report Generation                         │
-│  Static HTML report + plain text outputs            │
-│  (TSV, Newick, Nexus) + Phase5_metadata/run_config.json     │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Phase 4: Report Generation                                     │
+│  Static HTML report + plain text outputs                        │
+│  (TSV, Newick, Nexus) + Phase5_metadata/run_config.json         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 > Note: in coalescence mode (Mode B), the gene trees are built with FastTree + WAG by default; pass `--gene-tree-builder iqtree` to switch to IQ-TREE3.
@@ -110,10 +110,10 @@ conda run -n markerfinder pytest -q
 
 **`six` is declared for you**: the `ete3` wheel on PyPI declares no requirements at all, yet
 `ete3/webplugin/webapp.py` does `import six.moves.cPickle` and `ete3/__init__.py` star-imports
-that module. MarkerFinder therefore lists `six` in its own dependencies, so `pip install
-markerfinder` gives you an importable ete3. Installing `ete3` *on its own* still needs
-`pip install ete3 six`. (This was not a hypothetical: a clean CI environment — where nothing
-else happens to pull six in — is exactly how the undeclared dependency surfaced.)
+that module. MarkerFinder therefore lists `six` in its own dependencies, so
+`pip install markerfinder` gives you an importable ete3. Installing `ete3` *on its own* still
+needs `pip install ete3 six`. (This was not a hypothetical: a clean CI environment — where
+nothing else happens to pull six in — is exactly how the undeclared dependency surfaced.)
 
 **Measured results inside the supported range** (the same code, one full run per interpreter with
 ete3 installed):
@@ -241,9 +241,9 @@ markerfinder \
 
 # 3. Check results
 ls example/output/
-# Phase5_reports/markerfinder.report.html       — Static HTML report
-# Phase5_reports/markerfinder.marker_summary.tsv — Marker gene summary table
-# Phase4_trees/markerfinder.species_tree_concat.newick — Species tree (Newick)
+# Phase5_reports/markerfinder.report.html                — Static HTML report
+# Phase5_reports/markerfinder.marker_summary.tsv         — Marker gene summary table
+# Phase4_trees/markerfinder.species_tree_concat.newick   — Species tree (Newick)
 ```
 
 ### MAG Analysis Example
@@ -414,7 +414,7 @@ input_dir/
 | `--taxonomy-table` | (empty) | Recommended external taxonomy table (TSV/CSV, first column = genome id), used with MAD rooting + monophyly proportion for the Phylogenetic step |
 | `--monophyly-rank` | `auto` | Rank at which the Phylogenetic-step monophyly proportion is measured when `--taxonomy-table` is used. `auto` (default) derives it from the gene tree's taxonomic scope (one rank below the scope: domain→phylum, phylum→class, class→order, order→family, family→genus, genus→species; `genus` when the tips are not cohesive at any rank). Naming a rank — `domain`/`phylum`/`class`/`order`/`family`/`genus`/`species` — measures at exactly that rank; if no taxon there has an informative split (≥ 2 representatives on both sides) the walk moves upward and the result is reported as a cross-rank comparison (graded UNKNOWN), never as a proportion comparable with `--monophyly-threshold` |
 | `--monophyly-threshold` | `0.5` | Lower bound on monophyly proportion; below this value the tree is phylogenetically incongruent (HGT-prone). Phylogenetic-step risk = `1 − monophyly_proportion` |
-| `--hgt-threshold` | `0.25` | HGT risk threshold for level classification |
+| `--hgt-threshold` | `0.25` | **DEPRECATED alias** for `--hgt-threshold-l1l2` (`0.25` when neither is given): it moves only the Level1/Level2 boundary, never Level2/Level3 — prefer `--hgt-threshold-l1l2` / `--hgt-threshold-l2l3` |
 | `--hgt-adaptive-thresholds` | `false` | Enable far-distance adaptive relaxation (**default off**; when on, `level2_max` is relaxed to 0.95 on cross-family / cross-order datasets where phylogenetic HGT risk saturates, so the pipeline does not discard every marker as Level 3) |
 | `--no-hgt-adaptive-thresholds` | `false` | Explicitly disable far-distance adaptive relaxation (same as the default; placeholder flag) |
 
@@ -571,7 +571,7 @@ Coverage spans core configuration, models, marker-selection strategies, the HGT 
 GTDB-TK marker loading, MAD rooting, taxonomy parsing, tree and sequence validation, and report
 generation. Three specialised groups sit on top of that:
 
-- behaviour-regression tests for the consolidated modules (`tests/unit/test_module_regressions.py`)
+- behaviour-regression tests for the code-review findings (`tests/unit/test_module_regressions.py`, finding ids F1-F21)
 - the must-fail control matrix
 - product-level acceptance (`tests/integration/test_products_acceptance.py`), which runs the
   pipeline under mocked external tools and reads the artifacts back

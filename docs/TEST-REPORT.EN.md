@@ -60,10 +60,10 @@ The surface is enumerated from the code, not from a hand-kept list
 
 | Source of truth | Entries | Covered by at least one case |
 |---|---|---|
-| `--options` in `_build_parser` (incl. deprecated aliases and their recording attributes) | 68 | 68 |
+| CLI options in `_build_parser` (incl. deprecated aliases and their recording attributes) | 68 | 68 |
 | Stepwise subcommands (`scan` / `filter` / `infer` / `report`, plus the no-subcommand aggregate run `aggregate-run`) | 5 | 5 |
 | Distinct exit codes in `markerfinder.cli.constants` | 7 | 7 |
-| Output products (reports, evidence, trees, alignments, state) | 19 | 19 |
+| Output products (reports, evidence, metadata, trees, alignments, intermediates, state) | 19 | 19 |
 | Workflow properties (selection, grading, provenance, determinism, loudness…) | 9 | 9 |
 | **Total capability ids** | **108** | **108 — `capabilities_uncovered: []`** |
 
@@ -123,7 +123,7 @@ testable per marker:
 | `--monophyly-threshold 0.0` vs `1.0` | 3 markers flagged vs 3 flagged (a stricter floor can only move markers down; on this data both thresholds flag the same three) | `v04_monophyly` |
 | `--hgt-threshold-l2l3 0.9` vs `0.1` | 0 excluded → 2 excluded | `v06_l2l3` |
 | `--hgt-threshold` (deprecated alias of L1/L2) | Level-1 count 4 → 2, Level-3 count unchanged | `v06_alias` |
-| `--hgt-adaptive-thresholds` | `level2_max` 0.6 → 0.95, announced as far-distance; default run says nothing | `v06_adaptive` |
+| `--hgt-adaptive-thresholds` | `level2_max` 0.6 → 0.95, announced as `far-distance`; default run says nothing | `v06_adaptive` |
 | Ranking-only demotion (consistency criterion) | `--cog-category-map` fills `functional_category` in the excluded-marker profile (`markerfinder.excluded_profile.tsv`); without the map that column reads `NA` with the reason in `category_note` | `v06_cog` |
 | `--hgt-mode risk / consistency / hybrid` | all three criteria kept exactly the same marker set on this data (`PF01025.20` alone), so this dataset cannot discriminate them; the case is recorded as xfail and the report does not claim a separation | `v08_criteria` |
 
@@ -161,7 +161,7 @@ from returning.
 * `--coalescent-mode off / post-filter / always` → the ASTRAL tree is absent,
   present, present respectively (`v09_coalescent_*`), and the recommendation
   text follows the trees that exist.
-* All 18+1 product kinds are opened and parsed: TSV headers, decision-card JSON
+* All 19 product kinds are opened and parsed: TSV headers, decision-card JSON
   schema, Nexus partition (`charsets` = markers kept by the screen, which is not
   the Phase-1 selected count), HTML report, run_config, step state
   (`v14_products`, `v14_partition`, `v14_cards`, `v13_*`).

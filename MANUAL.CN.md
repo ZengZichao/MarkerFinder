@@ -2,7 +2,7 @@
 
 **自适应 HGT 感知系统发育基因组学流水线 — 技术参考手册**
 
-版本 0.1.1
+版本 0.1.1 · [English version](MANUAL.EN.md)
 
 ---
 
@@ -38,7 +38,7 @@ MarkerFinder 是一个系统发育基因组学流水线，自动化完成标记�
 | **HGT 感知** | 独立 Phase 2 基于系统发育的 HGT 筛查（MAD 定根 + 单系比例或 RF/quartet） |
 | **双策略** | 串联法（Supermatrix）与合并法（ASTRAL）并行推断 |
 | **MAG 优先** | 原生支持宏基因组组装基因组的质量感知分析 |
-| **工程化** | 模块化测试套件（用例数以 README 的实测徽章为准，单一来源不在此复述）：集成层在 mock 外部工具下真跑流水线并读回产物核对验收条款，基准层含取数、嵌合阳性对照、度量、取证与反向消融脚本；两者均**不再是占位** |
+| **工程化** | 模块化测试套件（用例数以 README 的实测徽章为准，单一来源不在此复述）：集成层在 mock 外部工具下真跑流水线并读回产物核对验收条款，基准层含取数、嵌合阳性对照、度量、溯源记录与反向消融脚本；两者均不再是占位 |
 
 ### 1.3 五大创新路径
 
@@ -144,7 +144,7 @@ MarkerFinder/
 │   └── benchmark/             # 外部复现与嵌合阳性对照
 ├── validation/                # 全功能验证：真实流水线 + 真实基因组
 │   ├── cases/                 # 验收用例，按功能域分文件
-│   ├── data/                  # 随仓库发布的夹具 + 来源记录（基因组需下载）
+│   ├── data/                  # 随仓库发布的夹具 + 溯源记录（基因组需下载）
 │   ├── results/               # 本次发布所依据的存档证据
 │   └── scripts/               # 数据流水线：下载基因组/标记集/夹具
 ├── db/                        # expected_hashes.json（HMM profile 需自行获取）
@@ -227,7 +227,7 @@ markerfinder -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/mar
 | `marker_mode` | `str` | `"gtdb_tk"` | 标记发现模式：`gtdb_tk`=消费 GTDB-TK ar53/bac120 每标记原始序列（需 `--gtdb-markers-dir`）；`hmm`=基于 TIGRFAM/Pfam 单标记 HMM 库扫描输入基因组（需 `--marker-hmm-dir` 或自动发现）。`denovo` **不受支持** |
 | `marker_db_source` | `str` | `"auto"` | `marker_mode="hmm"` 且 `marker_hmm_dir` 为空时的 HMM 库定位策略：`auto`=在 `db/gtdb_markers/{ar53,bac120}` 下按检测到的输入域自动发现；`cog`/`gtdb`=仅查指定来源；`none`=不自动发现（需显式提供 `--marker-hmm-dir`） |
 | `gtdb_markers_dir` | `str` | `""` | `marker_mode="gtdb_tk"` 时必填：GTDB-TK 提取的每标记 FASTA 目录（每个保守蛋白一个 `.faa`/`.fasta` 文件，文件名主干即标记 id；GTDB-TK 输出为**未比对/未修剪**的原始序列，软件会自动用 MAFFT 比对 + trimal 修剪后再建树） |
-| `species_tree` | `str` | `""` | `--species-tree` 的别名（`--tree` 为其遗留别名，等价但会触发弃用提示；见 §3.3 与 §8 的示例）。参考物种树（Newick）的路径，用于 HGT 系统发育步骤的 RF/quartet 不一致度筛查。在 `marker_mode="gtdb_tk"` 下通常就是 GTDB-TK 的串联物种树。**建议**改为提供 `--taxonomy-table`，让系统发育步骤切换到 MAD 定根 + 单系比例筛查。当 `--species-tree`/`--tree` 与 `--taxonomy-table` 均未提供时，跳过该步骤，所有标记记为 `UNKNOWN`（未筛查：保留，但不参与风险分档）；须提供参照才能启用筛查。 |
+| `species_tree` | `str` | `""` | `--species-tree` 的别名（`--tree` 为其遗留别名，等价但会触发弃用提示）。参考物种树（Newick）的路径，用于 HGT 系统发育步骤的 RF/quartet 不一致度筛查。在 `marker_mode="gtdb_tk"` 下通常就是 GTDB-TK 的串联物种树。**建议**改为提供 `--taxonomy-table`，让系统发育步骤切换到 MAD 定根 + 单系比例筛查（见 §3.3 与 §8 的示例）。当 `--species-tree`/`--tree` 与 `--taxonomy-table` 均未提供时，跳过该步骤，所有标记记为 `UNKNOWN`（未筛查：保留，但不参与风险分档）；须提供参照才能启用筛查。 |
 | `quality_weighted` | `bool` | `True` | 按基因组质量加权占有率 |
 
 ### 3.3 HGTConfig
@@ -239,11 +239,11 @@ markerfinder -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/mar
 | `enable_phylogenetic` | `bool` | `True` | 启用系统发育步骤 |
 | `phylogenetic_threshold` | `float` | `0.5` | 系统发育步骤风险阈值 |
 | `level_thresholds` | `Dict` | `{level1_max: 0.25, level2_max: 0.60}` | 等级边界（常规模式）。远缘放宽模式下 `level2_max` 由 `level2_max_far` 覆盖。 |
-| `adaptive_far_thresholds` | `bool` | `False` | **远缘自适应放宽**（**默认关闭**，须显式开启）。当输入跨多个高阶分类单元（含 ≥ 2 目，或属比 ≥ 0.70）时，系统发育风险评分趋于饱和，会把所有标记归入等级 3 剔除，导致流水线无标记可用。开启后自动放宽 `level2_max` 到 `level2_max_far`（默认 0.95），保留足量标记建树。CLI 开关为 `--hgt-adaptive-thresholds`（开启）/ `--no-hgt-adaptive-thresholds`（显式关闭）；YAML/JSON 配置文件键为 `hgt_adaptive_thresholds: true`。注意：`adaptive_far_thresholds` 仅是 HGTConfig 数据类字段名，**不能**直接作为配置文件键使用。 |
+| `adaptive_far_thresholds` | `bool` | `False` | **远缘自适应放宽**（**默认关闭**，须显式开启）。当输入跨多个高阶分类单元（含 ≥ 2 目，或属比 ≥ 0.70）时，系统发育风险评分趋于饱和，会把所有标记归入等级 3 剔除，导致流水线无标记可用。开启后自动放宽 `level2_max` 到 `level2_max_far`（默认 0.95），保留足量标记建树。CLI 开关为 `--hgt-adaptive-thresholds`（开启）/ `--no-hgt-adaptive-thresholds`（显式关闭）；配置文件键为 `hgt_adaptive_thresholds: true`。注意：`adaptive_far_thresholds` 仅是 HGTConfig 数据类字段名，**不能**直接作为配置文件键使用。 |
 | `far_distance_genera_ratio` | `float` | `0.70` | 触发远缘放宽的属比下界（`n_genera / n_genomes`）。 |
 | `far_distance_min_orders` | `int` | `2` | 触发远缘放宽的目数下界。 |
 | `level2_max_far` | `float` | `0.95` | 远缘放宽模式下的 `level2_max` 上限。 |
-| `monophyly_rank` | `str` | `"auto"` | 使用 `--taxonomy-table` 时，系统发育步骤中基因树单系比例的**测量阶元**。`auto`（默认）由基因树的分类学范围推导（scope 的下一阶元；tip 在任何阶元都不一致时取 `genus`）；显式命名阶元则就在该阶元测量，scope 仅被记录。取值：`auto`/`domain`/`phylum`/`class`/`order`/`family`/`genus`/`species`（见 §4.3 系统发育步骤）。 |
+| `monophyly_rank` | `str` | `"auto"` | 使用 `--taxonomy-table` 时，系统发育步骤中基因树单系比例的测量阶元。`auto`（默认）由基因树的分类学范围推导（scope 的下一阶元；tip 在任何阶元都不一致时取 `genus`）；显式命名阶元则就在该阶元测量，scope 仅被记录。取值：`auto`/`domain`/`phylum`/`class`/`order`/`family`/`genus`/`species`（见 §4.3 系统发育步骤）。 |
 | `monophyly_threshold` | `float` | `0.5` | 单系比例下限：低于该值视为系统发育不一致（HGT 倾向），系统发育步骤风险 = `1 - monophyly_proportion`。 |
 
 ### 3.4 PhylogeneticConfig
@@ -343,12 +343,12 @@ markerfinder -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/mar
 1. **`--hgt-mode hybrid` 已按规范实现**（联结语义即“两者都要过”，实现见 `markerfinder/pipeline.py` 的 hybrid 合取分支与 `markerfinder/modules/report_generator.py` 写的裁决注记）：risk 判据（Phase 2 的 `excluded`，不变）与 `grade == CONSISTENT`（Phase 3 `screen`）同时满足才计入放行；一致性腿排除的标记写入 `excluded_profile.tsv`，逐标记裁决注记进 `hgt_evaluation.tsv` 与决策卡。**单趟语义**：本次运行的树由 risk 通过集构建，一致性腿裁决的是标记级结论与产物，不会假装做了第二趟重推断。`consistency` 模式**已接入运行路径**（同上产出）；缺任一可用树时记 `NOT EXECUTED`，该列保持 `NA`，不会借用 risk 结果冒充一致性结论。默认 `risk` 模式不进该分支。
 2. `--cog-category-map <tsv>` 已实现：`marker_id<TAB>functional_category` 两列，跳过注释/表头/单列行；文件缺失或无可用行时记 WARN，该列渲染为 `NA` 并加报告注记，不虚构类别值。
 3. 组成诊断产物（`composition.tsv`）与 PIS 门槛依赖 `.pis` sidecar，只有走 `gtdb_tk` 基因树构建路径才生成；`hmm` 路径无 sidecar，故这两项在该路径上无产物。
-4. **must-pass 基线的 `markers.ids` 仍是未填骨架**（需按研究对象补全 62 条核糖体标记 id）。门禁本身已实现：ids 为空时改为检验**全部**标记基因树并明确记一条日志；ids 已填但与数据集无交集时直接中止，不报“通过”。
+4. **must-pass 基线的 `markers.ids` 仍是未填骨架**（需按研究对象补全 62 条核糖体蛋白标记 id）。门禁本身已实现：ids 为空时改为检验**全部**标记基因树并明确记一条日志；ids 已填但与数据集无交集时直接中止，不报“通过”。
 5. 多宇宙因子评测按 E.3 排在本版本之外。
 6. **任何代码都未读取的配置字段（诚实登记；由 `tests/unit/test_config_surface_ratchet.py` 强制：新增此类字段必须要么接线、要么在此登记）**：`PipelineConfig.verify_db` 与 `PipelineConfig.databases`（这两个开关没有任何代码读取：`--check` 会对照 `db/expected_hashes.json`（见 §6.1）给哈希比对计分，不符即是一项 FAIL 且退出码非 0；普通运行则重算同样的哈希、在不符时记 WARNING，并把结果写入 `Phase5_metadata/run_config.json`（见 §6.4），两者都不读这两个字段）；`MAGConfig.min_completeness`（完整度门槛走 Phase 0 自适应占有率路径）；`OrthologConfig.use_diamond` 与 `OrthologConfig.graph_clustering`（DIAMOND/图聚类直系同源解析未接线，Phase 1.5 明确记日志跳过）；`HeterogeneityConfig.min_allele_freq`/`consensus_threshold`/`minor_allele_threshold`/`identity_threshold`（仅供未接入主流水线的 `MAGHeterogeneityHandler` 预留，主流程每标记只取最优命中）。
    注：`HeterogeneityConfig.enable_composition_screen` 与 `composition_warn_threshold` 已不再是死字段——前者现在与 `hgt_steps: composition` 等效（任一为真即开启组成诊断），后者经 `PipelineConfig.heterogeneity_config` 真正传到 `composition.tsv` 的离群判定；`composition_outlier_metric` 取非 `rcv` 值时会记 WARN 说明只实现了 `rcv`，不再静默忽略。
 
-7. **`--check --db-dir <目录>` 现在按你指定的目录做哈希校验**。此前 `--check` 内部调用哈希检查时不带参数，
+7. **`--check --db-dir <directory>` 现在按你指定的目录做哈希校验**。此前 `--check` 内部调用哈希检查时不带参数，
    永远校验仓库默认的 `db/`，即 `--check --db-dir X` 会给出一个针对**错误对象**的结论。
    未显式传 `--db-dir` 时行为不变（仍看仓库 `db/`）。另注意 `--check` 在读取 `--config` 之前执行，
    因此想让它校验指定库请把 `--db-dir` 显式写在命令行上，不要只写在配置文件里。
@@ -362,7 +362,7 @@ markerfinder -i genomes/ -o output/ -t 8 --gtdb-markers-dir gtdbtk_out/align/mar
 **目的：** 评估基因组质量，计算自适应参数。
 
 **流程：**
-1. **评估质量来源（`Quality source`）：**
+1. 评估质量来源（`Quality source`）：
    - **强制要求 `.faa` 蛋白序列输入**；CheckM 无法在蛋白序列上运行，因此默认跳过并使用默认质量估计（`Quality source = default_no_nucleotide`）；
    - 用户提供 `--checkm-results`（基于对应 `.fna` 预先计算）→ 预计算结果（`precomputed`）；
    - **显式 `--skip-checkm`** → 跳过 CheckM，使用默认质量估计（`skipped`）。
@@ -457,7 +457,7 @@ HGT_risk = phylogenetic
 
 其中 `phylogenetic` 为系统发育步骤的综合风险（RF/quartet 不一致度或 `1 - monophyly_proportion`）。
 
-**等级分级（常规模式）：**
+**等级分级：**
 
 | 等级 | 风险范围 | 动作 |
 |------|---------|------|
@@ -535,19 +535,19 @@ HGT_risk = phylogenetic
 ### 5.2 MAFFT
 
 - **用途：** 多序列比对
-- **命令：** `mafft --auto --quiet --thread N <input>`
-- **模式：** 根据输入大小自动选择算法
+- **命令：** `mafft --auto --quiet --thread 1 <input>`
+- **模式：** 根据输入大小自动选择算法。线程数被刻意固定为 1（而非 `--cpu N`）：MAFFT 的多线程比对结果不可复现，因此逐标记的并行由流水线自身的任务池提供
 
 ### 5.3 trimAl
 
 - **用途：** 自动比对修剪
 - **命令：** `trimal -automated1 -in <input> -out <output>`
-- **方法：** Automated1 启发式（基于比对统计的 gap 阈值）
+- **方法：** Automated1 启发式（基于比对统计的 gap 阈值）。`gtdb_tk` 的逐标记基因树路径则按 gap 比例修剪：`trimal -in <input> -out <output> -gt 0.2`
 
 ### 5.4 IQ-TREE3
 
 - **用途：** 最大似然树推断
-- **命令：** `iqtree3 -s <aln> -m MFP -B 1000 -bnni -nt N -pre <prefix>`
+- **命令：** `iqtree3 -s <aln> -m MFP -B 1000 -bnni -nt N -pre <prefix> --quiet -seed 1`
 - **特性：** ModelFinder Plus 自动模型选择，UFBOOT 分支支持度
 
 ### 5.5 ASTRAL-III
@@ -567,16 +567,16 @@ HGT_risk = phylogenetic
 ### 5.7 DIAMOND
 
 - **用途：** 快速蛋白同源搜索。用于 `OrthologResolver` 的 BBH 直系同源物解析接口（当前主流程已跳过，接口预留）
-- **命令：** `diamond blastp --query <faa> --db <db> --evalue <e> --max-target-seqs N --outfmt 6...`
+- **命令：** 先 `diamond makedb --in <faa> -d <db> --quiet`，再 `diamond blastp --query <faa> -d <db> --outfmt 6 qseqid sseqid bitscore --out <out> --quiet`（不传 `--evalue`/`--max-target-seqs`，最优命中在 Python 侧按 bit score 选取）
 
 ### 5.8 CheckM
 
 - **用途：** 基因组质量评估（完整度、污染度）
-- **命令：** `checkm lineage_wf -t N -x fna --tablename checkm.tsv <input_dir> <output_dir>`
+- **命令：** `checkm lineage_wf -t N -x fna --tab_table -f checkm.tsv <input_dir> <output_dir>`
 - **输出：** 包含 Bin Id、Completeness、Contamination 列的 TSV
 - **输入说明：** 当前版本强制要求 `.faa`/`.fasta`/`.fa` 蛋白序列输入，`.fna-only` 不再支持。**蛋白序列输入时 MarkerFinder 主动跳过 CheckM**（蛋白上完整度预测不可靠），直接用默认质量估计（完整度 98%/污染 1%/得分 93%，MAG/SAG 来源则 75%/5%/50%）；报告 `Quality source = default_no_nucleotide`。
   - 如需使用预计算的 CheckM 质量，可通过 `--checkm-results` 提供基于对应 `.fna` 的结果文件以覆盖默认估计，此时 `Quality source = precomputed`。
-  - 使用 `--skip-checkm` 可显式跳过 CheckM，此时 `Quality source = skipped`。
+  - 使用 `--skip-checkm` 可显式跳过 CheckM 并使用默认质量估计，此时 `Quality source = skipped`。
   - 注：真实现场运行 CheckM（`Quality source = checkm`）与 `default_no_checkm`（CheckM 未安装、运行失败或无可解析结果）两个来源仍然存在，只在基因组带同名 `.fna` 时触发（`-i` 说明：`.fna` 可选，仅供 CheckM 使用）。
 
 ---
@@ -718,9 +718,9 @@ end;
 
 人类可读的文本文件，包含关键统计数据。
 
-> **未测量声明**：本次运行中因外部工具或依赖不可用而**没有测到**的指标，会在 `pipeline_summary.txt` 摘要顶部逐条列出（指标名 + 原因 + 受影响标记），同样的内容也以 WARNING 级写入日志。这些指标在表格里一律渲染为 `NA`，绝不以 0 或 0.5 这类中性值出现；覆盖率数字（`Evidence coverage`）只回答“有多少标记真正测过”，而这份声明回答“缺的是哪一项、为什么缺”——两者不可互相替代。
+> **未测量声明**：本次运行中因外部工具或依赖不可用而没有测到的指标，会在 `pipeline_summary.txt` 摘要顶部逐条列出（指标名 + 原因 + 受影响标记），同样的内容也以 WARNING 级写入日志。这些指标在表格里一律渲染为 `NA`，绝不以 0 或 0.5 这类中性值出现；覆盖率数字（`Evidence coverage`）只回答“**有多少**标记真正测过”，而这份声明回答“缺的是**哪一项**、**为什么**缺”——两者不可互相替代。
 
-示例内容：
+示例内容（取自随仓库发布的那趟 run；真实文件中这些字段按分节排布）：
 
 ```
 ============================================================
@@ -728,14 +728,14 @@ MarkerFinder Pipeline Summary
 ============================================================
 
 Genomes: 6
-Markers: 60
-HGT L1: 0 L2: 30 L3: 30
-Species tree source: concat
+Markers: 44
+HGT L1: 43 L2: 0 L3: 1
+Species tree source: astral
 Quality source: default_no_nucleotide
-Runtime: 57.8s
+Runtime: 238.1s
 ```
 
-- `Species tree source`: 取值 `concat`（模式 A 串联法）/ `astral`（模式 B ASTRAL-III 成功）/ `none`（ASTRAL-III 失败或未跑合并法）。当前实现不会在 ASTRAL-III 失败时生成 `consensus` 或 `first_gene_tree` 文件（见 §4.4）。
+- `Species tree source`: 取值 `concat`（模式 A 串联法）/ `astral`（模式 B ASTRAL-III 成功）/ `none`（ASTRAL-III 失败或未跑合并法）。当前实现**不会**在 ASTRAL-III 失败时生成 `consensus` 或 `first_gene_tree` 文件（见 §4.4）。
 - `Quality source`: 取值 `precomputed`（`--checkm-results` 提供）/ `default_no_nucleotide`（纯蛋白 `.faa` 输入主动跳过 CheckM）/ `skipped`（`--skip-checkm` 显式跳过）/ `checkm`（现场运行成功）/ `default_no_checkm`（有可用核酸序列但 CheckM 未安装、运行失败或无可解析结果）。后两者只在基因组带同名 `.fna` 时出现，见 §4.1。
 
 ### 7.7 合并法物种树（`Phase4_trees/markerfinder.species_tree_{source}.newick`）
@@ -746,7 +746,7 @@ Runtime: 57.8s
 
 ### 7.8 基因树集合（`Phase4_trees/markerfinder.gene_trees.newick`）
 
-各标记基因的 Newick 树集合，标准 multi-newick 格式（每行一棵树），无 `>gene_id` 分隔头。仅在启用合并法推断时生成。单棵基因树缓存位于 `Phase4_trees/gene_trees/{marker_id}.nwk`。
+各标记基因的 Newick 树集合，标准 multi-newick 格式（每行一棵树），**无** `>gene_id` 分隔头。仅在启用合并法推断时生成。单棵基因树缓存位于 `Phase4_trees/gene_trees/{marker_id}.nwk`。
 
 ### 7.9 运行配置快照（`Phase5_metadata/run_config.json`）
 
@@ -769,7 +769,7 @@ markerfinder -i genomes/ -o output/ -t 8 \
 ```
 
 CheckM 结果文件应为 TSV 格式，包含列：`Bin Id`、`Completeness`、`Contamination`。当前版本强制要求输入目录包含 `.faa`/`.fasta`/`.fa` 文件，不再支持 `.fna-only`；`--checkm-results` 仅用于导入基于对应 `.fna` 文件的预计算质量值。
-使用 `--skip-checkm` 时，`pipeline_summary.txt` 中 `Quality source` 会显示为 `skipped`。
+使用 `--skip-checkm` 时，`pipeline_summary.txt` 会报告 `Quality source: skipped`。
 
 ### 8.2 自定义 HGT 阈值
 
@@ -787,7 +787,7 @@ markerfinder -i genomes/ -o output/ -t 8 \
     --hgt-adaptive-thresholds
 ```
 
-> 远缘放宽**默认关闭**：需要时请显式传 `--hgt-adaptive-thresholds`（或在配置文件写 `hgt_adaptive_thresholds: true`），MarkerFinder 才会对远缘数据集（含 ≥ 2 目，或属比 ≥ 0.70）把 `level2_max` 放宽到 0.95，缓解系统发育风险饱和致使所有标记都被归为等级 3 剔除的问题（详见 §3.3 HGTConfig）。
+> 远缘放宽**默认关闭**：需要时请显式传 `--hgt-adaptive-thresholds`（或在配置文件写 `hgt_adaptive_thresholds: true`），MarkerFinder 才会对**远缘数据集**（含 ≥ 2 目，或属比 ≥ 0.70）把 `level2_max` 放宽到 0.95，缓解系统发育风险饱和致使所有标记都被归为等级 3 剔除的问题（详见 §3.3 HGTConfig）。
 
 ### 8.3 大规模数据集优化
 
@@ -844,7 +844,7 @@ markerfinder -i genomes/ -o output/ --no-clobber
 
 ### 8.7 临时目录管理
 
-MarkerFinder 默认在系统临时目录下自动生成 `markerfinder-{uuid8}` 作为临时根目录，每趟 run 隔离，并在流程结束时**自动清理**。
+MarkerFinder 默认在系统临时目录下自动生成 `markerfinder-{uuid8}` 作为临时根目录，每趟 run 隔离，并在流程结束时自动清理。
 
 ```bash
 # 保留临时目录用于调试（可查看 .domtblout / .faa / .aln 文件）
@@ -869,7 +869,7 @@ markerfinder -i genomes/ -o output/ --tmp-dir ./my_tmp
 
 | 错误 | 原因 | 解决方案 |
 |------|------|---------|
-| `NoMarkerAvailableError` | 没有标记满足占有率阈值 | 显式降低下限——`--marker-preset expanded` / `--marker-preset mag_adaptive`（同时设定占有率、预算与策略），或 `--min-occupancy 0.5`。注意 `--mode` 本身只改变选择策略，不改变占有率下限 |
+| `NoMarkerAvailableError` | 没有标记满足占有率阈值 | 显式降低下限——`--marker-preset expanded` / `--marker-preset mag_adaptive`（同时设定**占有率**、**预算**与**策略**），或 `--min-occupancy 0.5`。注意 `--mode` 本身只改变选择策略，不改变占有率下限 |
 | `hmmsearch not found` | HMMER 未安装 | `conda install -c bioconda hmmer` |
 | `HMM database not found` | 数据库路径未配置 | 设置 `--marker-hmm-dir` 或将 TIGRFAM/Pfam HMM 文件放入 `db/gtdb_markers/{ar53,bac120}`；或改用 `gtdb_tk` 模式（`--gtdb-markers-dir`） |
 | `gtdb-markers-dir not provided` | `gtdb_tk` 模式缺少必填参数 | 提供 GTDB-TK 提取的每标记 FASTA 目录 |
@@ -916,7 +916,7 @@ MarkerFinder 使用标准化退出码，便于脚本和工作流集成：
 ### 10.1 Robinson-Foulds 距离
 
 ```
-RF(T1, T2) = 不同二分分割的数量
+RF(T1, T2) = number of different bipartitions
 normalized_RF = RF / (2 × (n - 3))
 ```
 
@@ -963,11 +963,11 @@ score = 0.25 × hmm_norm + 0.25 × occupancy + 0.10 × length_norm
 | 术语 | 本项目用法 | 注意事项 |
 |---|---|---|
 | **marker / gene** | marker = 挑选出来的直系同源标记；gene = 某基因组中该 marker 的拷贝 | 新增字段一律用 `marker_id` |
-| **risk（风险分）** | `overall_risk ∈ [0,1]`，由 RF 与 quartet 两信号加权合成 | 不是概率，不可解读为 “HGT 概率” |
+| **risk（风险分）** | `overall_risk ∈ [0,1]`，由 RF 与 quartet 两信号加权合成 | 不是概率，不可解读为“HGT 概率” |
 | **incongruence（拓扑不一致）** | 基因树与参照（物种树 / 分类框架）之间的分歧本身，由 `normalized_rf` 与 `quartet_agreement` 度量；是一个**观测量** | 与 `risk` 严格区分：risk 是把不一致程度加权合成后用于**排序**的分，不是概率，也不是 HGT 结论；不一致本身还可能来自 ILS、组装碎片化或长枝吸引，因此“有不一致”不等于“发生了 HGT” |
 | **consistent / concordant** | `consistent` 专指标记级双框架同侧判据；quartet agreement 指数据集级拓扑一致比例 | 不可互换，二者是不同层级的量 |
 | **不可测（NOT_MEASURABLE）** | 依赖/工具/数据缺失导致根本无法测量 | 与“不适用”区分，用户行动不同 |
-| **不适用（NOT_APPLICABLE）** | 该分量在此判定路径上本就不该存在（如单系路径不测 RF） | 不是错误，但也不该填成 0 |
+| **不适用（NOT_APPLICABLE）** | 该分量在此判定路径上本就不该存在（如单系路径不测 RF） | 不是错误，但也不得填成 0 |
 | **被拒绝（REJECTED）** | 测了，但参照对象合法性未通过 | 错误 A 的防线（错误 A 指撤稿论文 Steenwyk & King 2025, *Science* 390:751-756, doi:10.1126/science.adw9456 的合并参照缺陷；详见 README“概念来源”节） |
 | **UNKNOWN** | `MarkerLevel.UNKNOWN`，HGT 层“未筛查”，标记被保留但不参与风险叙事 | 与 `inconclusive`（推荐层/一致性层）是两回事 |
 | **inconclusive** | 证据存在但强度不足 ⇒ 不下结论（推荐层/一致性层枚举） | `MarkerLevel` 不新增此值 |

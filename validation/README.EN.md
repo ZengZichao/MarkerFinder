@@ -37,7 +37,7 @@ validation/
 ├── conftest.py                   fixtures: runners, inputs, per-case outputs
 ├── run_validation.py             one-command entry point
 ├── cases/                        test_vNN_*.py, numbered by feature area
-├── data/                         fixtures that ship + data the suite fetches
+├── data/                         fixtures that ship + data the suite fetches (see below)
 │   ├── PROVENANCE.tsv            per-assembly organism, tax_id, lineage, checksum
 │   ├── MANIFEST.sha256           checksum of every file in this directory
 │   ├── genomes/                  12 NCBI RefSeq proteomes (.faa) — FETCHED, not committed
@@ -73,8 +73,10 @@ per-case outputs and temp directories. It is disposable and git-ignored.
 ## Running it
 
 Requirements: the MarkerFinder environment (Python 3.10 or newer plus
-`hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`, `iqtree3`), and
-`pip install -e ".[dev]"`.
+`hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`), and
+`pip install -e ".[dev]"`. `run_validation.py` refuses when `hmmsearch`,
+`mafft`, `trimal`, `FastTree` or `astral` is absent from `PATH`; `iqtree3` is
+not in that gate, and the one case that needs it skips without it.
 
 ```bash
 # Everything except the slow 12-genome detection case, 8 parallel workers
@@ -91,7 +93,7 @@ Equivalent direct pytest invocations:
 
 ```bash
 pytest validation/cases -m "not slow" -n 8
-pytest validation/cases -m slow            # detection metrics; ~10 min
+pytest validation/cases -m slow            # detection metrics; ~23 min
 pytest validation/cases/test_v06_hgt_screening.py -k composition
 ```
 
@@ -112,27 +114,28 @@ does not record the degree of parallelism, so only the measured total is
 reported here, not a worker count for a single run. As recorded in
 `conftest.py`, a single pipeline run measured 1 m 34 s
 for 4 genomes over 6 markers, and 7 m 19 s for the same dataset over 30
-markers, which is why feature-level cases run on small marker budgets and only
-the occupancy and detection cases use the larger sets.
+markers, which is why feature-level cases run on small marker budgets and the
+larger sets are used only by the marker-selection, product-audit and detection
+cases.
 
 ---
 
 ## The test data, honestly described
 
-**Genomes.** 12 complete NCBI RefSeq assemblies, protein FASTA (`--include
-protein`), spanning two orders of the phylum Bacillota and one Pseudomonadota
-outgroup. `data/PROVENANCE.tsv` records for each: organism name, tax_id, the
-seven NCBI lineage ranks, assembly level, contig count, length, GC%, protein
-count, NCBI's own CheckM completeness/contamination, the download URL, the
-retrieval date and the SHA-256 of the shipped file.
+**Genomes.** 12 complete NCBI RefSeq assemblies, protein FASTA
+(`--include protein`), spanning two orders of the phylum Bacillota and one
+Pseudomonadota outgroup. `data/PROVENANCE.tsv` records for each: organism name,
+tax_id, the seven NCBI lineage ranks, assembly level, contig count, length,
+GC%, protein count, NCBI's own CheckM completeness/contamination, the download
+URL, the retrieval date and the SHA-256 of the shipped file.
 
 Lineages are **read from NCBI**, never typed. An earlier revision of this
 dataset hand-typed its taxonomy table and labelled *Salmonella enterica*
 `GCF_000008105.1` as `o__Bacillales;f__Bacillaceae;g__Bacillus`. Because the
 taxonomy table drives the monophyly screen, that was an invalid experiment, not
 a typo. `test_shipped_genomes_are_the_organisms_the_provenance_claims` now
-checks each shipped proteome against its recorded genus, and
-`01_fetch_genomes.py` cannot produce a table without a `tax_id`.
+checks each shipped proteome's own FASTA headers against its recorded genus,
+and `01_fetch_genomes.py` cannot produce a table without a `tax_id`.
 
 **Per-marker FASTA (`markers/`).** GTDB-Tk writes one unaligned FASTA per marker
 into `align/marker_genes/`, and `--marker-mode gtdb_tk` consumes that layout.
@@ -144,7 +147,8 @@ per marker, filename stem = marker id, tips
 named by assembly accession. What is preserved is everything the pipeline reads;
 what is not reproduced is GTDB-Tk's taxonomy-aware best-hit selection.
 `markers/OCCUPANCY_ALL.tsv` records the occupancy of every profile scanned, and
-each directory carries its own `OCCUPANCY.tsv`.
+each named marker set writes its own `OCCUPANCY.tsv` — `markers/degenerate/` is
+a 1-tip/2-tip control rather than a set, and has none.
 
 **Planted chimeras (`markers/chimera_bench12`).** In three markers the
 *Bacillus anthracis* Ames sequence is replaced by the *Lactococcus lactis*
@@ -158,10 +162,11 @@ the clean directory, which makes the clean run the negative control for the same
 `checkm_info` figures per assembly, not invented numbers. Assemblies for which
 NCBI records none are omitted, with the omission written into the file.
 
-**Functional categories (`cog/`).** The category text is the `# DESCRIPTION`
-line of the marker's HMM profile. This exercises the plumbing of
-`--cog-category-map`; it is not an assertion about COG biology, and the file
-says so.
+**Functional categories (`cog/`).** The category text is the `DESC` line of the
+marker's HMM profile (the builder also accepts `DESCRIPTION`, `# DESCRIPTION`
+and `NAME`). This exercises the plumbing of
+`--cog-category-map`; it is not an assertion about COG biology, and
+`03_build_fixtures.py` says so.
 
 **MAG-named variant (`variants/mag_named/`).** The four quad4 genomes renamed to
 `mag_01..mag_04`, with marker headers and the taxonomy table rewritten to match.
