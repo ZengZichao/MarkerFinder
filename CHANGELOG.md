@@ -6,9 +6,44 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-_No releases since the last tag. User-visible changes go here before they are
-folded into a version section (see `CONTRIBUTING.md` and the pull-request
-checklist)._
+### Added
+
+- **The bilingual guard now checks content, not only structure.**
+  `tests/unit/test_docs_are_bilingual.py` compares, for every EN/CN pair, the
+  measured figures (decimals, percentages, data sizes), the command-line flags
+  inside fenced blocks, and the ASCII-only inline code spans -- the parts of a
+  document that have no translation. Run against the tree as it stood before
+  the translation round, 10 of the 18 pair-checks it performs would have
+  failed. Each check carries a planted-positive control of its own: a regex
+  that matches nothing would otherwise report clean forever.
+- `tests/unit/test_config_surface_ratchet.py` requires a reserved knob to be
+  named in **both** halves of the MANUAL. It used to read `MANUAL.CN.md` only,
+  so the not-wired list could drift in the authoritative English page with the
+  suite green.
+
+### Fixed
+
+- Four references that pointed at nothing, or at the wrong thing: the module
+  docstring of `tests/unit/test_module_regressions.py` cited
+  `MarkerFinder-代码审查.md`, a file that was never in this repository;
+  `tests/benchmark/expected/accessions.yaml` sent the reader to a `README.md`
+  that exists here only as `.EN.md` / `.CN.md`; and
+  `tests/unit/test_hybrid_conjunction.py` asserted the Chinese wording of the
+  hybrid spec inside `pipeline.py`, so translating one comment would have
+  failed a test that is about the decision being on the page, not about the
+  script it is written in.
+- The last two defects the audit found: the Chinese halves of `docs/TESTING`
+  and `docs/TEST-REPORT` quoted the literal `import cgi` where the English
+  names the `cgi` module. Both statements are true; the halves now quote the
+  same identifier, which is what the new check compares.
+
+### Changed
+
+- The README badge and suite-count prose are refreshed to the live collection
+  (1083 cases: 1015 unit + 17 integration + 51 benchmark), as the single-source
+  rule requires, and `docs/TESTING` states the same total. The 0.1.1
+  verification record in `AI_ASSISTANCE.md` is now dated to its own commit
+  rather than claiming to match whatever the README says today.
 
 ## [0.1.1] - 2026-10-18
 
@@ -137,7 +172,8 @@ than a long-lived API token.
   `pyproject.toml` and `_version.py`.
 - README, docs and manuals were reconciled against the manifest, in both
   languages. The English and Chinese documents had drifted apart — the
-  bilingual test checks structure, not content.
+  bilingual test checked structure, not content, which is why the drift could
+  survive it. (Superseded: see `[Unreleased]`.)
 
 ## [0.1.0] - 2026-09-30
 

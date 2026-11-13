@@ -56,8 +56,8 @@ assistant can state from its own evidence rather than reconstruct from memory:
   package while passing in the repository). Manuscript, SI and figure text in
   the accompanying paper were revised in the same session.
 * **Verification:** every code change above was kept only after `python -m pytest tests`
-  passed (currently **1042 passed, 1 skipped — 1043 collected**, matching the README and
-  TEST-REPORT totals: 975 `tests/unit` + 17 `tests/integration` + 51 `tests/benchmark`;
+  passed (**1042 passed, 1 skipped — 1043 collected** at that commit, matching the README and
+  TEST-REPORT totals of the time: 975 `tests/unit` + 17 `tests/integration` + 51 `tests/benchmark`;
   the skip is `NOT EXECUTED: no mypy`, so the count is 1043 passed / 0 skipped only in an
   environment that has `mypy` installed),
   and the packager's output was re-scanned for identifiers independently of its own audit.

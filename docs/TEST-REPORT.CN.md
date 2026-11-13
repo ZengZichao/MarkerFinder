@@ -241,7 +241,7 @@ must-pass 门禁过去会把基因树缓存文件的*路径*当作 Newick 读取
   marker 占有率为 0.75（`TIGR02012`，9/12，见
   `validation/data/markers/bench12/OCCUPANCY.tsv`）；更稀疏的输入只能靠截取模拟（2-tip /
   1-tip），并在 `validation/data/markers/degenerate/README.txt` 中如实标注。
-* **Python 3.13 及以上。** ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除 `cgi`
+* **Python 3.13 及以上。** ete3 在包导入时会导入标准库的 `cgi` 模块，而 CPython 3.13 已移除 `cgi`
   （PEP 594），此前导致 ete3——以及所有 MAD / 单系性测量——在更新的解释器上不可用。
   `markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 3.13 与
   3.14 已纳入受支持范围，CI 矩阵逐个实跑。“不设上界”这一点本身在被测，而不是靠文档

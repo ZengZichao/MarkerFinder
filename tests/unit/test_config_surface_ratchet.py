@@ -9,8 +9,9 @@ MANUAL reasonably believes setting it changes something.
 
 This is a ratchet, not a report: a new unread config field fails the suite, and an
 "intentionally reserved" field only passes if it is listed here WITH a reason AND
-named in the MANUAL's not-wired section -- so the excuse has to be written down in
-the place users actually read.
+named in BOTH halves of the MANUAL's not-wired section -- so the excuse has to be
+written down in the place users actually read, in the authoritative English
+version as well as the Chinese one.
 """
 
 from __future__ import annotations
@@ -21,10 +22,10 @@ from pathlib import Path
 from markerfinder import config as config_module
 
 PACKAGE = Path(__file__).resolve().parents[2] / "markerfinder"
-MANUAL = PACKAGE.parent / "MANUAL.CN.md"
+MANUALS = [PACKAGE.parent / f"MANUAL.{lang}.md" for lang in ("EN", "CN")]
 
 # Fields that are deliberately NOT consumed by the pipeline, and why. Anything
-# Here must also appear by name in MANUAL.CN.md's "尚未接线" section.
+# Here must also appear by name in both MANUAL.EN.md and MANUAL.CN.md.
 RESERVED: dict[str, str] = {
     "verify_db": "数据库哈希校验目前只在 `--check` 自检里做，run 路径不消费此开关",
     "databases": "同上：`--check` 自行发现 db/ 下的库，run 路径不读该映射",
@@ -104,7 +105,7 @@ def test_every_config_field_is_read_or_declared_reserved_and_documented():
     consumed = _consumed_names()
     undocumented = []
     unreserved = []
-    manual_text = MANUAL.read_text(encoding="utf-8")
+    manuals = {path.name: path.read_text(encoding="utf-8") for path in MANUALS}
     for cls, fields in sorted(_fields_by_class().items()):
         for field in fields:
             if field in consumed:
@@ -112,17 +113,26 @@ def test_every_config_field_is_read_or_declared_reserved_and_documented():
             if field not in RESERVED:
                 unreserved.append(f"{cls}.{field}")
                 continue
-            if field not in manual_text:
-                undocumented.append(f"{cls}.{field}")
+            missing = sorted(name for name, text in manuals.items() if field not in text)
+            if missing:
+                undocumented.append(f"{cls}.{field} (named in none of {missing})")
     assert not unreserved, (
         f"unread configuration knobs (no attribute read, no keyword use, no "
         f"string reference anywhere): {unreserved}. Wire them into the decision "
         f"they claim to control, or add them to RESERVED with a reason AND name "
-        f"them in MANUAL.CN.md's 尚未接线 section."
+        f"them in the not-wired section of both MANUAL.EN.md and MANUAL.CN.md."
     )
     assert not undocumented, (
-        f"reserved knobs missing from MANUAL.CN.md: {undocumented}"
+        f"reserved knobs missing from a language half of the MANUAL: {undocumented}"
     )
+
+
+def test_control_the_documentation_check_covers_both_language_halves():
+    """Without this, narrowing the scan back to one language makes the pair
+    check quietly one-sided, and the authoritative English page can drift."""
+    named = [path.name for path in MANUALS
+             if "verify_db" in path.read_text(encoding="utf-8")]
+    assert sorted(named) == sorted(path.name for path in MANUALS), named
 
 
 def test_reserved_reasons_are_not_placeholders():

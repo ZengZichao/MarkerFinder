@@ -1,7 +1,9 @@
-"""Regression tests for the fixes documented in ``MarkerFinder-代码审查.md``.
+"""Regression tests for the fixes made during the pre-publication review round.
 
-Each test maps to a finding id (F1-F21) from the review report. The module is
-ete3-import-safe: ete3 is only imported lazily inside the library (and even
+Each test marks the review finding id it protects (the ids run through F1-F21)
+and says in that mark what the finding was, so a reader needs nothing outside
+this file -- the review report itself is not part of the repository. The module
+is ete3-import-safe: ete3 is only imported lazily inside the library (and even
 then every use has a non-ete3 fallback), so these tests also run in
 environments where ete3 is unavailable.
 """

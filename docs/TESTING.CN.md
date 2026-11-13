@@ -22,7 +22,7 @@ doi:10.1126/science.adw9456，2026-02-05 撤稿）正是在这个
 缺口上失败的——所有内部检查都通过，而拓扑在生物学上荒谬。因此测试被拆成：
 
 ```
-tests/       1043 个快速用例，不需要外部工具，不下载数据
+tests/       1083 个快速用例，不需要外部工具，不下载数据
 validation/  153 个在真实基因组上用真实工具跑的端到端用例
 ```
 
@@ -164,7 +164,7 @@ Il1403（Lactobacillales 目）的直系同源序列——一次位置已知的�
 tomli），以及外部工具 `hmmsearch`、`mafft`、`trimal`、`FastTree`/`fasttree`、`astral`；
 ML 基因树还需 `iqtree3`，若不跳过质量评估则需 `checkm`。
 
-这个区间此前止于 3.12：ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除
+这个区间此前止于 3.12：ete3 在包导入时会导入标准库的 `cgi` 模块，而 CPython 3.13 已移除
 `cgi`（PEP 594），导致 ete3——以及所有 MAD / 单系性测量——在更新的解释器上不可用。
 `markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 ete3 在
 3.13+ 可以导入，上界也就没有继续存在的理由。
