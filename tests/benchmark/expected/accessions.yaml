@@ -1,7 +1,8 @@
 # GTDB ar53 order-level benchmark set.
 # 30 genomes = 25 in-order representatives + 5 out-group representatives.
 # Placeholder accessions follow RefSeq assembly naming; the executing user
-# MUST verify/replace after choosing the concrete order (see README.md).
+# MUST verify/replace after choosing the concrete order (see
+# ../README.EN.md / ../README.CN.md for how this set is used).
 
 in_order:
   order: "REPLACE_WITH_ORDER_NAME" # e.g. Thermococcales

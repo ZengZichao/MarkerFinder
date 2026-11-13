@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/markerfinder)](https://pypi.org/project/markerfinder/)
 [![Python 3.10–3.14 (CI matrix)](https://img.shields.io/badge/python-3.10--3.14%20CI-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-1083%20collected-brightgreen.svg)](#testing)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 
 [Chinese](README.CN.md) | [Manual (EN)](MANUAL.EN.md) | [Manual (CN)](MANUAL.CN.md)
@@ -557,7 +557,7 @@ python validation/run_validation.py --all -n 8
 ```
 
 **Test coverage (measured, not estimated):** the suite has 91 modules and collects
-**1043** cases — 975 in `tests/unit/`, 17 in `tests/integration/` and 51 in
+**1083** cases — 1015 in `tests/unit/`, 17 in `tests/integration/` and 51 in
 `tests/benchmark/` (the three directories sum to the badge; both sides are re-checked
 by `tests/unit/test_docs_numbers_are_current.py`).
 The badge carries the collected total (`python3 -m pytest tests --collect-only -q`)

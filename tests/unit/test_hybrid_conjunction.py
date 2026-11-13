@@ -112,11 +112,18 @@ def test_spec_decision_is_recorded_where_the_refusal_used_to_be():
     """The closure report's open item was 'hybrid 语义待定案'. The spec fixes it
     (两者都要过), so pipeline.py must cite the decision instead of
     carrying a refusal — a reader of the code should meet the rationale where
-    the dead end used to be."""
+    the dead end used to be.
+
+    The citation is accepted in either language. The assertion is about the
+    decision being on the page, not about the script it happens to be written
+    in: pinning the Chinese wording alone would fail a comment translation
+    that changed nothing about the semantics.
+    """
     import inspect
 
     import markerfinder.pipeline as pipeline_module
 
     src = inspect.getsource(pipeline_module)
-    assert "两者都要过" in src, "the spec citation for the hybrid semantics is gone"
+    cited = [wording for wording in ("两者都要过", "both legs must pass") if wording in src]
+    assert cited, "the spec citation for the hybrid semantics is gone"
     assert "语义尚未定案" not in src, "the old undecided-refusal text is still there"
