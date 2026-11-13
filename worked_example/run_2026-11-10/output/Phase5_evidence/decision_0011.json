@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "marker_id": "PF04919.13",
+  "detector": "taxonomy_monophyly",
+  "gene_tree_source": "rebuilt",
+  "trimming_regime": "none",
+  "rf": {
+    "value": null,
+    "state": "not_applicable",
+    "method": "robinson_foulds",
+    "reason": "monophyly detector: no reference species tree, RF not part of this screen"
+  },
+  "quartet": {
+    "value": null,
+    "state": "not_applicable",
+    "reason": ""
+  },
+  "monophyly": {
+    "value": 1.0,
+    "state": "measured"
+  },
+  "rank_used": "class",
+  "n_total": 2,
+  "n_mono": 2,
+  "weights": {
+    "rf": 0.5,
+    "quartet": 0.5
+  },
+  "n_signals_used": 1,
+  "thresholds_in_effect": {
+    "level1_max": 0.25,
+    "level2_max": 0.6
+  },
+  "far_active": false,
+  "risk_basis": "monophyly_only",
+  "overall_risk": 0.0,
+  "level": "level_1",
+  "confidence": "medium",
+  "assertion_ids_fired": [],
+  "notes": "graded from monophyly proportion only (single-signal path) confidence capped to medium: single-signal evidence risk=0.0000 graded against thresholds [L1<0.25, L2<0.60] (n_signals_used=1)",
+  "occupancy": 11
+}

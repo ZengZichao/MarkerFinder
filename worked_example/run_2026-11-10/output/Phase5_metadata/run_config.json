@@ -1,0 +1,169 @@
+{
+  "markerfinder_version": "0.1.1",
+  "timestamp": "2026-11-10T14:56:13.489592",
+  "run_duration_seconds": 238.116112947464,
+  "parameters": {
+    "cpus": 4,
+    "input_dir": "<workspace>/worked_example_run/genomes",
+    "output_dir": "<workspace>/worked_example_run/output",
+    "output_prefix": "markerfinder",
+    "tmp_dir": "<tmp>/markerfinder-<uuid>",
+    "tmp_dir_auto": true,
+    "keep_tmp": false,
+    "save_intermediates": false,
+    "mode": "standard",
+    "mag_config": {
+      "cpus": 4,
+      "checkm_results": null,
+      "skip_checkm": false,
+      "min_completeness": 50.0,
+      "min_marker_coverage": 0.3,
+      "quality_weighted": true,
+      "tmp_dir": "<tmp>/markerfinder-<uuid>",
+      "input_dir": "<workspace>/worked_example_run/genomes",
+      "max_markers": 150
+    },
+    "selection_config": {
+      "cpus": 4,
+      "marker_mode": "hmm",
+      "marker_hmm_dir": "<workspace>/MarkerFinder-项目代码/db/gtdb_markers/ar53",
+      "marker_db_source": "auto",
+      "min_hmm_score": 20.0,
+      "min_occupancy": 0.75,
+      "user_min_occupancy": null,
+      "max_markers": 60,
+      "user_max_markers": null,
+      "strategy": "SelectionStrategy.GREEDY",
+      "gtdb_markers_dir": "",
+      "species_tree": "",
+      "tmp_dir": "<tmp>/markerfinder-<uuid>",
+      "quality_weighted": true
+    },
+    "hgt_config": {
+      "cpus": 4,
+      "enable_phylogenetic": true,
+      "tmp_dir": "<tmp>/markerfinder-<uuid>",
+      "phylogenetic_threshold": 0.5,
+      "monophyly_rank": "auto",
+      "monophyly_threshold": 0.5,
+      "level_thresholds": {
+        "level1_max": 0.25,
+        "level2_max": 0.6
+      },
+      "adaptive_far_thresholds": false,
+      "far_distance_genera_ratio": 0.7,
+      "far_distance_min_orders": 2,
+      "level2_max_far": 0.95,
+      "hgt_score_weights": {
+        "rf": 0.5,
+        "quartet": 0.5
+      },
+      "hgt_mode": "risk",
+      "consistency_stringency": 1,
+      "min_informative_sites": 0
+    },
+    "ortholog_config": {
+      "cpus": 4,
+      "bbh_evalue": 1e-10,
+      "bbh_identity": 30.0,
+      "bbh_coverage": 0.6,
+      "graph_clustering": true,
+      "use_diamond": true,
+      "tmp_dir": "<tmp>/markerfinder-<uuid>"
+    },
+    "aligner_config": {
+      "cpus": 4,
+      "tmp_dir": "<tmp>/markerfinder-<uuid>",
+      "output_prefix": "markerfinder"
+    },
+    "phylo_config": {
+      "cpus": 4,
+      "tmp_dir": "<tmp>/markerfinder-<uuid>",
+      "output_prefix": "markerfinder",
+      "ufboot_replicates": 1000,
+      "fast_mode": false,
+      "use_fasttree": true,
+      "gene_tree_builder": "fasttree",
+      "iqtree_timeout": 3600,
+      "astral_timeout": 1800,
+      "min_gene_tree_support": null,
+      "coalescent_mode": "post-filter",
+      "recommend_rf_low": 0.1,
+      "recommend_rf_moderate": 0.3
+    },
+    "heterogeneity_config": {
+      "min_allele_freq": 0.2,
+      "consensus_threshold": 0.7,
+      "minor_allele_threshold": 0.3,
+      "identity_threshold": 0.99,
+      "enable_composition_screen": false,
+      "composition_outlier_metric": "rcv",
+      "composition_warn_threshold": 0.15
+    },
+    "report_config": {
+      "output_dir": "<workspace>/worked_example_run/output",
+      "output_prefix": "markerfinder",
+      "template_dir": "<workspace>/worked_example_run/markerfinder/templates",
+      "report_format": "html",
+      "save_intermediates": false,
+      "level1_max": 0.25,
+      "level2_max": 0.6,
+      "require_evidence_coverage": 0.5,
+      "strict_assertions": true,
+      "allow_assertion_failure": false,
+      "hgt_scan": false,
+      "scan_stability_min": 0.6,
+      "composition_screen": false,
+      "hgt_mode": "risk",
+      "cog_category_map": null,
+      "taxonomy_mustpass": null
+    },
+    "taxonomy_config": {
+      "taxonomy_table": "<workspace>/worked_example_run/taxonomy.tsv",
+      "taxonomy_format": "table",
+      "taxonomy_source_priority": "table",
+      "taxonomy_delimiter_mode": "reverse",
+      "table_sep": null,
+      "ignore_malformed": false,
+      "taxonomy_levels": null
+    },
+    "db_dir": "<workspace>/worked_example_run/db",
+    "databases": {},
+    "verify_db": true,
+    "force": false,
+    "no_clobber": false,
+    "sequences_path": null,
+    "mol_type": null,
+    "skip_length_check": false,
+    "strip_annotations": false
+  },
+  "effective_parameters": {
+    "min_hmm_score": 30.0,
+    "min_occupancy": 0.75,
+    "max_markers": 60,
+    "source": "phase0_adaptive",
+    "configured": {
+      "min_hmm_score": 20.0,
+      "min_occupancy": 0.75,
+      "max_markers": 60
+    }
+  },
+  "database_versions": {
+    "gtdb_markers": {
+      "name": "gtdb_markers",
+      "path": "db/gtdb_markers",
+      "hash": "84cf08b9d5cd85b3a85d2706e0b5475f4e9daaf6ec17a6d871c7e55398cf51ea",
+      "exists": true,
+      "expected_hash": "67e931f36515f5711312645e2b283dfec151510e10d9347f225e34069a15c7de",
+      "hash_match": false
+    },
+    "marker_hmm": {
+      "name": "marker_hmm",
+      "path": "<workspace>/MarkerFinder-项目代码/db/gtdb_markers/ar53",
+      "hash": "63ad8f1aefefe27b4b0f1c2ec2da5dbef1b140dfd7597c2ac56482f7bbeee1f8",
+      "exists": true,
+      "expected_hash": "",
+      "hash_match": null
+    }
+  }
+}

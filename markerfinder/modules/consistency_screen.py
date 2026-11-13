@@ -149,9 +149,10 @@ def guard(mode: str, cfg: Optional[Any] = None) -> None:
     missing = [name for name in REQUIRED_PREREQS if not _probe(name)]
     if missing:
         raise UnsupportedCriterion(
-            f"--hgt-mode {mode} 需要以下条件先满足: {', '.join(missing)}. "
-            "未经校准的交叉一致性判据会产生'统计显著、方向错误'的结果，"
-            "因此缺少任一前置条件时拒绝启动。"
+            f"--hgt-mode {mode} requires the following prerequisites: "
+            f"{', '.join(missing)}. An uncalibrated cross-consistency criterion can "
+            "produce statistically significant but directionally wrong results, so the "
+            "run is refused when any prerequisite is missing."
         )
 
 

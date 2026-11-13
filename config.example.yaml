@@ -14,83 +14,90 @@ threads: 4 # Number of CPU threads
 mode: standard
 
 # HGT Filtering
-# 启用哪些 HGT 筛查步骤。phylogenetic = 系统发育不一致判据（驱动风险分档）;
-# composition = 组成型/GC 偏差诊断，只作为并列证据列产出，
-# 绝不并入 overall_risk / overall_score。
-hgt_steps: "phylogenetic" # 可选 "phylogenetic,composition"；默认只跑系统发育步骤
+# Which HGT screening steps to run. phylogenetic = the topological-incongruence
+# criterion (it drives the risk grading); composition = the compositional / GC-bias
+# diagnostic, emitted only as a parallel evidence column and never folded into
+# overall_risk / overall_score.
+hgt_steps: "phylogenetic" # may be "phylogenetic,composition"; phylogenetic step only by default
 hgt_threshold: 0.25 # HGT risk threshold
-# 远缘自适应放宽(默认关闭): 远缘数据集(≥2 目或属比≥0.70)上开启可避免
-# 标记被全部判为 Level 3 剔除. 等价 CLI 开关: --hgt-adaptive-thresholds.
+# Distant-lineage adaptive relaxation (off by default): on distant datasets
+# (>= 2 orders, or genus ratio >= 0.70) it keeps markers from all being discarded
+# as Level 3. Equivalent CLI flag: --hgt-adaptive-thresholds.
 # hgt_adaptive_thresholds: false
 
-# ---- 自检层新增开关 ----
-# 全部有默认值，且默认行为等于改造前基线行为。
-# 键名即 CLI dest，也可用同名命令行参数覆盖（CLI > 配置文件 > 默认值）。
+# ---- switches added by the self-review round ----
+# All of them have a default, and the default behaviour equals the pre-refactor baseline.
+# The key name is the CLI dest, so the same-named flag overrides it (CLI > config file > defaults).
 
-# 阈值双键：HGTConfig.level_thresholds 的两个边界现可独立设置
-# hgt_threshold_l1l2: 0.25 # Level1/Level2 边界（--hgt-threshold-l1l2）
-# hgt_threshold_l2l3: 0.60 # Level2/Level3 边界（--hgt-threshold-l2l3）
-# 说明：hgt_threshold 保留为 l1l2 的向后兼容别名，使用时打印一次弃用提示。
+# Two threshold keys: the two edges of HGTConfig.level_thresholds can now be set separately
+# hgt_threshold_l1l2: 0.25 # Level1/Level2 edge (--hgt-threshold-l1l2)
+# hgt_threshold_l2l3: 0.60 # Level2/Level3 edge (--hgt-threshold-l2l3)
+# Note: hgt_threshold is kept as a backward-compatible alias for l1l2 and prints a deprecation notice once.
 
-# 远缘放宽生效时会在报告顶部与逐标记决策卡双处留痕，
-# 且 level2_max 由 level2_max_far 覆盖，不再是只有一行 INFO 日志。
+# When the distant-lineage relaxation takes effect it leaves a trace in two places - the report
+# header and the per-marker decision card - and level2_max is overridden by level2_max_far;
+# it is no longer just one INFO log line.
 
-# max_markers: 60 # 标记预算，原为代码内硬编码
+# max_markers: 60 # marker budget, previously hardcoded inside the code
 # marker_preset: "none" # none|conservative|standard|expanded|mag_adaptive
-# # 选 none 时保持现行占居率 top-K 行为；
-# # 显式选择预设时用其 min_occupancy/max_markers/strategy 三元组覆盖
-# require_evidence_coverage: 0.5 # HGT 证据覆盖率低于此值时报告顶部显著告警（仅告警）
-# hgt_scan: false # 阈值扫描（--hgt-scan）：只重评已存的风险值，
-# # 绝不重跑任何外部工具；产出 {prefix}.threshold_scan.tsv
-# scan_stability_min: 0.6 # 跨档入选标记集 Jaccard 下限；低于则该结论记 inconclusive
-# hgt_mode: "risk" # risk|consistency|hybrid，默认 risk 永不自动切换；
-# # consistency/hybrid 需通过结构化门禁（校验可观察工件，
-# # 标志位不可伪造），过闸后在 Phase 3 真正执行判据；
-# # hybrid = 两者都要过：risk 判据与
-# # grade==CONSISTENT 同时满足，逐标记裁决写进评估注记
-# consistency_stringency: 1 # 一致性强度档 1..5，门槛逐级递减；默认 1（provisional，尚未校准）
-# cog_category_map: "" # 可选 marker_id<TAB>functional_category 的 TSV。
-# # 未提供或文件缺行时该列渲染 NA 并在报告注记，不凭空填类别
-# min_informative_sites: 0 # 逐标记简约信息位点(PIS)下限，0=关闭（provisional）。
-# # 低于下限的标记在决策卡/报告中标 inconclusive，不得当作"干净"；
-# # 不改变 ev.level，是否剔除属发布决策
+# # "none" keeps the current occupancy top-K behaviour;
+# # picking a preset explicitly overrides with its min_occupancy/max_markers/strategy triple
+# require_evidence_coverage: 0.5 # prominent report-header warning when HGT evidence coverage falls below this (warning only)
+# hgt_scan: false # threshold scan (--hgt-scan): only re-evaluates the risk values already computed,
+# # never re-runs any external tool; writes {prefix}.threshold_scan.tsv
+# scan_stability_min: 0.6 # Jaccard floor for the selected marker set across bins; below it the verdict is recorded as inconclusive
+# hgt_mode: "risk" # risk|consistency|hybrid; the default risk never switches automatically;
+# # consistency/hybrid must pass a structured gate (it validates observable artifacts,
+# # so a flag alone cannot fake it), and only after passing does Phase 3 actually run the criterion;
+# # hybrid = both must pass: the risk criterion and
+# # grade==CONSISTENT must hold at once, and the per-marker verdict is written into the evaluation notes
+# consistency_stringency: 1 # consistency strength tier 1..5, thresholds step down tier by tier; default 1 (provisional, not yet calibrated)
+# cog_category_map: "" # optional TSV of marker_id<TAB>functional_category.
+# # When the file is absent or a row is missing, the column renders NA and is noted in the report; no category is invented
+# min_informative_sites: 0 # per-marker parsimony-informative-site (PIS) floor, 0 = off (provisional).
+# # Markers below the floor are marked inconclusive in the decision card/report and must not be read as "clean";
+# # does not change ev.level; whether to drop them is a release decision
 
-# 输出数值断言层
-# strict_assertions: true # severity=fail 断言触发时以退出码 4 结束
-# allow_assertion_failure: false # 显式绕过上一项；绕过行为会写进报告
-# 分类学 must-pass 门禁：默认关闭，开启后任一"必须成立"的
-# 分类关系被违反即以退出码 4 中止（不是扣风险分）。裸开关用仓库内的基线 YAML，
-# 也可显式给路径；产物为 Phase5_reports/{prefix}.mustpass.tsv。
-# 注意：基线的 markers.ids 仍是未填骨架（需按研究对象补全 62 条核糖体标记 id），
-# 此时门禁改为检验全部标记基因树；若 ids 已填但与本数据集无交集，门禁直接中止
-# 而非报"通过"。
+# Output numeric-assertion layer
+# strict_assertions: true # exit with code 4 when a severity=fail assertion fires
+# allow_assertion_failure: false # explicitly bypasses the item above; the bypass is written into the report
+# Taxonomy must-pass gate: off by default. Once enabled, any violated "must hold"
+# taxonomic relationship aborts the run with exit code 4 (it is not a risk-score deduction).
+# The bare switch uses the in-repo baseline YAML; you may also give a path explicitly.
+# The artifact is Phase5_reports/{prefix}.mustpass.tsv.
+# Note: the baseline's markers.ids is still an unfilled skeleton (the 62 ribosomal marker ids
+# must be completed for your study group). In that state the gate tests EVERY marker gene tree;
+# if ids are filled but do not intersect this dataset, the gate aborts outright rather than
+# reporting a "pass".
 # taxonomy_mustpass: "tests/benchmark/expected/taxonomy_mustpass.yaml"
 
-# 组成型 / GC 偏差诊断默认关闭，且只作并列证据列，
-# 绝不并入 overall_risk / overall_score（由测试锁定）。
-# 开启方式：把 hgt_steps 写成 "phylogenetic,composition"
-# （等价 CLI --hgt-steps phylogenetic,composition），产物为
-# Phase5_reports/{prefix}.composition.tsv（rcv/gc_bias/n_sequences/outlier_flag，
-# 离群标记排榜首；蛋白输入下 gc_bias 恒为 NA=NOT_APPLICABLE）。
-# 注意：HeterogeneityConfig.enable_composition_screen 与上面等价（任一为真即开启），
-# 但它本身仍只能由程序内设置——配置文件与 CLI 都没有对应键，本文件的开关是 hgt_steps。
-# 同一对象里的 composition_warn_threshold 现在真的生效（经 PipelineConfig.heterogeneity_config
-# 传到离群判定）；composition_outlier_metric 若被设为非 rcv 会记 WARN 说明只实现了 rcv。
+# The compositional / GC-bias diagnostic is off by default and is only ever a parallel evidence
+# column, never folded into overall_risk / overall_score (locked by tests).
+# How to enable it: write hgt_steps as "phylogenetic,composition"
+# (equivalent CLI: --hgt-steps phylogenetic,composition). The artifact is
+# Phase5_reports/{prefix}.composition.tsv (rcv/gc_bias/n_sequences/outlier_flag;
+# outliers are sorted to the top, and gc_bias is always NA=NOT_APPLICABLE for protein input).
+# Note: HeterogeneityConfig.enable_composition_screen is equivalent to the above (either being
+# true enables it), but it can still only be set in code - neither the config file nor the CLI
+# has a key for it; the switch in this file is hgt_steps.
+# composition_warn_threshold in that same object now really takes effect (it reaches the outlier
+# verdict through PipelineConfig.heterogeneity_config); setting composition_outlier_metric to
+# anything other than rcv logs a WARN saying only rcv is implemented.
 
 # Marker Discovery
-# marker_mode: "gtdb_tk" 使用 GTDB-TK 提取的 ar53/bac120 每标记 FASTA（必需 --gtdb-markers-dir）
-# "hmm" 使用 HMMER 扫描输入基因组中的 TIGRFAM/Pfam HMM 目录（--marker-hmm-dir），
-# 无需 GTDB-TK 预运行。
+# marker_mode: "gtdb_tk" uses the ar53/bac120 per-marker FASTA extracted by GTDB-Tk (requires --gtdb-markers-dir)
+# "hmm" uses the TIGRFAM/Pfam HMM directory scanned by HMMER in the input genomes (--marker-hmm-dir),
+# with no GTDB-Tk pre-run needed.
 marker_mode: "gtdb_tk"
-# 当未显式指定 marker_hmm_dir 时如何定位标记 HMM（仅 hmm 模式）：
-# auto=在 db/gtdb_markers/{ar53,bac120} 下按检测到的域自动发现；
-# gtdb=仅查 db/gtdb_markers；cog=仅查 db/cog_hmm；none=不自动发现
+# How to locate the marker HMMs when marker_hmm_dir is not given explicitly (hmm mode only):
+# auto = discover automatically under db/gtdb_markers/{ar53,bac120} by the detected domain;
+# gtdb = only db/gtdb_markers; cog = only db/cog_hmm; none = no automatic discovery
 marker_db_source: "auto"
 
-# [gtdb_tk 模式必填] GTDB-TK 提取的每标记 FASTA 目录
+# [required in gtdb_tk mode] directory of the per-marker FASTA extracted by GTDB-Tk
 # gtdb_markers_dir: "gtdbtk_out/align/marker_genes"
 
-# [hmm 模式] TIGRFAM/Pfam HMM 目录（未指定时按 marker_db_source 自动发现）
+# [hmm mode] TIGRFAM/Pfam HMM directory (auto-discovered per marker_db_source when omitted)
 # marker_hmm_dir: "GTDB-Tk-214-Markers/pfam/individual_hmms"
 
 # Phylogenetic Inference
@@ -108,8 +115,9 @@ coalescent_mode: post-filter # Options: off, post-filter, always
 # MAG Optimization (CheckM)
 checkm_results: "" # Pre-computed CheckM results file (TSV with 'Bin Id', 'Completeness', 'Contamination')
 skip_checkm: false # Force skip CheckM and use default quality estimates
-# 标记选择最低占用率下限(0-1): 显式指定时覆盖 Phase 0 自适应阈值.
-# 废弃别名 min_marker_coverage 仍被接受, 作用相同.
+# Minimum occupancy floor for marker selection (0-1): when given explicitly it overrides the
+# Phase 0 adaptive threshold. The deprecated alias min_marker_coverage is still accepted and does
+# the same thing.
 # min_occupancy: 0.75
 
 # Report
@@ -129,9 +137,9 @@ report_format: html # Options: html
 # skip_length_check: false # Skip sequence length consistency check
 # no_cross_check: false # Skip tree-sequence cross-validation
 
-# 复现先前运行: 可直接把某次输出的 Phase5_metadata/run_config.json 作为配置
-# 传入, 其中嵌套的 parameters 快照会被自动展开生效.
-# 例如: markerfinder --config output/Phase5_metadata/run_config.json -i genomes/ -o output/
+# Reproducing a previous run: pass the Phase5_metadata/run_config.json of that run as the config
+# file; the nested parameters snapshot inside it is expanded and applied automatically.
+# For example: markerfinder --config output/Phase5_metadata/run_config.json -i genomes/ -o output/
 
 # Logging
 # log_file: "" # Path to log file (UTpersistent)
@@ -145,13 +153,14 @@ report_format: html # Options: html
 # resume: false # Stepwise mode: auto-run missing prerequisite steps and continue
 
 # Advanced
-# tmp_dir 建议使用独立于 output 的路径, 避免与输出目录冲突检查冲突.
-# 默认留空时 MarkerFinder 会在系统临时目录下自动创建每趟 run 独立的
-# markerfinder-{uuid8} 子目录, 流程结束自动清理.
+# tmp_dir: use a path separate from output, so it cannot clash with the output-directory check.
+# Left empty by default, MarkerFinder creates its own markerfinder-{uuid8} subdirectory per run
+# under the system temporary directory and cleans it up when the run finishes.
 # tmp_dir: /tmp/markerfinder-run
 db_dir: ./db
 
-# 是否保留临时目录. 默认 false,流程结束自动清理; 设为 true 可保留中间文件用于调试.
+# Whether to keep the temporary directory. Default false: cleaned up when the run finishes;
+# set true to keep the intermediate files for debugging.
 keep_tmp: false
 
 verbose: 0 # Verbosity level (0=WARNING, 1=INFO, 2=DEBUG)

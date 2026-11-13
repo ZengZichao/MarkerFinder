@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/markerfinder)](https://pypi.org/project/markerfinder/)
-[![Python 3.10–3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10–3.14 (CI matrix)](https://img.shields.io/badge/python-3.10--3.14%20CI-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-1043%20collected-brightgreen.svg)](#testing)
 [![CI](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/MarkerFinder/actions/workflows/ci.yml)
 [![ORCID](https://img.shields.io/badge/ORCID-0000--0001--6553--970X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-6553-970X)
@@ -17,9 +17,16 @@
 [English README](README.EN.md) | [中文说明](README.CN.md) | [Manual (EN)](MANUAL.EN.md) | [Manual (CN)](MANUAL.CN.md)
 
 > Documentation in this repository ships in both languages, with the **English
-> version as the primary text**. `tests/unit/test_docs_are_bilingual.py` fails if
-> a document exists in only one language, if an "English" file is written in
-> Chinese, or if the two versions diverge in shape.
+> version as the primary text**. `tests/unit/test_docs_are_bilingual.py` guards
+> that structurally: a page named `*.EN.md` must have its `*.CN.md` twin and the
+> other way round, an English half may not drift into Chinese prose, the two
+> halves must stay parallel in shape (heading structure and overall length), and
+> this index must be English and link both versions. A few pages deliberately
+> ship in English only and carry no language suffix — `SECURITY.md`,
+> `CONTRIBUTING.md`, `CHANGELOG.md`, `AI_ASSISTANCE.md`,
+> `ai-annotation-checklist.md`, `db/README.md`, `worked_example/README.md`
+> and `worked_example/run_2026-11-10/README.md` — so they fall outside that
+> pairing rule.
 
 ---
 
@@ -74,7 +81,7 @@ markerfinder \
 |---|---|---|
 | Full README (features, parameters, outputs) | [README.EN.md](README.EN.md) | [README.CN.md](README.CN.md) |
 | Manual (formats, schemas, troubleshooting) | [MANUAL.EN.md](MANUAL.EN.md) | [MANUAL.CN.md](MANUAL.CN.md) |
-| Reference databases (what is fetched, not shipped) | [db/README.md](db/README.md) | [db/README.md](db/README.md) |
+| Reference databases (what is fetched, not shipped) | [db/README.md](db/README.md) | [db/README.md](db/README.md) — English only, no Chinese counterpart ships for this page |
 | Test plan & validation methodology | [docs/TESTING.EN.md](docs/TESTING.EN.md) | [docs/TESTING.CN.md](docs/TESTING.CN.md) |
 | Test report (measured results) | [docs/TEST-REPORT.EN.md](docs/TEST-REPORT.EN.md) | [docs/TEST-REPORT.CN.md](docs/TEST-REPORT.CN.md) |
 | Validation suite (data, cases, archived results) | [validation/README.EN.md](validation/README.EN.md) | [validation/README.CN.md](validation/README.CN.md) |

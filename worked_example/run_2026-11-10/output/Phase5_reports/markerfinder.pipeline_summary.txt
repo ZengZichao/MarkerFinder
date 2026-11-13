@@ -1,0 +1,60 @@
+============================================================
+MarkerFinder Pipeline Summary
+============================================================
+
+Generated: 2026-11-10T14:56:13.364837
+Runtime: 238.1s
+
+Leg independence: shared gene trees 100% (cache reuse across the two legs); marker-set Jaccard 1.00; same trimming regime: no; reference built from the markers under test: yes
+NOTE: the two legs are NOT independent upstream — agreement between them is weaker evidence than independent replication (risk R2), so recommendation confidence is capped at medium rather than reported as high.
+
+Tree recommendation: confidence=medium; recommended_tree=yes; reason: Low conflict (normalized RF=0.000; quartet agreement=1.000). Both methods agree. Confidence capped to medium: the two legs share upstream gene trees (cached reuse / reference built from the tested markers), so their agreement is not fully independent evidence.
+
+Input/Output:
+  Input directory:  genomes/
+  Output directory: output/
+  Analysis mode:    standard
+  Selection strategy: greedy
+  Intermediate files saved: no
+
+Dataset:
+  Genomes: 6
+  Markers selected: 44
+  Quality source: default_no_nucleotide
+
+HGT screening:
+  Evidence coverage: 1.00 (44/44 markers truly measured)
+  Level 1 (clean):     43
+  Level 2 (suspicious): 0
+  Level 3 (excluded):  1
+  Unknown (screen skipped, kept): 0
+  Mean HGT risk: 0.0227
+
+HGT step availability:
+  Phylogenetic HGT step was enabled.
+
+Level 1 markers:
+  PF00410.20, PF00466.21, PF00687.22, PF00827.18, PF00900.21, PF01000.27, PF01015.19, PF01090.20, PF01200.19, PF01280.21, PF04919.13, TIGR00037, TIGR00279, TIGR00291, TIGR00323, TIGR00335, TIGR00373, TIGR00405, TIGR00448, TIGR00522, TIGR00967, TIGR00982, TIGR01008, TIGR01012, TIGR01018, TIGR01020, TIGR01028, TIGR01052, TIGR01171, TIGR01213, TIGR01952, TIGR02338, TIGR02389, TIGR02390, TIGR03626, TIGR03627, TIGR03628, TIGR03629, TIGR03670, TIGR03671, TIGR03672, TIGR03673, TIGR03674
+
+Level 2 markers:
+  None
+
+Level 3 markers (excluded from tree inference):
+  PF07541.13
+
+Unknown markers (HGT screen skipped; kept for tree inference):
+  None
+
+Phylogenetic inference:
+  Primary species tree source: astral
+  Concatenation tree avg. UFBOOT support: 92.00
+  Coalescent gene trees used: 43
+  Concat vs coalescent normalized RF distance: 0.0000
+  Concat vs coalescent quartet agreement: 1.0000
+
+Phylogenetic inference notes:
+  Concatenation and coalescent trees are topologically identical (RF distance = 0). Differences in the Newick strings are due to rooting or branch ordering, not topology. IQ-TREE may report 'failed composition chi2 test' for GC/codon-specialised clades (e.g. halophilic archaea). This warning is typically benign and does not invalidate the inferred tree.
+
+HGT evidence confidence key:
+  high = phylogenetic step produced a clean signal
+  low  = phylogenetic step could not be run or produced no signal

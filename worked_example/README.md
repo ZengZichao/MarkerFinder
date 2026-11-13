@@ -1,19 +1,21 @@
 # Worked example — reproduction recipe
 
-**Status of this directory: recipe only.** The repository contains **no output of the
-six-genome archaeal run** quoted in the manuscript's worked example. Nothing here
-records a runtime, an alignment length, a marker count or a tree statistic, because
-none exists in the tree to record it from; see
-`审阅报告_MarkerFinder_2026-10-08.md` batch note X-015 / FACT-020, which searched the
-whole repository for `176 s`, `9,771`, `Halobacteria` and the marker counts and found
-zero hits. `validation/data/` holds bacterial proteomes only (`PROVENANCE.tsv` lists
-twelve, all Bacteria), and the committed run sets are `quad4` and `small8`.
+**Status: archived run available.** The complete output of the six-genome run is in
+[`run_2026-11-10/`](run_2026-11-10/): the six `.faa` inputs, the taxonomy table, the
+tool versions, `run_config.json`, the alignment/partition, the concatenation and
+ASTRAL trees, all per-marker gene trees, the HGT evaluation, the assertion log, the
+HTML report, the decision cards and a `SHA256SUMS` file (154 files, 7.4 MB).
 
-Filling this gap requires **one real run by the author**, after which the artefacts
-listed under *Artefacts to archive* belong in this directory (or in the data deposit)
-and the manuscript's numbers get re-checked against them. Until that happens the
-worked-example figures in the paper are unverifiable from the software release, and no
-amount of documentation here changes that.
+The run used `markerfinder 0.1.1` on a Linux x86_64 host with four threads. The
+manuscript's headline numbers reproduce exactly: 44 selected markers, 43 Level 1 and
+one Level 3 (`PF07541.13`), 9,771 amino-acid sites, normalised RF 0.000 and quartet
+agreement 1.000. The archived runtime is **238 s**; the earlier Apple Silicon run
+quoted in the manuscript took 176 s. The 44 risk values are 43 × 0 and 1 × 1.0, so the
+Level 2 band is empty — the example is a smoke test, not a calibration of the
+0.25/0.60 thresholds.
+
+The dataset and outputs are ready to be deposited in the DOI-minting archive. The DOI
+still has to be registered and added to the manuscript and the title page.
 
 ## What the example is
 
@@ -38,8 +40,10 @@ S6c; recompute them locally rather than trusting the table when you re-run.
 ## Prerequisites
 
 External tools on `PATH`: `hmmsearch` (HMMER 3.4), `mafft`, `trimal`, `iqtree3` (or
-`fasttree` with `--fast-tree`), `astral`, and optionally `checkm`. Python 3.10–3.12
-(3.13 is excluded because `ete3` needs the removed `cgi` module).
+`fasttree` with `--fast-tree`), `astral`, and optionally `checkm`. Python 3.10 or newer —
+`pyproject.toml` sets `requires-python = ">=3.10"` with no upper bound, and the CI matrix
+proves 3.10 through 3.14 (a compatibility shim supplies the `cgi` module that `ete3` imports
+on 3.13+).
 
 ## Step 1 — obtain the marker HMM library
 

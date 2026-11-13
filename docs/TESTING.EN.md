@@ -12,7 +12,7 @@ different instrument:
 
 | Claim kind | Example | Instrument |
 |---|---|---|
-| Value-level | `rf_distance` of two topologies is in 0–1 | unit tests, `tests/unit/` |
+| Value-level | `normalized_rf` of two topologies is in 0–1 | unit tests, `tests/unit/` |
 | Structure-level | `run_config.json` records the database version | integration tests with mocked tools, `tests/integration/` |
 | Consequence-level | "HGT screening removes phylogenetically misleading markers" | **real end-to-end runs against a positive control**, `validation/` |
 
@@ -42,7 +42,7 @@ claim is enumerated from a source of truth. That source is the code:
 * `markerfinder.cli.parser._SUBCOMMAND_SPECS` → the four resumable steps;
 * `markerfinder.cli.constants` → seven distinct exit codes;
 * the product inventory in `validation/capabilities.py` → 19 output artefacts
-  (`Phase5_reports/*`, `Phase5_evidence/*`, `Phase4_trees/*`,
+  (`Phase5_reports/*`, `Phase5_evidence/*`, `Phase5_metadata/*`, `Phase4_trees/*`,
   `Phase4_alignments/*`, `Phase4_intermediate/*`, `.markerfinder/*`);
 * nine workflow/data properties: occupancy-based selection, HGT grading, state
   persistence, determinism, provenance recorded, unknown-not-placeholder,
@@ -91,8 +91,8 @@ All sequence data is public and re-derivable; nothing was typed by hand.
 
 Three build scripts reproduce the whole bundle from NCBI (`01_fetch_genomes.py`,
 `02_build_marker_sets.py`, `03_build_fixtures.py`); they are idempotent and
-`--force`-able, and `validation/data/.hit_cache/` holds the HMM scan cache they
-derive from.
+`--force`-able, and `validation/data/markers/.hit_cache/` holds the HMM
+scan cache they derive from.
 
 ### 3.2 An error the data layer caught
 
@@ -122,12 +122,12 @@ assembly accession. What is preserved is exactly what the pipeline reads (file
 layout, marker ids, unaligned protein sequences, per-marker occupancy). What is
 **not** reproduced is GTDB-Tk's taxonomy-aware best-hit choice, so these files
 must not be read as a GTDB-Tk release output. `OCCUPANCY_ALL.tsv` records the
-occupancy of all 121 scanned profiles; each marker directory carries its own
+occupancy of all 120 scanned profiles; each marker directory carries its own
 `OCCUPANCY.tsv`.
 
 Two derived sets exist for deliberate reasons:
 
-* `markers/<set>` (20 markers spanning occupancy 0.875–1.0) versus
+* `markers/<set>` (20 markers spanning occupancy 0.75–1.0) versus
   `markers/<set>_core` (8 complete markers) — a threshold cannot be shown to
   reject on data where everything is complete, and the core set keeps runs fast;
 * `markers/degenerate/` — a 2-tip and a 1-tip marker carved out of a real one by
@@ -158,9 +158,10 @@ would inflate apparent sensitivity. Two quantities are reported:
    exit code, or a measured difference. "The function was called" is not
    accepted as evidence for a behavioural claim.
 2. **Differential over absolute.** Most cases run the pipeline twice with one
-   factor changed and compare (`--max-markers 2` vs `8`, threshold 0.0 vs 1.01,
-   floor 0 vs 100000). An absolute expected value would silently encode the
-   dataset; a difference isolates the knob.
+   factor changed and compare (`--max-markers 2` vs `8`, threshold 0.0 vs 1.0,
+   floor 0 vs 100000, plus a single-arm case that sets
+   `--require-evidence-coverage` to 1.01). An absolute expected value would
+   silently encode the dataset; a difference isolates the knob.
 3. **A knob that changes nothing is a failure.** `test_l2l3_boundary_decides_exclusion`,
    `test_occupancy_floor_rejects_markers_below_it`,
    `test_informative_site_floor_marks_markers_inconclusive_and_says_so` and
@@ -181,7 +182,7 @@ would inflate apparent sensitivity. Two quantities are reported:
 ## 5. Environment
 
 Required: Python 3.10 or newer, with no upper bound. The declared runtime
-dependencies (biopython, pyyaml, ete3, tomli), and the external tools
+dependencies (biopython, pyyaml, ete3, six, tomli), and the external tools
 `hmmsearch`, `mafft`, `trimal`, `FastTree`/`fasttree`, `astral`, plus `iqtree3`
 for ML gene trees and `checkm` if quality assessment is not skipped.
 
@@ -231,20 +232,22 @@ asserts `--check` agrees with it).
 The measured outcome of the published run — pass/fail counts, timings, coverage
 figures, detection metrics, and every product/schema defect the suite exposed
 during this rework — is in
-**[docs/TEST-REPORT.EN.md](TEST-REPORT.EN.md)** (中文:
-[docs/TEST-REPORT.CN.md](TEST-REPORT.CN.md)).
+**[TEST-REPORT.EN.md](TEST-REPORT.EN.md)** (中文:
+[TEST-REPORT.CN.md](TEST-REPORT.CN.md)).
 
 Known limits, stated rather than left implicit:
 
 * Marker inputs are a GTDB-Tk **layout** reconstruction (§3.3), so end-to-end
   results here do not measure GTDB-Tk's own marker choice.
-* The functional-category map's text is each profile's `# DESCRIPTION` line: it
+* The functional-category map's text is each profile's `DESC` line: it
   exercises the `--cog-category-map` plumbing, not COG biology.
 * Detection metrics rest on three planted chimeras over 12 genomes. That is a
   positive control with a known answer and a measured background rate, not an
   epidemiologically representative HGT sample; the wider external benchmark in
   `tests/benchmark/` (30 genomes, GTDB r53 truth) is the route to a stronger
   estimate and is user-triggered because of its download size.
-* The 20-marker occupancy span reaches 0.875 at the low end: the bundled
-  library is a conserved-marker library, so very sparse markers do not occur on
-  this (closely related) genome set and are simulated by subsetting instead.
+* The 20-marker occupancy span reaches 0.75 at the low end
+  (`validation/data/markers/bench12/OCCUPANCY.tsv`: `TIGR02012` 9/12 =
+  0.7500): the bundled library is a conserved-marker library, so very sparse
+  markers do not occur on this (closely related) genome set and are simulated
+  by subsetting instead, and are labelled as such.

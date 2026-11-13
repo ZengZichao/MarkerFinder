@@ -6,7 +6,7 @@ abstract: >-
   An adaptive, horizontal-gene-transfer-aware pipeline for prokaryotic marker
   gene selection and species tree inference. Marker sets are chosen per dataset
   rather than fixed, horizontal gene transfer is screened phylogenetically by
-  MAD rooting and monophyly proportion or by comparison against a reference
+  monophyly proportion against a taxonomy or by comparison against a reference
   species tree, and species trees are inferred by both concatenation
   (IQ-TREE3 / FastTree2) and coalescence (ASTRAL-III) with normalised
   Robinson-Foulds and quartet-conflict detection. The marker-level
@@ -24,9 +24,13 @@ authors:
     given-names: Zichao
     orcid: "https://orcid.org/0000-0001-6553-970X"
     email: zengzichao@sjtu.edu.cn
+  - family-names: Wang
+    given-names: Yinzhao
+    orcid: "https://orcid.org/0000-0001-8715-1386"
+    email: wyz@sjtu.edu.cn
 
-version: 0.1.0
-date-released: "2026-09-30"
+version: 0.1.1
+date-released: "2026-10-18"
 
 license: MIT
 

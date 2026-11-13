@@ -8,13 +8,13 @@
 > 些产物重新推导主指标。数字与证据不一致会导致测试失败，而不只是一句过时的话。
 
 > **混合版本警示。** §2 的两个层是在不同的代码树上测得的。快速层（`tests/`，
-> 收集 1043 / 通过 1043 + 跳过 0）是在合并远端 CI/依赖修复（PR #2–#8）后的本 0.1.1
+> 收集 1043 / 1043 passed + 0 skipped）是在合并远端 CI/依赖修复（PR #2–#8）后的本 0.1.1
 > 代码树、且安装了 `dev` 附加依赖（含 mypy）的解释器上测得的。
 > 验收层与 §1 的运行标识则是 `validation/results/` 中
 > **归档**的那次运行——其中的 `environment.txt` 写着 `version : 0.1.0`，因为那次端到端
 > 运行是在 0.1.0 标签上执行、此后未再重跑。在 0.1.1 上重跑 `validation/` 仍是待作者
 > 完成的事项；在此之前，引用时须把 §1 当作 0.1.0 的验收证据、把 §2 的快速层当作
-> 0.1.1 的数字，不能混成一个不带版本号的大数。
+> 0.1.1 的数字，不能混成一个不带版本号的数字。
 
 ---
 
@@ -24,17 +24,17 @@
 |---|---|
 | 被测软件 | MarkerFinder `0.1.0` |
 | 解释器 | CPython 3.11.9，conda 环境 `markerfinder` |
-| 主机 / CPU | Linux x86-64，96 核（取自产物中的 `platform.platform`） |
+| 主机 / CPU | Linux x86-64，96 核（`environment.txt` 的 `platform` 与 `cpu_count` 行） |
 | 验收运行 | `python validation/run_validation.py --all -n 16`（16 个 pytest worker） |
 | 用例数 | 收集 153 / 执行 153 |
-| 结果 | **152 passed · 0 failed · 0 errors · 1 xfailed**（预期失败，见 §5.7） |
+| 结果 | **152 passed · 0 failed · 0 errors · 1 xfailed**（预期失败，见 §5.2 的 `v08_criteria`） |
 | 墙钟耗时 | 见 `validation/results/junit.xml` 中套件节点的 `time` 属性 |
-| 外部工具 | hmmsearch 3.4、mafft v7.525、trimal v1.5.rev1、FastTree 2.2.0、IQ-TREE 3.1.3、ASTRAL 5.7.8、CheckM 1.2.2、ncbi-datasets 18.38.0 |
+| 外部工具 | hmmsearch 3.4、mafft v7.525、trimal v1.5.rev1、FastTree 2.2.0、IQ-TREE 3.1.3、ASTRAL 5.7.8、CheckM（`environment.txt` 只记录到 `usage: checkm` 自报行，无版本号）、ncbi-datasets 18.38.0 |
 | 归档产物 | `validation/results/{junit.xml,metrics.json,capability_matrix.tsv,environment.txt,chimera_metrics.json}` |
 
 完整环境清单——解释器路径、每个声明依赖的实际版本、每个外部工具自报的版本与路径、
 本次运行使用的 `TMPDIR`——见 `validation/results/environment.txt`；它由
-`validation/scripts/04_record_environment.py` 通过**执行命令**生成，而不是抄自文字。
+`validation/scripts/04_record_environment.py` 通过执行命令生成，而不是抄自文字。
 
 ## 2. 两层测试
 
@@ -46,23 +46,23 @@
 快速层不需要外部二进制、也不下载数据；验收层两者都需要，它是发布的验收证据。
 `validation/results/capability_matrix.tsv` 记录了哪个用例覆盖哪个被声称的能力。
 
-## 3. 功能面覆盖
+## 3. 能力面覆盖
 
-功能面由代码枚举，而不是靠手工维护清单（`validation/capabilities.py`）：
+能力面由代码枚举，而不是靠手工维护清单（`validation/capabilities.py`）：
 
 | 权威来源 | 条目数 | 至少被一个用例覆盖 |
 |---|---|---|
 | `_build_parser` 中的命令行选项（含废弃别名及其记录属性） | 68 | 68 |
-| 分步子命令（`scan` / `filter` / `infer` / `report`） | 5 | 5 |
+| 分步子命令（`scan` / `filter` / `infer` / `report`，再加无子命令的聚合运行 `aggregate-run`） | 5 | 5 |
 | `markerfinder.cli.constants` 中互不相同的退出码 | 7 | 7 |
-| 输出产物（报告、证据、树、比对、状态） | 19 | 19 |
-| 流程性质（选择、分级、溯源、确定性、失败必须大声…） | 9 | 9 |
+| 输出产物（报告、证据、元数据、树、比对、中间产物、状态） | 19 | 19 |
+| 流程性质（选择、分级、溯源记录、确定性、失败必须大声…） | 9 | 9 |
 | **能力 id 合计** | **108** | **108 — `capabilities_uncovered: []`** |
 
 这项检查是双向的：有能力面无用例会失败；用例声明了 parser 已不再暴露的能力 id 也会
 失败。`test_v90` 会在 `metrics.json` 中报出
 `capabilities_required = 108, capabilities_covered = 108`；而部分收集（`-k …`）会让
-该守卫**显式 skip**，而不是拿着削弱的快照报通过。
+该守卫显式 skip，而不是拿着削弱的快照报通过。
 
 ## 4. 测试数据：溯源与完整性
 
@@ -70,11 +70,11 @@
 |---|---|---|
 | 蛋白质组 | 12 个，来自 NCBI RefSeq（`datasets download genome accession … --include protein`） | `validation/data/genomes/`、`PROVENANCE.tsv` |
 | lineage / 物种名 / 组装统计 / 完整度与污染率 | 全部取自 NCBI 自己的报告（`datasets summary genome accession`、`datasets summary taxonomy taxon`） | `validation/data/PROVENANCE.tsv` 的 24 列 × 12 行 |
-| marker FASTA | 用 hmmsearch 扫描 `db/gtdb_markers/bac120`（由 `scripts/fetch_marker_db.py` 拼装）的 profile 后，对 GTDB-Tk 布局的**重构**；120 个被扫描 profile 的占居率全部记录 | `validation/data/markers/*/OCCUPANCY.tsv`、`OCCUPANCY_ALL.tsv` |
+| marker FASTA | 用 hmmsearch 扫描 `db/gtdb_markers/bac120`（由 `scripts/fetch_marker_db.py` 拼装）的 profile 后，对 GTDB-Tk 布局的重构；120 个被扫描 profile 的占有率全部记录 | `validation/data/markers/*/OCCUPANCY.tsv`、`OCCUPANCY_ALL.tsv` |
 | 跨目阳性对照 | 植入 3 次跨目转移（受体 *Bacillus anthracis* Ames ← 供体 *Lactococcus lactis* Il1403），从被记录的候选池以 `random.Random(20260929)` 抽取 | `validation/data/markers/chimera_ground_truth_bench12.json` |
 | 功能类别映射 | 取 profile 自身的 `DESC` 注释行（8/8 个 marker 均有注释）——**不是** COG 生物学 | `validation/data/cog/marker_category_map.tsv` |
 | 参照树 | 由记录的 lineage 构造；所有内部节点均已解析（未解析的多分叉会让参照不可测量），并在构造时校验 | `validation/data/trees/`、`03_build_fixtures.py::_validate_reference` |
-| 完整性 | 对每个随包数据文件计算 SHA-256 | `validation/data/MANIFEST.sha256`（241 个文件），由 `test_shipped_data_matches_the_manifest` 校验 |
+| 完整性 | 对每个随包数据文件计算 SHA-256 | `validation/data/MANIFEST.sha256`（241 个文件），由 `test_manifest_checksums_match_the_shipped_files` 校验 |
 | 物种身份 | 每个组装记录的属名，必须是该蛋白质组 FASTA 头中 `[organism]` 的多数 | `test_shipped_genomes_are_the_organisms_the_provenance_claims` |
 
 构建该数据包时发现并修掉了两个数据缺陷：taxonomy 表原本为手工填写，把
@@ -91,11 +91,11 @@ MAD 定根筛查去检验一个数据里并不存在的关系）；生成的参�
 |---|---|---|
 | `--max-markers 2 / 4 / 8` | “Markers selected” = 2 / 4 / 8 | `v07_budget.selected_per_ceiling` |
 | `--min-occupancy 0.50 / 0.95` | 保留 20 个 → 保留 17 个 | `v07_occupancy` |
-| `--marker-preset …` | 每个具名预设都覆盖显式旋钮；`none` 不覆盖 | `v07_preset_*` |
+| `--marker-preset …` | 每个具名预设都覆盖显式指定的预算；`none` 不覆盖 | `v07_preset_*` |
 | `--mode conservative/standard/expanded/mag_adaptive` | 都能跑完并在摘要中标出自己的模式 | `v07_mode_*` |
 | `--min-marker-coverage`（废弃别名） | 与 `--min-occupancy` 选出同样 8 个 marker，并声明自己是别名 | `v07_alias` |
 
-`--max-markers` 过去是「读取了、记录了、然后被 Phase 0 自适应预算覆盖」的死旋钮。
+`--max-markers` 过去是“读取了、记录了、然后被 Phase 0 自适应预算覆盖”的死旋钮。
 现在它在自适应之后生效（显式 `--marker-preset` 同理），第一行测的正是这件事。
 
 ### 5.2 系统发育 HGT 筛查能区分一致与冲突
@@ -107,17 +107,18 @@ MAD 定根筛查去检验一个数据里并不存在的关系）；生成的参�
 |---|---|---|
 | order 阶元下被测试的分类单元数（`n_total`） | 2 | `hgt_evaluation.tsv` |
 | 单系比例分布 | 4 个被评分 marker 中出现 0.0 与 0.5 | `hgt_evaluation.tsv` |
-| `--monophyly-threshold 0.0` vs `1.0` | 3 个被标记 vs 3 个被标记 | `v04_monophyly` |
+| `--monophyly-threshold 0.0` vs `1.0` | 3 个被标记 vs 3 个被标记（更严的阈值只会把 marker 往下移；本数据上两个阈值标出的是同一组 3 个） | `v04_monophyly` |
 | `--hgt-threshold-l2l3 0.9` vs `0.1` | 剔除 0 个 → 剔除 2 个 | `v06_l2l3` |
 | `--hgt-threshold`（L1/L2 的废弃别名） | Level-1 数 4 → 2，Level-3 数不变 | `v06_alias` |
-| `--hgt-adaptive-thresholds` | `level2_max` 0.6 → 0.95，并报出远缘判定；默认运行不提 | `v06_adaptive` |
-| 仅排名降级（一致性判据） | `--cog-category-map` 会被写进被剔除标记的 `functional_category`；不给图时该列为 `NA` 并附说明 | `v06_cog` |
+| `--hgt-adaptive-thresholds` | `level2_max` 0.6 → 0.95，并报出 `far-distance`；默认运行不提 | `v06_adaptive` |
+| 仅排名降级（一致性判据） | `--cog-category-map` 会把类别写进被剔除 marker 的 profile（`markerfinder.excluded_profile.tsv`）的 `functional_category` 列；不给映射表时该列为 `NA` 并在 `category_note` 中说明 | `v06_cog` |
+| `--hgt-mode risk / consistency / hybrid` | 三个判据在本数据上保留了完全相同的 marker 集（都只剩 `PF01025.20`），因此本数据集无法区分它们；该用例记为 xfail，报告不主张区分 | `v08_criteria` |
 
 这一层的三个行为是错的并已修复，因为是验收数据把它们暴露出来的：单系判定依赖 MAD 把
-根放在哪里（手册明言单系性与定根无关，而代码只检验「有根树的 clade 成员」）；补集只有
+根放在哪里（手册明言单系性与定根无关，而代码只检验“有根树的 clade 成员”）；补集只有
 1 个 tip 的分类单元被当作可测量（7 对 1 的取样无法证伪任何断言，代码却因此给完全一致
-的树打出 risk 1.0）；`--monophyly-rank` 这个文档承诺的阶元会被一条按 scope 推导的自动
-规则覆盖，用户无法关闭。现在默认是 `auto`（由树推导），显式命名阶元则以之为准。
+的树打出 risk 1.0）；`--monophyly-rank` 这个文档承诺的阶元会被一个按 scope 推导的自动
+阶元覆盖，用户无法关闭。现在默认是 `auto`（由树推导），显式命名阶元则以之为准。
 
 ### 5.3 门禁、断言与退出码
 
@@ -128,11 +129,11 @@ MAD 定根筛查去检验一个数据里并不存在的关系）；生成的参�
 | `--taxonomy-mustpass` 被违反（genus 拆分孪生表） | 运行中止，并点名违反项 | 4（`EXIT_ASSERTION_FAILED`） |
 | `--taxonomy-mustpass` 指向不存在的基线 | 拒绝而不是通过 | 4 |
 | `--allow-assertion-failure` 绕过 | 绕过被记录进产物 | 4 → 运行完成但绕过被标出 |
-| 推荐结论不可判定 | 文档所述的退出码 5 可达且有说明 | 5 |
+| 推荐结论不可判定 | 用 3-tip 数据驱动：运行以 3（`EXIT_DATA_ERROR`）退出并说明缺什么；文档所述的 5 未被本次数据驱动，只在常量与单元层被钉住 | 3 |
 | 参数错误（`-t 0`、`--min-occupancy 1.5`、`-o` 指向已存在文件） | 带说明拒绝，无 traceback | 2 |
 
-must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读取，于是它一个关系都没测
-却打印「所有必需关系成立」。上面这条基于产物的断言就是防止该形状的错误回归的手段。
+must-pass 门禁过去会把基因树缓存文件的*路径*当作 Newick 读取，于是它一个关系都没测
+却打印“所有必需关系成立”。上面这条基于产物的断言就是防止该形状的错误回归的手段。
 
 ### 5.4 推断与产物
 
@@ -140,8 +141,8 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
   下出现，并且标签写清用了哪种（`v09_support`、`v09_builder`）。
 * `--coalescent-mode off / post-filter / always` → ASTRAL 树分别为不存在、存在、存在
   （`v09_coalescent_*`），推荐文字跟着真实存在的树走。
-* 18+1 类产物全部被打开并解析：TSV 表头、决策卡 JSON schema、Nexus 分区文件
-  （`charsets` 数等于筛查**保留**的标记数，而不是 Phase 1 的选中数）、HTML 报告、
+* 19 类产物全部被打开并解析：TSV 表头、决策卡 JSON schema、Nexus 分区文件
+  （`charsets` 数等于筛查保留的标记数，而不是 Phase 1 的选中数）、HTML 报告、
   run_config、分步状态（`v14_products`、`v14_partition`、`v14_cards`、`v13_*`）。
 * 读取物种树 tip 集合时会先剥掉 FastTree 的 support 标签，因此 `72` 这类标签不会被当成
   一个分类单元（`v14_trees`）。
@@ -159,22 +160,22 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 | 缓存能说明自己是根据什么构建的 | 19 个缓存基因树，19 个输入指纹；重跑是复用而不是重建（`v14_tree_cache`） |
 | 随机种子被钉住而非交给时钟 | 两次运行的基因树与 support 值一致（`v15_seeds`、`v09_ufboot`） |
 
-其中两条是新增的。重放一份快照过去是「名为重放的空操作」：`run_config.json` 按模块
+其中两条是新增的。重放一份快照过去是“名为重放的空操作”：`run_config.json` 按模块
 嵌套参数并改名了其中几个字段，因此加载器会把 marker 目录、taxonomy 表、风险带当作
-「未识别键」丢掉；路径按输出目录相对化写入、却被按当前工作目录解析，于是重放会去够
-`../../../tmp/…`。而逐标记基因树缓存只按 marker id 复用，于是**别的序列**推出来的树可以
+“未识别键”丢掉；路径按输出目录相对化写入、却被按当前工作目录解析，于是重放会去够
+`../../../tmp/…`。而逐标记基因树缓存只按 marker id 复用，于是*别的序列*推出来的树可以
 回答下一次运行的请求。现在：快照记录解析后的绝对路径，读取时展平回命令行词汇，并且
-恢复「用户请求的」预算而不是自适应后的值；缓存条目携带其输入序列的 SHA-256。
+恢复“用户请求的”预算而不是自适应后的值；缓存条目携带其输入序列的 SHA-256。
 
 ### 5.6 稳健性：拒绝必须具体且大声
 
 退化输入是被检验的，不是被绕开的：2-tip 与 1-tip 的 marker 文件、3 基因组的集合（低于
 建树所需的 4-tip 下限）、全是不可用 profile 的 marker 目录、空的 `.faa`、非 FASTA 文件、
-首行会被误当成数据的 taxonomy 表、非法参照树、缺失的 HMM 目录。每个用例都要求：非零退出
-码、消息点名越界的文件、不出现 traceback、不产出空的占位产物
+表头行会变成幽灵 tip 的 taxonomy 表、非法参照树、缺失的 HMM 目录。每个用例都要求：非零退出
+码、消息点名出问题的路径、不出现 traceback、不产出空的占位产物
 （`v16_degenerate.exit_code = 3`、`v16_three_tips.exit_code = 3`）。
 
-通用的拒绝文案过去在 Phase 1 什么都没选中时仍然声称「所有标记都被判为 Level 3」；现在
+通用的拒绝文案过去在 Phase 1 什么都没选中时仍然声称“所有标记都被判为 Level 3”；现在
 两种情形分别说明，因为针对一种的建议对另一种是错的。
 
 ### 5.7 对植入阳性结果的检出（12 基因组基准）
@@ -187,23 +188,24 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 |---|---|
 | 两次运行都被评分的 marker | 20 |
 | 嵌合运行中被剔除（risk = 1.0）的植入 marker | **3 / 3** |
-| 相对干净运行风险**上升**的植入 marker | 2 |
+| 相对干净运行风险*上升*的植入 marker | 2 |
 | 干净运行里就已达到最大风险的植入 marker | 1（`TIGR00061`）——这是被实测到的假阳性，按原样记录 |
 | 成对运行之间发生变化的非植入 marker | 0 |
 | 干净数据上的背景剔除率 | 0.1 |
 | 剔除决策处的 precision / recall / F1 | 1.0 / 0.667 / 0.8 |
 
-这个区分很重要：干净运行已经标记为阳性的 marker 不可能再「上升」，因此要求三个全部上升
+这个区分很重要：干净运行已经标记为阳性的 marker 不可能再“上升”，因此要求三个全部上升
 要么不可满足，要么会把基线错误率藏起来。所以该用例断言的是：每个植入 marker 都被剔除、
 旁观者保持不动、基线没有饱和——并把基线数字公布出来。`xfail` 只用于套件明确知道自己还
-不能主张的结论；本次运行没有任何一处靠预期失败装成绿色。
+不能主张的结论；本检出用例没有任何一处靠预期失败装成绿色，而本次运行唯一的一处 xfail
+是 §5.2 的三判据用例（三判据在这份数据上不可区分）。
 
 ## 6. 本次验收发现并修复的缺陷
 
 | # | 症状（用户会看到什么） | 根因 | 钉住它的测试 |
 |---|---|---|---|
 | 1 | `--max-markers` 被接受、被记录、被忽略 | 自适应预算覆盖了用户值 | `v07_budget`、单元接线测试 |
-| 2 | must-pass 打印「所有必需关系成立」，而它从没读过那棵树 | 把基因树**路径**当 Newick 解析 → 测试组数为 0 | `v11_gate_pass/fail` |
+| 2 | must-pass 打印“所有必需关系成立”，而它从没读过那棵树 | 把基因树*路径*当 Newick 解析 → 测试组数为 0 | `v11_gate_pass/fail` |
 | 3 | 断言失败退出 3（运行时错误），与文档的 4 矛盾 | 聚合路径未映射该异常类型 | `v11_bypass`、退出码用例 |
 | 4 | 所有基于 taxonomy 表的 marker 都评成 UNKNOWN | 跨阶元标志把 scope 推导的阶元也算作偏离 | `v04_format_b`、单元阶元权威性测试 |
 | 5 | `--monophyly-rank` 被自动阶元悄悄替换 | scope 规则压过了文档承诺 | 单元 + `v04_ranks` |
@@ -211,7 +213,7 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 | 7 | `--taxonomy-levels` 不起作用，kingdom 阶元被丢弃并告警 | 值被记录但从未传给表解析器 | `v04_custom_levels`、单元 parser 测试 |
 | 8 | `--mol-type DNA` 接受了蛋白序列 | 该开关从未到达字母表校验 | `test_inert_switches_wired.py`、`v05_moltype` |
 | 9 | 带 `--force` 的重跑可能复用由别的序列构建的基因树 | 缓存仅按 marker id 键控 | `v14_tree_cache`、单元 must-fail 对照 |
-| 10 | `--config <上次运行>` 实际用了默认值 | 加载器看不懂嵌套的快照块 | `v02_replay`、`test_config_loader.py` |
+| 10 | `--config <previous run>` 静默用了默认值 | 加载器看不懂嵌套的快照块 | `v02_replay`、`test_config_loader.py` |
 | 11 | 重放会去够 `../../../tmp/…` 并在只读 `/tmp` 上崩溃 | 快照按输出目录相对化、读取时按 cwd 解析 | `v02_replay`、`v15_replay` |
 | 12 | 每次运行看起来都不确定（`run_config.json`） | 归一化器的时间戳正则先破坏了 JSON 再解析 | `v15_determinism` |
 | 13 | `-o` 指向已存在文件时抛裸 traceback | 未检查 `Path.is_file` | 退出码 2 用例 |
@@ -219,7 +221,7 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 | 15 | taxonomy 表的表头行变成一个幽灵 tip，进入每一次 tip 集比较 | 无表头嗅探 | `v04_*`、单元测试 |
 | 16 | banner 把 pandas/numpy/scipy/rich 声称为本项目依赖 | 硬编码清单 | 改由发行版元数据派生 |
 | 17 | 废弃别名被静默接受；`--tree` 的弃用提示永远不可能触发 | 与正主共用同一个 dest | `v05`/`v06`/`v07` 别名用例 |
-| 18 | 退出 3 的文案断言了一个并未发生的原因 | 「什么都没选中」与「全被剔除」共用一条消息 | `v16_*`、`v07` 预算用例 |
+| 18 | 退出 3 的文案断言了一个并未发生的原因 | “什么都没选中”与“全被剔除”共用一条消息 | `v16_*`、`v07` 预算用例 |
 | 19 | `PipelineConfig(output_dir=X)` 仍把报告写进 `./output` | 各 section 数据类各自带着 `output_dir`/`tmp_dir` 默认值，一次运行对“写到哪”有两个答案 | `test_config.py::TestOneAnswerPerRunLocation` |
 | 20 | 暂存目录缺失被报成“hmmsearch 不在 PATH 上” | 输出路径的 `FileNotFoundError` 与工具缺失被混为一谈，结论指向了错的原因 | `test_run_scan_hmm_mode`；HMM 路径现在先建好自己的暂存目录 |
 | 21 | 测试数据：taxonomy 错误、Newick 非法、嵌合目录与干净目录不配对、类别映射全 `NA` | 手工填值、写入器缺陷、缓存过期 | `01`–`03` 的构造期校验、`v17` 真值用例 |
@@ -235,17 +237,19 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
   r53 真值），因下载体积而由用户触发。
 * **COG 生物学。** 功能类别列取自这些 profile 自身的注释行，因此它检验的是
   `--cog-category-map` 的通路。
-* **占居率的极端分布。** 这套 profile 是保守标记集，在这组亲缘较近的基因组上最稀疏的天然
-  marker 占居率仍为 0.875；更稀疏的输入只能靠截取模拟，并在
-  `validation/data/markers/degenerate/README` 中如实标注。
+* **占有率的极端分布。** 这套 profile 是保守标记集，在 12 基因组基准集上最稀疏的天然
+  marker 占有率为 0.75（`TIGR02012`，9/12，见
+  `validation/data/markers/bench12/OCCUPANCY.tsv`）；更稀疏的输入只能靠截取模拟（2-tip /
+  1-tip），并在 `validation/data/markers/degenerate/README.txt` 中如实标注。
 * **Python 3.13 及以上。** ete3 在包导入时会 `import cgi`，而 CPython 3.13 已移除 `cgi`
-  （PEP 594），此前导致 ete3 —— 以及所有 MAD / 单系性测量 —— 在更新的解释器上不可用。
+  （PEP 594），此前导致 ete3——以及所有 MAD / 单系性测量——在更新的解释器上不可用。
   `markerfinder._cgi_compat` 现在只在标准库 `cgi` 确实缺失时安装最小替身，因此 3.13 与
-  3.14 已纳入受支持范围，CI 矩阵逐个实跑。「不设上界」这一点本身在被测，而不是靠文档
+  3.14 已纳入受支持范围，CI 矩阵逐个实跑。“不设上界”这一点本身在被测，而不是靠文档
   声明。残留风险：替身只覆盖 ete3 真正引用的那一个符号（`cgi.FieldStorage`），一旦被真正
-  调用就抛 `NotImplementedError`；MarkerFinder 不使用 ete3 的 web 插件，该路径不会被触发。
+  调用就抛 `NotImplementedError`；MarkerFinder 从不使用 ete3 的 web 插件，本次测试也没有
+  触发并覆盖该路径。
 * **可写的 `/tmp`。** MAFFT 用 `mktemp -dt` 建暂存目录，失败后并不会停止，而是带着空路径
-  继续、产不出比对——流水线于是把结果报成「没有 marker 可比对」。套件把
+  继续、产不出比对——流水线于是把结果报成“没有 marker 可比对”。套件把
   `TMPDIR`/`MAFFT_TMPDIR` 钉在 `validation/.work` 内，因此只读 `/tmp` 的容器不可能把一个
   环境问题变成错误的科学结论。
 
@@ -253,7 +257,8 @@ must-pass 门禁过去会把基因树缓存文件的**路径**当作 Newick 读�
 
 ```bash
 conda env create -f environment.yml && conda activate markerfinder
-# 先拼装 HMM profile（第三方模型，不入库）：python scripts/fetch_marker_db.py --auto
+# HMM profile 是第三方模型，不随包提交，须先拼装
+python scripts/fetch_marker_db.py --auto
 # 可选：从 NCBI 重建测试数据（需要网络）
 python validation/run_validation.py --prepare
 # 验收层，含慢速检出基准

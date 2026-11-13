@@ -110,3 +110,13 @@ kimi_agents/
 notify/
 state.json
 manifest.json
+
+# ---------------------------------------------------------------------------
+# Archived worked-example run (a deliverable, not runtime scratch)
+#
+# The pipeline writes its products under output/, which the rule above ignores.
+# This specific archive is cited in the manuscript and must travel with the
+# review package, so re-include its output tree and its run log.
+# ---------------------------------------------------------------------------
+!worked_example/run_2026-11-10/output/
+!worked_example/run_2026-11-10/output/**

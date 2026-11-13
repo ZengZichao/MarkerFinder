@@ -5,7 +5,7 @@ The profile data itself is **fetched, not committed**.
 
 | Path | In git? | What it is |
 |---|---|---|
-| `expected_hashes.json` | yes | The SHA-256 each database is expected to have. `markerfinder --check` compares the directory on disk against it; an empty value is reported as `NOT RUN`, never as a pass. |
+| `expected_hashes.json` | yes | The SHA-256 each database is expected to have. `markerfinder --check` compares the directory on disk against it, but only for the entries whose value is populated: an empty value produces **no line at all** in the report, so it is silently unchecked rather than reported as a pass (see `_note_marker_hmm` in that file). Only when **no** entry is populated does `--check` emit one INFO row saying the comparison was NOT RUN. |
 | `gtdb_markers/` | **no** (git-ignored) | One HMM profile per marker, in `bac120/` (bacteria) and `ar53/` (archaea). Used by `--marker-mode hmm` when `--marker-hmm-dir` is omitted. |
 
 ## Getting the HMM profiles
