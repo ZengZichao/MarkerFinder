@@ -26,10 +26,12 @@ env*/
 # ---------------------------------------------------------------------------
 # Test & coverage machinery
 #
-# validation/results/ is deliberately NOT ignored: it is the archived evidence
-# that ships with the release (metrics, coverage matrix, junit record,
-# environment inventory). Only the scratch space is disposable.
+# validation/results/ holds a run's record (metrics, coverage matrix, junit,
+# environment inventory). `validation/run_validation.py` produces it and
+# validation-nightly.yml uploads it as an artifact; it is not committed, so a
+# run never dirties the tree. Only the scratch space is disposable.
 # ---------------------------------------------------------------------------
+validation/results/
 .pytest_cache/
 .pytest_of*/
 pytest-of-*/

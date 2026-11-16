@@ -16,7 +16,7 @@
 
 | | 被确立的论断 | 位置 |
 |---|---|---|
-| 1 | 命令行公开的每一项能力都有对应用例 | `cases/test_v90_capability_coverage.py`、`results/capability_matrix.tsv` |
+| 1 | 命令行公开的每一项能力都有对应用例 | `cases/test_v90_capability_coverage.py`、`capabilities.py` |
 | 2 | 全流程既可分步执行也可一次性执行，且结果一致 | `cases/test_v12_stepwise_workflow.py` |
 | 3 | 每一个已文档化的输出文件都存在，且列与内容一致 | `cases/test_v14_product_audit.py` |
 | 4 | 检测性能是针对“已知答案的阳性对照”实测得到的 | `cases/test_v17_benchmark_detection.py` |
@@ -55,8 +55,8 @@ validation/
 │   ├── 02_build_marker_sets.py   逐 marker FASTA、占有率、植入型嵌合体
 │   ├── 03_build_fixtures.py      表、树、质量文件、配置、清单
 │   └── 04_record_environment.py  实测记录解释器、依赖包与外部工具版本
-└── results/                      发布那次运行的归档产物
-    ├── metrics.json              测试报告中引用的全部数值
+└── results/                      运行记录，由运行生成——不入库
+    ├── metrics.json              各用例测得的数值
     ├── capability_matrix.tsv     能力 → 覆盖用例
     ├── chimera_metrics.json      检测的 precision / recall / F1
     ├── junit.xml                 逐用例通过失败记录
@@ -64,7 +64,9 @@ validation/
 ```
 
 `validation/.work` 是临时区：运行时物化出的输入目录、各用例输出与临时目录。它可随时
-删除，且不进入版本库。
+删除，且不进入版本库。`validation/results/` 就是上面的运行记录：由
+`run_validation.py` 写出，不进入版本库，并由 `validation-nightly.yml` 在每次定时运行后
+作为 CI 产物上传。
 
 ---
 
@@ -101,13 +103,12 @@ MAFFT 会静默失败并表现为“没有 marker 可比对”，把一个环境
 
 ### 运行时长
 
-`results/environment.txt` 记录实测机器为 96 核（`cpu_count: 96`）。整套件的实测总时长
-记在 `results/junit.xml`：testsuite `time` 为 1682.956 秒（约 28 分钟，153 个用例），
-其中唯一标记为 `slow` 的 `cases/test_v17_benchmark_detection.py` 占 1367.2 秒；该产物
-没有记录并行度，所以这里只报实测总时长，不报单次运行的 worker 数。单次流水线运行按
-`conftest.py` 记录的实测值为：4 个基因组 / 6 个 marker 用时 1 分 34 秒，同一
-数据集换成 30 个 marker 用时 7 分 19 秒。因此功能级用例只使用小 marker 预算，
-较大的集合只被标记选择、产物审计与检测性能这三类用例使用。
+每次运行都会自测运行环境与耗时，并写入 `results/environment.txt` 与
+`results/junit.xml`；这两个文件不入库，所以任何一份拷贝里的数字都只是上一次运行的产物。
+`junit.xml` 的 testsuite `time` 是整个套件的墙钟耗时，且不记录并行度，因此这里不报单次
+运行的 worker 数。单次流水线运行按 `conftest.py` 记录的实测值为：4 个基因组 / 6 个 marker
+用时 1 分 34 秒，同一数据集换成 30 个 marker 用时 7 分 19 秒。因此功能级用例只使用小
+marker 预算，较大的集合只被标记选择、产物审计与检测性能这三类用例使用。
 
 ---
 
@@ -166,5 +167,5 @@ profile 对每个基因组做 hmmsearch，取 bitscore ≥ 20 的最佳命中；
 * 优先使用差示断言（A/B 两次运行，只差一个因子），而不是绝对阈值，因为绝对阈值
   会把数据集本身悄悄编码进期望值。
 * skip 必须写明理由；skip 永远不会被当作通过。
-* 报告引用的数值由各用例自己写入 `results/metrics.json`，因此文档里出现陈旧数字
+* 一次运行报告的数值由各用例自己写入 `results/metrics.json`，因此文档里出现陈旧数字
   会表现为机读记录中的差异。

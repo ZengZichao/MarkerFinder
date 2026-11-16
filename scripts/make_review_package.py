@@ -524,14 +524,14 @@ before sending.
   the benchmark contract test uses a deliberately synthetic placeholder identifier.
   Only the author knows the deposited record's version and concept DOIs, so nothing was
   substituted here and nothing was invented.
-* **Which files were AI-assisted.** `ai-annotation-checklist.md` defines the marker line
-  and ships an empty author-completed list; `scripts/add_llm_markers.py` refuses to
-  guess which files those are.
+* **Which files were AI-assisted.** The repository ships no AI-assistance
+  statement and no annotation list; if the authors deposit one, the packager's
+  scrubbing rules must be checked against it.
 * **The worked-example run outputs.** `worked_example/README.md` holds the reproduction
   recipe and no results, because the repository holds no results to report.
-* **Whether the archived validation evidence matches this build.** The
-  `validation/results/` artefacts were recorded on the previous tag; re-running
-  `validation/` on this one is an author action.
+* **Whether the run record matches this build.** `validation/results/` is
+  produced by `validation/run_validation.py` and is not committed, so the
+  numbers in it are whatever the last run produced.
 
 ## Reproducing HMM marker mode
 

@@ -3,14 +3,14 @@
 
 The rule this enforces is a published one: documentation ships in an English and
 a Chinese version, and the English version is the primary one. That is easy to
-state and easy to break — a new ``docs/`` page written only in Chinese, a
+state and easy to break — a new documentation page written only in Chinese, a
 ``README.EN.md`` whose Chinese twin was never updated, a link that lands on the
 Chinese page from the English index. None of those are visible to a reviewer
 reading one file.
 
 So the check is structural, over the filesystem:
 
-1. every ``*.md`` under the repository root and ``docs/`` that carries a
+1. every ``*.md`` in a documentation directory that carries a
    ``.EN.md`` / ``.CN.md`` suffix must have both halves;
 2. the language-neutral entry point (``README.md``) must be English prose and
    must link to both language versions;
@@ -37,7 +37,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[2]
 
 # Directories that are documentation, not code comments or generated output.
-DOC_DIRS = [REPO, REPO / "docs", REPO / "validation", REPO / "tests" / "benchmark",
+DOC_DIRS = [REPO, REPO / "validation", REPO / "tests" / "benchmark",
             REPO / "scripts"]
 SKIP_PARTS = {".git", "__pycache__", ".work", "node_modules", "outputs",
               "results", ".pytest_cache", ".mimosa"}

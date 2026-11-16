@@ -66,20 +66,15 @@ python validation/scripts/02_build_marker_sets.py   # builds validation/data/hmm
    enforces pairing, parallel heading shape, and that the README index links
    both languages in EN-first order. A docs change is not done until both
    halves are updated.
-2. **The changelog.** User-visible changes get an entry under `[Unreleased]`
-   in `CHANGELOG.md`.
-3. **Honest numbers.** Claims in the README and the validation report are
-   checked against the shipped evidence
-   (`tests/unit/test_docs_numbers_are_current.py`,
-   `tests/unit/test_validation_report_is_current.py`). If your change alters
-   a measured quantity, re-run the relevant validation cases and refresh
-   `validation/results/` — the committed evidence is the source those tests
-   read.
-4. **Skips must say why.** A case that cannot be measured in a given
+2. **Honest numbers.** The suite count in the README is re-measured from the
+   tree on every run (`tests/unit/test_docs_numbers_are_current.py`), so a
+   stale figure fails a test rather than quietly rotting. If your change alters
+   a measured quantity, re-run the relevant validation cases before merging.
+3. **Skips must say why.** A case that cannot be measured in a given
    environment (missing optional binary, unfetched third-party library)
    calls `pytest.skip` with the reason and the command that would make it
    measurable. A bare failure is reserved for a real regression.
-5. **Declare what you cover.** Acceptance cases declare the capability they
+4. **Declare what you cover.** Acceptance cases declare the capability they
    exercise with `@pytest.mark.capability(...)`; the coverage matrix is built
    from those declarations, so an undeclared case is invisible to it.
 

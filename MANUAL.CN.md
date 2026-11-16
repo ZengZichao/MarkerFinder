@@ -145,10 +145,8 @@ MarkerFinder/
 ├── validation/                # 全功能验证：真实流水线 + 真实基因组
 │   ├── cases/                 # 验收用例，按功能域分文件
 │   ├── data/                  # 随仓库发布的夹具 + 溯源记录（基因组需下载）
-│   ├── results/               # 本次发布所依据的存档证据
 │   └── scripts/               # 数据流水线：下载基因组/标记集/夹具
 ├── db/                        # expected_hashes.json（HMM profile 需自行获取）
-├── docs/                      # 测试计划与实测报告（中英双语）
 ├── scripts/                   # 工具脚本（fetch_marker_db.py、smoketest.py 等）
 ├── pyproject.toml             # 包配置
 ├── environment.yml            # 含外部工具的 conda 环境
