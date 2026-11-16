@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Marker-level cross-consistency screen tests."""
 
 import pytest

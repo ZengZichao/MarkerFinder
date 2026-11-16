@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Tree manipulation utilities."""
 
 import logging

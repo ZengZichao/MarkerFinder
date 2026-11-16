@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The conflict-band thresholds must be one configurable source, not scenery.
 
 's wording is "``ConflictDetector.__init__`` 的 ``rf_threshold`` /

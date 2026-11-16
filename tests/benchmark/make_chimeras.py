@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Build position-known chimera positive controls.
 
 Replaces marker X of genome A with the homologue from distant genome B,

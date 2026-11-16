@@ -27,6 +27,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   conventions (charset, final newline, indentation, 120-column guide). Neither
   adds a linter gate: the tree is not formatter-clean, and the project's stated
   position is to fix findings before gating them.
+- **SPDX license identifier on every Python source file.** All 193 tracked
+  `.py` files carry `# SPDX-License-Identifier: MIT` (after the shebang where there is
+  one), so the licence travels with each file when sources are redistributed
+  outside this repository -- a review package, a vendored copy, a single-file
+  excerpt. `LICENSE`, `CITATION.cff` and `pyproject.toml` already stated MIT;
+  this makes the same statement per file. It is a comment, so module docstrings
+  and the AI-assistance annotation convention are unaffected.
 
 ### Fixed
 

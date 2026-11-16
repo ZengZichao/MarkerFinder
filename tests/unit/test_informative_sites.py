@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Parsimony-informative sites tests."""
 
 import pytest

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Global configuration dataclasses for MarkerFinder pipeline."""
 
 import os

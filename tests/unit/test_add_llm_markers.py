@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The LLM-annotation mechanism (``scripts/add_llm_markers.py``) must mark, hold, and refuse.
 
 ``AI_ASSISTANCE.md`` states a convention -- one marker line, placed after the module

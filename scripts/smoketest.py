@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """MarkerFinder end-to-end smoketest.
 
 Exercises the full pipeline --marker-mode hmm with a real TIGRFAM/Pfam HMM

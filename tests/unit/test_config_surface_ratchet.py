@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Every configuration knob must be consumed, or be declared and documented.
 
 The single most common defect this shape of suite finds is a switch that exists but is

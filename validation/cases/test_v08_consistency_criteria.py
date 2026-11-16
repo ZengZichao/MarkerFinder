@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-08 — the consistency and hybrid screening criteria.
 
 Covers ``--hgt-mode`` and ``--consistency-stringency``.

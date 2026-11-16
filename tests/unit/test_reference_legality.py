@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Reference-tree legality tests.
 
 The Error-A fixture (``collapsed_sponge_other.nwk``) reproduces the

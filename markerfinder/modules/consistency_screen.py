@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Marker-level cross-consistency screen.
 
 Thesis: grade each marker by whether the concatenation and coalescent legs

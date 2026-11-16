@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Self-test runner: verify dependencies and built-in examples.
 
 The historical ``_run_self_test`` function (≈266 lines) is split into one

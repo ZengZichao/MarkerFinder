@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Version and authorship information for MarkerFinder.
 
 The version is a single constant: what ``markerfinder --version``, the startup

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for MAD rooting utility.
 
 MAD rooting has no pure-Python equivalent ( covers only the monophyly

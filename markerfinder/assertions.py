@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Output-numeric assertion layer.
 
 The assertion layer is deliberately separate from ``validation.py`` (AD):

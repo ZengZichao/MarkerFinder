@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Taxonomy parsing, external table loading, and monophyly checking.
 
 Supports two formats:

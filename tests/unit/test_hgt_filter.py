@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for HGT-aware marker filtering module."""
 
 import pytest

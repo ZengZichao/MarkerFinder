@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Thin parallel-map helper for I/O-bound external-tool tasks.
 
 Why a ``ThreadPoolExecutor`` backend (the default) instead of

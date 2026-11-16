@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ +: the taxonomy must-pass gate must actually gate.
 
 The must-pass baseline existed only as a YAML file with no

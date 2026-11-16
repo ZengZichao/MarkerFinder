@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Species-tree source priority resolution.
 
 This module is the single source of truth for choosing the "primary" species

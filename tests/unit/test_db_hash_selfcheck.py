@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """A wrong database hash must make --check red.
 
 The hash COMPARISON exists in ``verify_database``, and before this test the run

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Execute the ``scan`` subcommand (Phase 0+1+1.5)."""
 
 from __future__ import annotations

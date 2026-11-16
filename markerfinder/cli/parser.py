@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Argument parser definitions for the MarkerFinder CLI.
 
 This module owns every argparse artefact (custom types, shared/common args,

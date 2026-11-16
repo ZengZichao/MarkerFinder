@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """ Performance budget probe.
 
  caps the *added pure-Python computation* at 5% of total run time for

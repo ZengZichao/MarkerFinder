@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-01 — environment, self-check, terminal states and data integrity.
 
 Covers: ``--check`` / ``--self-test``, ``--version``, the external-tool surface

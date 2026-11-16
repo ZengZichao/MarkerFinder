@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import pytest
 from pathlib import Path
 

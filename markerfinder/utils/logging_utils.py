@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Logging utilities: ISO 8601 timestamps, flush, file persistence.
 
 Log format: 2025-03-21T10:15:30.123 | INFO | message

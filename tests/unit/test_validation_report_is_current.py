@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The published test report must agree with the archived evidence it cites.
 
 ``docs/TEST-REPORT.{EN,CN}.md`` is shipped with the release and states measured

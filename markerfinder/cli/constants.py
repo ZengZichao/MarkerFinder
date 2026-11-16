@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Exit codes and shared CLI constants for the MarkerFinder command line.
 
 These mirror the historical constants defined in ``markerfinder.__main__`` so

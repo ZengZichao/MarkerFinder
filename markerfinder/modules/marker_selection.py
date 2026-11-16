@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Adaptive marker selection: HMMER-based scan of input genomes.
 
 Two operating modes, selected by ``SelectionConfig.marker_mode``:

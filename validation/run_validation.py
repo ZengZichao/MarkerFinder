@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """One-command entry point for the MarkerFinder validation suite.
 
     python validation/run_validation.py # everything but the slow benchmark

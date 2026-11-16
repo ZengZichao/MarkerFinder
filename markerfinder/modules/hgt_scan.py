@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Threshold scan.
 
 Re-grades the already-computed per-marker risks under several threshold

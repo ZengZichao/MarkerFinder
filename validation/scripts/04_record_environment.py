@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Step 4: record the machine-readable environment the published run used.
 
 A test result is only interpretable alongside the environment that produced it,

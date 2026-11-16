@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Benchmark metrics — precision / recall / F1 + block
 bootstrap confidence intervals (block = genome). Pure stdlib."""
 

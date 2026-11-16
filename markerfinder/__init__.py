@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """MarkerFinder: Adaptive HGT-Aware Phylogenomic Pipeline.
 
 Author: Zengzichao (zengzichao@sjtu.edu.cn, ORCID 0000-0001-6553-970X)

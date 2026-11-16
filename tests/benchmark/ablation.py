@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Reverse ablation — compare rankings that differ in ONE factor.
 
  asks for "同一份数据只改一个因子（有无 HGT 过滤 / 串联 vs 合并），比较排序变化".

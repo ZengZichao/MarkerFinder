@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The supported interpreter range must be earned, not remembered.
 
 ``pyproject.toml`` declares ``requires-python = ">=3.10"``. A declared

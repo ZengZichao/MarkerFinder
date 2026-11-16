@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Canonical phase numbering for MarkerFinder.
 
 This module is the SINGLE source of truth for pipeline phase numbers and the

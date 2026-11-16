@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Step 2: build the per-marker inputs the pipeline consumes.
 
 Produced artefacts (all under ``validation/data/``)

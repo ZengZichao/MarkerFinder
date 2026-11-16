@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Regression tests for the fixes made during the pre-publication review round.
 
 Each test marks the review finding id it protects (the ids run through F1-F21)

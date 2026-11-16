@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Zero-discrimination probe: does the output move when the input moves?
 
 Feeds two 4-taxon trees — one maximally conflicted with the reference

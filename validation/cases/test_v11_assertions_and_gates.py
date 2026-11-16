@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-11 — the self-check layer, adjudication and the taxonomy must-pass gate.
 
 Covers ``--strict-assertions``, ``--allow-assertion-failure``,

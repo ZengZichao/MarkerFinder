@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Composition evidence must reach the products.
 
 The metrics in ``composition.py`` were implemented and unit-tested, but

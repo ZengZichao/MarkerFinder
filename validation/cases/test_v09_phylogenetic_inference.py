@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-09 — phylogenetic inference: builders, coalescent modes and support.
 
 Covers ``--gene-tree-builder``, the ``--fast-tree`` alias,

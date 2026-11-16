@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for taxonomy parsing and monophyly checks."""
 
 import pytest

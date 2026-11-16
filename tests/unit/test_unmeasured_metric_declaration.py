@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ (P0): a run must declare WHICH metrics it did not measure, and why.
 
 The requirement's own evidence site is ``hgt_filter.py:52-54`` — the branch that

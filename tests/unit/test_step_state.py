@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for stepwise subcommand state inspection helpers."""
 
 import sys

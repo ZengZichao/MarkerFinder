@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Additional unit tests for MarkerFinderPipeline orchestration."""
 
 from pathlib import Path

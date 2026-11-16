@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Execute the ``report`` subcommand (Phase 4, report generation)."""
 
 from __future__ import annotations

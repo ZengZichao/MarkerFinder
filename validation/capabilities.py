@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The capability surface the validation suite must cover, read from the code.
 
 Why this module exists

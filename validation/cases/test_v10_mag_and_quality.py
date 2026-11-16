@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-10 — genome quality: the CheckM routes and MAG-aware adaptation.
 
 Covers ``--skip-checkm``, ``--checkm-results`` and the filename-based

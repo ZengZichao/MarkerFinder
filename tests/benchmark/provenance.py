@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """External data must be reproducible from a record.
 
  says external data and products stay out of the repository, replaced by

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Phase numbers in logs and comments must resolve to the one table.
 
  created ``markerfinder/phases.py`` as the single source of truth and kept

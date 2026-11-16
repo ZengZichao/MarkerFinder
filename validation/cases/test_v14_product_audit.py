@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-14 — the product audit: every documented output, where it is, what is in it.
 
 Covers the ``product:*`` surface: the files the README and MANUAL promise a run

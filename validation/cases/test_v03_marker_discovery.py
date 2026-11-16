@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-03 — marker discovery: the ``hmm`` and ``gtdb_tk`` modes.
 
 Covers ``--marker-mode``, ``--marker-hmm-dir``, ``--marker-db-source``,

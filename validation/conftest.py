@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Shared fixtures for the MarkerFinder validation (full-feature E2E) suite.
 
 Design rules this file enforces

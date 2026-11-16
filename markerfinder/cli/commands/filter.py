@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Execute the ``filter`` subcommand (Phase 2, HGT-aware marker filtering)."""
 
 from __future__ import annotations

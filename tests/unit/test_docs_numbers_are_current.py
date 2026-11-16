@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The user-facing documents must not keep quoting retired measurements.
 
 The docs contract requires the README/MANUAL pair to stay in sync with the code.

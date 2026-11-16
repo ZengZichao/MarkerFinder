@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-02 — command line, configuration files and the parameter priority.
 
 Covers ``--config`` (YAML / TOML / JSON), the documented CLI > config >

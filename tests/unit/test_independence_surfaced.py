@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ Second bullet: the independence verdict must reach a product.
 
  measured how independent the concatenation and coalescent legs are and

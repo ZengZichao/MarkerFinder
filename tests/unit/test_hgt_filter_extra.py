@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Additional unit tests for HGT filtering."""
 
 from unittest.mock import MagicMock, patch

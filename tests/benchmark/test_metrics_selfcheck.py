@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Metrics self-check — known answers, plus the must-fail
 control: shuffling a label MUST change P/R (a metric that cannot fail is
 not a metric)."""

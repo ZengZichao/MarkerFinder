@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Per-marker phylogenetic informativeness.
 
 PIS (parsimony-informative sites, Farris definition, protein alphabet): a

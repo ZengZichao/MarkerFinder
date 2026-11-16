@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """沉默即失败 — an ``except`` must not return a fabricated number.
 
 "任何 except 分支返回数值的路径必须要么改为 None，要么显式声明为合法的业务值并注释说明."

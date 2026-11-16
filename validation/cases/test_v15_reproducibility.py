@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-15 — reproducibility: the same input must give the same answer.
 
 Two claims are tested, and they are different claims:

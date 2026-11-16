@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Configuration file support: YAML, TOML, and JSON loading.
 
 Provides --config <path> with CLI > Config > Defaults priority.

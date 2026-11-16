@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-06 — HGT screening: steps, thresholds, scanning and evidence coverage.
 
 Covers ``--hgt-steps``, ``--hgt-threshold`` (deprecated alias),

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-17 — measured detection performance on the 12-genome benchmark.
 
 The claim under test is MarkerFinder's second headline: "phylogenetic-only HGT

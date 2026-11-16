@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-13 — output management: intermediates, temp directories, report format.
 
 Covers ``--save-intermediates``, ``--tmp-dir``, ``--keep-tmp``,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """MAD rooting for gene trees (Minimal Ancestor Deviation).
 
 Implements the original MAD (Minimal Ancestor Deviation) criterion of Tria

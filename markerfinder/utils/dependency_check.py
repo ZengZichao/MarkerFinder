@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Dependency pre-checks for MarkerFinder.
 
 Called at pipeline initialization to detect missing critical dependencies

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The heterogeneity configuration must actually reach the product.
 
 Two defects lived in one line. ``pipeline.py`` read

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Upstream independence provenance tests."""
 
 from markerfinder.config import PhylogeneticConfig

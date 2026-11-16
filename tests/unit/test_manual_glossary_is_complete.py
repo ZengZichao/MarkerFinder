@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The manual's glossary has to be complete, and its rows have to say something.
 
 Two terms in this project are easy to confuse and expensive to get wrong:

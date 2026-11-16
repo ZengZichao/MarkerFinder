@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Product-level acceptance evidence from a real end-to-end run.
 
 The same mocked external tools the existing integration suite relies on, so what

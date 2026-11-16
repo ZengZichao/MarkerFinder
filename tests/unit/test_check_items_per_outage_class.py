@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ +: failures must be loud, distinguishable, and self-checked.
 
 "依赖缺失、工具缺失、参照非法必须产生可区分的退出码与报告条目". Three

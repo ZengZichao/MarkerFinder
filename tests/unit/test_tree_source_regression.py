@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Behavior-equivalence tests for the consolidated shared utilities.
 
 These pin the exact behaviour of ``markerfinder.utils.tree_source`` and the

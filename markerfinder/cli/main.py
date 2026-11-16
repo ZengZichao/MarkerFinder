@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """MarkerFinder command-line entry point: orchestration and dispatch.
 
 This is the historical ``main`` function, relocated verbatim from

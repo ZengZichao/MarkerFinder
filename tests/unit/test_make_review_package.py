@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The anonymity packager (``scripts/make_review_package.py``) must scrub, prove and fail closed.
 
 The manuscript tells reviewers the code reaches them as "an anonymised package

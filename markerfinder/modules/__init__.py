@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The five analysis-stage modules wired into ``MarkerFinderPipeline``.
 
 ``pipeline.py`` imports exactly these five and no other stage:

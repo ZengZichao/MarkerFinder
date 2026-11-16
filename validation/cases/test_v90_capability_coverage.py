@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-90 — the coverage ratchet: every advertised capability has a case.
 
 This file is what makes "the tests cover everything the software claims"
