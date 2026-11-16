@@ -38,7 +38,10 @@ class TestInteractiveReportGenerator:
     def test_creates_html(self, tmp_path):
         cfg = ReportConfig(output_dir=str(tmp_path), output_prefix=str(tmp_path / "t"))
         gen = InteractiveReportGenerator(cfg)
-        out = gen.generate(make_marker_result(), make_hgt_report(), PhylogeneticResult(), None, RuntimeInfo(duration=5.0))
+        out = gen.generate(
+            make_marker_result(), make_hgt_report(), PhylogeneticResult(), None,
+            RuntimeInfo(duration=5.0),
+        )
         assert out.html_path.endswith(".html")
         assert Path(out.html_path).exists()
 
@@ -67,7 +70,10 @@ class TestPlainTextReportGenerator:
     def test_creates_files(self, tmp_path):
         cfg = ReportConfig(output_dir=str(tmp_path), output_prefix=str(tmp_path / "t"))
         gen = PlainTextReportGenerator(cfg)
-        out = gen.generate(make_marker_result(), make_hgt_report(), PhylogeneticResult(), None, RuntimeInfo(duration=5.0))
+        out = gen.generate(
+            make_marker_result(), make_hgt_report(), PhylogeneticResult(), None,
+            RuntimeInfo(duration=5.0),
+        )
         assert len(out.file_paths) > 0
         for p in out.file_paths:
             assert Path(p).exists()

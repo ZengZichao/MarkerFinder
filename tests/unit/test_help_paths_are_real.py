@@ -37,7 +37,10 @@ HELP_SOURCES = [
 
 # ``<path/to/name.ext>`` -- only names that carry an extension are claims about a
 # File the program produces; bare directory mentions are checked by.
-HELP_PATH = re.compile(r"[\w.<>/-]*?/?([\w.-]+\.(?:json|pkl|tsv|csv|txt|html|htm|domtblout|fasta|faa|fna|nwk|newick))\b")
+HELP_PATH = re.compile(
+    r"[\w.<>/-]*?/?([\w.-]+\.(?:json|pkl|tsv|csv|txt|html|htm|domtblout"
+    r"|fasta|faa|fna|nwk|newick))\b"
+)
 
 # A name counts as "real" when the package itself spells it out in a string
 # Literal (write side, read side, or a constant such as STATE_FILE_NAME). Names

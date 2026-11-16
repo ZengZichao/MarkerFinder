@@ -180,20 +180,40 @@ def _test_format_a() -> List[tuple]:
     try:
         from markerfinder.taxonomy import parse_taxonomy
 
-        r = parse_taxonomy("GB_GCA_000252485.1_d_Bacteria_p_Cyanobacteriota_c_Cyanobacteriia_o_Cyanobacteriales_f_Prochloraceae_g_Prochloron", mode="reverse")
-        results.append(("Format A parse (reverse)", "PASS" if r.get("domain") == "Bacteria" else "FAIL", str(r.get("domain"))))
+        r = parse_taxonomy(
+            "GB_GCA_000252485.1_d_Bacteria_p_Cyanobacteriota_c_Cyanobacteriia"
+            "_o_Cyanobacteriales_f_Prochloraceae_g_Prochloron",
+            mode="reverse",
+        )
+        results.append(
+            ("Format A parse (reverse)",
+             "PASS" if r.get("domain") == "Bacteria" else "FAIL",
+             str(r.get("domain")))
+        )
 
         # 缺失级别
         r2 = parse_taxonomy("GB_GCA_001_d_Bacteria_p_Firmicutes", mode="reverse")
-        results.append(("Format A parse (missing levels)", "PASS" if r2.get("domain") == "Bacteria" and r2.get("family") is None else "FAIL", f"d={r2.get('domain')}, f={r2.get('family')}"))
+        results.append(
+            ("Format A parse (missing levels)",
+             "PASS" if r2.get("domain") == "Bacteria" and r2.get("family") is None else "FAIL",
+             f"d={r2.get('domain')}, f={r2.get('family')}")
+        )
 
         # 含下划线分类名
         r3 = parse_taxonomy("ID_d_Bacteria_p_Proteo_bacteria_c_Gamma", mode="reverse")
-        results.append(("Format A parse (underscore in name)", "PASS" if r3.get("domain") == "Bacteria" else "FAIL", str(r3.get("domain"))))
+        results.append(
+            ("Format A parse (underscore in name)",
+             "PASS" if r3.get("domain") == "Bacteria" else "FAIL",
+             str(r3.get("domain")))
+        )
 
         # Greedy 模式
         r4 = parse_taxonomy("ID_d_Bacteria_p_Firmicutes_c_Bacilli", mode="greedy")
-        results.append(("Format A parse (greedy)", "PASS" if r4.get("domain") == "Bacteria" else "FAIL", str(r4.get("domain"))))
+        results.append(
+            ("Format A parse (greedy)",
+             "PASS" if r4.get("domain") == "Bacteria" else "FAIL",
+             str(r4.get("domain")))
+        )
     except Exception as e:
         results.append(("Format A parse", "FAIL", str(e)))
     return results
@@ -204,16 +224,31 @@ def _test_format_b() -> List[tuple]:
     try:
         from markerfinder.taxonomy import parse_taxonomy_table
 
-        r = parse_taxonomy_table("d__Bacteria;p__Cyanobacteriota;c__Cyanobacteriia;o__Cyanobacteriales;f__Prochloraceae;g__Prochloron;s__")
-        results.append(("Format B parse (normal)", "PASS" if r.get("domain") == "Bacteria" else "FAIL", str(r.get("domain"))))
+        r = parse_taxonomy_table(
+            "d__Bacteria;p__Cyanobacteriota;c__Cyanobacteriia;o__Cyanobacteriales;"
+            "f__Prochloraceae;g__Prochloron;s__"
+        )
+        results.append(
+            ("Format B parse (normal)",
+             "PASS" if r.get("domain") == "Bacteria" else "FAIL",
+             str(r.get("domain")))
+        )
 
         # 缺失值
         r2 = parse_taxonomy_table("d__Bacteria;p__Cyanobacteriota;s__")
-        results.append(("Format B parse (missing values)", "PASS" if r2.get("domain") == "Bacteria" and r2.get("species") is None else "FAIL", f"d={r2.get('domain')}, s={r2.get('species')}"))
+        results.append(
+            ("Format B parse (missing values)",
+             "PASS" if r2.get("domain") == "Bacteria" and r2.get("species") is None else "FAIL",
+             f"d={r2.get('domain')}, s={r2.get('species')}")
+        )
 
         # 分隔符冲突（值中包含分号）
         r3 = parse_taxonomy_table("d__Bacteria;p__C Firm;icutes")
-        results.append(("Format B parse (separator in value)", "PASS" if r3.get("domain") == "Bacteria" else "FAIL", str(r3.get("domain"))))
+        results.append(
+            ("Format B parse (separator in value)",
+             "PASS" if r3.get("domain") == "Bacteria" else "FAIL",
+             str(r3.get("domain")))
+        )
     except Exception as e:
         results.append(("Format B parse", "FAIL", str(e)))
     return results
@@ -227,10 +262,18 @@ def _test_merge_taxonomy() -> List[tuple]:
         emb = parse_taxonomy_embedded("ID_d_Bacteria_p_Firmicutes")
         tab = parse_taxonomy_table("d__Archaea;p__Proteobacteria")
         merged = merge_taxonomy(emb, tab, priority="table")
-        results.append(("Merge taxonomy (table priority)", "PASS" if merged.get("domain") == "Archaea" else "FAIL", str(merged.get("domain"))))
+        results.append(
+            ("Merge taxonomy (table priority)",
+             "PASS" if merged.get("domain") == "Archaea" else "FAIL",
+             str(merged.get("domain")))
+        )
 
         merged2 = merge_taxonomy(emb, tab, priority="embedded")
-        results.append(("Merge taxonomy (embedded priority)", "PASS" if merged2.get("domain") == "Bacteria" else "FAIL", str(merged2.get("domain"))))
+        results.append(
+            ("Merge taxonomy (embedded priority)",
+             "PASS" if merged2.get("domain") == "Bacteria" else "FAIL",
+             str(merged2.get("domain")))
+        )
     except Exception as e:
         results.append(("Merge taxonomy", "FAIL", str(e)))
     return results
@@ -269,16 +312,32 @@ def _test_newick_validation() -> List[tuple]:
         from markerfinder.validation import validate_newick_string
 
         errs, _ = validate_newick_string("((A:0.1,B:0.2),(C:0.3,D:0.4));")
-        results.append(("Newick validation (valid)", "PASS" if not any("Negative" in e or "Duplicate" in e for e in errs) else "FAIL", str(errs)))
+        results.append(
+            ("Newick validation (valid)",
+             "PASS" if not any("Negative" in e or "Duplicate" in e for e in errs) else "FAIL",
+             str(errs))
+        )
 
         errs2, _ = validate_newick_string("((A:-1,B),(C,D));")
-        results.append(("Newick validation (negative branch)", "PASS" if any("Negative" in e for e in errs2) else "FAIL", "detected" if any("Negative" in e for e in errs2) else "missed"))
+        results.append(
+            ("Newick validation (negative branch)",
+             "PASS" if any("Negative" in e for e in errs2) else "FAIL",
+             "detected" if any("Negative" in e for e in errs2) else "missed")
+        )
 
         errs3, _ = validate_newick_string("((A:0.1,B:0.2),(A:0.3,D:0.4));")
-        results.append(("Newick validation (duplicate tip)", "PASS" if any("Duplicate" in e for e in errs3) else "FAIL", "detected" if any("Duplicate" in e for e in errs3) else "missed"))
+        results.append(
+            ("Newick validation (duplicate tip)",
+             "PASS" if any("Duplicate" in e for e in errs3) else "FAIL",
+             "detected" if any("Duplicate" in e for e in errs3) else "missed")
+        )
 
         errs4, _ = validate_newick_string("((:0.1,B:0.2),(C:0.3,D:0.4));")
-        results.append(("Newick validation (empty tip name)", "PASS" if any("Empty" in e for e in errs4) else "FAIL", "detected" if any("Empty" in e for e in errs4) else "missed"))
+        results.append(
+            ("Newick validation (empty tip name)",
+             "PASS" if any("Empty" in e for e in errs4) else "FAIL",
+             "detected" if any("Empty" in e for e in errs4) else "missed")
+        )
     except Exception as e:
         results.append(("Tree validation", "FAIL", str(e)))
     return results
@@ -307,7 +366,11 @@ def _test_sequence_validation() -> List[tuple]:
         _os.chmod(fasta_path, 0o600)
         _Path(fasta_path).resolve().write_text(">seq1\nATGCGTXYZ!\n", encoding="utf-8")
         seqs, errs = validate_sequence_file(fasta_path, mol_type="DNA")
-        results.append(("Sequence validation (invalid alphabet)", "PASS" if errs else "FAIL", "detected" if errs else "missed"))
+        results.append(
+            ("Sequence validation (invalid alphabet)",
+             "PASS" if errs else "FAIL",
+             "detected" if errs else "missed")
+        )
         _os.unlink(fasta_path)
 
         # 重复 ID
@@ -328,7 +391,11 @@ def _test_sequence_validation() -> List[tuple]:
         _os.chmod(fasta_path, 0o600)
         _Path(fasta_path).resolve().write_text(">seq1\nATGCGT\n>seq2\nATGCGTACGT\n", encoding="utf-8")
         seqs, errs = validate_sequence_file(fasta_path, mol_type="DNA")
-        results.append(("Sequence validation (length mismatch)", "PASS" if any("length" in e.lower() for e in errs) else "FAIL", str(errs) if errs else "missed"))
+        results.append(
+            ("Sequence validation (length mismatch)",
+             "PASS" if any("length" in e.lower() for e in errs) else "FAIL",
+             str(errs) if errs else "missed")
+        )
         _os.unlink(fasta_path)
     except Exception as e:
         results.append(("Sequence validation", "FAIL", str(e)))
@@ -354,7 +421,11 @@ def _test_control_chars() -> List[tuple]:
         # 正常字符串不误报
         clean_str = "normal_label_no_issues"
         errs3 = check_control_characters(clean_str, "test_field")
-        results.append(("Control char detection (clean)", "PASS" if not errs3 else "FAIL", "clean" if not errs3 else "false positive"))
+        results.append(
+            ("Control char detection (clean)",
+             "PASS" if not errs3 else "FAIL",
+             "clean" if not errs3 else "false positive")
+        )
 
         # Validate_string_safety 应抛异常
         try:
@@ -400,13 +471,25 @@ def _test_custom_levels() -> List[tuple]:
         # Map_a 的键是去掉下划线的单字母/多字母代码（'k'、'ss'），与 Format A/B 解析一致
         has_kingdom = "k" in map_a and "kingdom" in names
         has_subspecies = "ss" in map_a and "subspecies" in names
-        results.append(("Custom taxonomy levels", "PASS" if has_kingdom and has_subspecies else "FAIL", f"kingdom={has_kingdom}, subspecies={has_subspecies}"))
+        results.append(
+            ("Custom taxonomy levels",
+             "PASS" if has_kingdom and has_subspecies else "FAIL",
+             f"kingdom={has_kingdom}, subspecies={has_subspecies}")
+        )
 
         r = parse_taxonomy("ID_k_Eukarya_d_Animalia_p_Chordata", custom_levels="kingdom:_k_")
-        results.append(("Custom level parsing (Format A)", "PASS" if r.get("kingdom") == "Eukarya" else "FAIL", str(r.get("kingdom"))))
+        results.append(
+            ("Custom level parsing (Format A)",
+             "PASS" if r.get("kingdom") == "Eukarya" else "FAIL",
+             str(r.get("kingdom")))
+        )
 
         r2 = parse_taxonomy("k__Eukarya;d__Animalia;p__Chordata", custom_levels="kingdom:k")
-        results.append(("Custom level parsing (Format B)", "PASS" if r2.get("kingdom") == "Eukarya" else "FAIL", str(r2.get("kingdom"))))
+        results.append(
+            ("Custom level parsing (Format B)",
+             "PASS" if r2.get("kingdom") == "Eukarya" else "FAIL",
+             str(r2.get("kingdom")))
+        )
     except Exception as e:
         results.append(("Custom taxonomy levels", "FAIL", str(e)))
     return results

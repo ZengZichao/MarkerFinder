@@ -260,7 +260,8 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
     marker_group.add_argument("--marker-hmm-dir",
                               help="[hmm mode] Directory of TIGRFAM/Pfam HMM profile files (one .HMM/.hmm per "
                                    "marker, filename stem = marker id). Used with --marker-mode hmm. Example: "
-                                   "GTDB-Tk-214-Markers/ containing pfam/individual_hmms/ and tigrfam/individual_hmms/. "
+                                   "GTDB-Tk-214-Markers/ containing pfam/individual_hmms/ and "
+                                   "tigrfam/individual_hmms/. "
                                    "When omitted in hmm mode the bundled library under --db-dir is auto-discovered "
                                    "according to --marker-db-source.")
     marker_group.add_argument("--marker-db-source",
@@ -302,7 +303,8 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
                               help="(default: Off) Opt in to auto-relax the Level-2/Level-3 risk threshold on "
                                    "phylogenetically distant datasets (multiple genera/orders) where phylogenetic HGT "
                                    "risk saturates, so markers are not all discarded as Level 3. Disabled by default "
-                                   "so the HGT acceptance threshold is never silently relaxed; pass this flag to enable. "
+                                   "so the HGT acceptance threshold is never silently relaxed; pass this "
+                                   "flag to enable. "
                                    "Equivalent no-op disable: --no-hgt-adaptive-thresholds.")
     marker_group.add_argument("--no-hgt-adaptive-thresholds", action="store_true", default=False,
                               help="Explicitly disable --hgt-adaptive-thresholds (the default behaviour).")
