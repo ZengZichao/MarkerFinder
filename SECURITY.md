@@ -15,8 +15,8 @@ Please do **not** open a public issue for a security report.
 
 Use GitHub's private vulnerability reporting on this repository
 (**Security → Report a vulnerability**), which is enabled. You will be able to
-discuss the details privately, and a fix will be credited in the changelog
-once it ships. If private reporting is unavailable for some reason, contact
+discuss the details privately, and a fix will be credited once it ships. If
+private reporting is unavailable for some reason, contact
 the maintainer directly (see `CITATION.cff` for the author of record) and
 include the word "security" in the subject.
 

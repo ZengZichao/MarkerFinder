@@ -15,7 +15,8 @@ Two directions are enforced:
 * a capability claimed by a case but absent from the surface also fails (an
   option that was renamed or deleted while its test marker stayed behind).
 
-The matrix is exported to ``results/capability_matrix.tsv`` for the test report.
+The matrix is exported to ``results/capability_matrix.tsv`` — a run record that
+is git-ignored and uploaded as a CI artifact, not a committed file.
 """
 
 from __future__ import annotations

@@ -133,7 +133,8 @@ jobs:
       - name: Archive the run record
         # The run rewrites validation/results/* inside the runner's checkout and
         # commits nothing, so without this the measured environment, the JUnit
-        # report and the metrics are lost when the job ends. `if: always()` so a
+        # report, the metrics and the capability matrix are lost when the job
+        # ends. `if: always()` so a
         # failed run still uploads the evidence of how it failed.
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -141,6 +142,5 @@ jobs:
           name: validation-results-${{ github.run_number }}
           path: |
             validation/results/
-            validation/capability_matrix.tsv
           retention-days: 30
           if-no-files-found: warn
