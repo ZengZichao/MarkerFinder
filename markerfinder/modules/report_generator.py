@@ -504,7 +504,18 @@ class PlainTextReportGenerator:
         logger.info(f"  Decision cards written: {n} -> {evidence_dir}")
         return str(evidence_dir)
 
-    def _write_pipeline_summary(self, marker_result, hgt_report, phylo_result, runtime_info, output_dir, prefix, quality_source: str = "checkm", input_dir: str = "", mode: str = "") -> str:
+    def _write_pipeline_summary(
+        self,
+        marker_result,
+        hgt_report,
+        phylo_result,
+        runtime_info,
+        output_dir,
+        prefix,
+        quality_source: str = "checkm",
+        input_dir: str = "",
+        mode: str = "",
+    ) -> str:
         path = str(output_dir / f"{prefix}.pipeline_summary.txt")
         n_genomes = marker_result.occupancy_matrix.n_genomes if marker_result.occupancy_matrix else 0
         n_markers = len(marker_result.marker_set.markers) if marker_result.marker_set else 0

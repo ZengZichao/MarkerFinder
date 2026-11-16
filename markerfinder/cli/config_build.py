@@ -43,7 +43,9 @@ _MODE_STRATEGY = {
 }
 
 
-def _build_pipeline_config(args: argparse.Namespace, parser: Optional[argparse.ArgumentParser] = None) -> PipelineConfig:
+def _build_pipeline_config(
+    args: argparse.Namespace, parser: Optional[argparse.ArgumentParser] = None
+) -> PipelineConfig:
     """Build a PipelineConfig from parsed CLI args.
 
     Shared by the full 'run' aggregate and the per-step subcommands. For non-scan
