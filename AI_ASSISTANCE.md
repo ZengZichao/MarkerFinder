@@ -74,6 +74,39 @@ the v0.1.0 work was assisted, and the model name/version required by the journal
 the author's to state. The marker-line convention below has still not been applied to any
 file, because the file list in `ai-annotation-checklist.md` is empty by design.
 
+## Record: the repository-hygiene round, 2026-11-16 (recorded by the assistant that did it)
+
+A norms audit of the repository was followed by three merged pull requests
+(#18, #19, #20), all drafted by the same class of tool. As with the 0.1.1 round
+above, the involvement is stated from the assistant's own evidence.
+
+* **Date:** 2026-11-16 (commits `750d921`, `cbed462`, `4679d07`; merge commits
+  `b55db0c`, `fd17820`, `5c34dfd`).
+* **Application:** 妙手 / CatPaw, the Meituan desktop AI assistant. The version
+  a journal statement needs is the client's own: **v2026.1030.1052
+  (darwin/arm64)**, read from the client build. As with the 0.1.1 note, the
+  underlying model identifier is not surfaced by the client and must come from
+  the account's usage record if the journal wants it.
+* **Scope:** repository hygiene only. `.gitattributes` and `.editorconfig` (line
+  endings, editor conventions), two `.gitignore` patterns (`.work/` at any depth,
+  `.ruff_cache/`), the missing shebang in `scripts/probe_zero_discrimination.py`,
+  an `# SPDX-License-Identifier: MIT` identifier on all 193 tracked `.py` files, and
+  the wrapping of eleven over-width code lines in `markerfinder/`. **No pipeline
+  logic, threshold, default, reported number or manuscript text was changed**, so
+  no scientific result in the paper is affected.
+* **Verification:** each commit was kept only after `python -m pytest tests`
+  passed (**1083 passed / 0 failed**, CPython 3.12, `.[dev]` installed), and the
+  CI matrix on CPython 3.10–3.14 was green for each pull request
+  (`ci-required` pass). `markerfinder --check` reports **49 PASS / 0 FAIL**, the
+  `gtdb_markers` database hash matches `db/expected_hashes.json`, and the shipped
+  `validation/data/MANIFEST.sha256` (236 files) and
+  `worked_example/run_2026-11-10/SHA256SUMS` (153 files) both still verify.
+* **Attestation gap, unchanged:** the files this round touched are **not** in
+  `ai-annotation-checklist.md`, and no marker line was added, because the
+  convention requires the author — not the tool — to state which files were
+  assisted. Filling that list, and applying it with
+  `scripts/add_llm_markers.py`, remains an author action.
+
 ## What the authors are responsible for
 
 Every AI-assisted change was **executed and reviewed against the test suite**
