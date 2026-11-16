@@ -148,10 +148,8 @@ MarkerFinder/
 ├── validation/                # Full-feature suite: real pipeline on real genomes
 │   ├── cases/                 # Acceptance cases, one file per feature area
 │   ├── data/                  # Shipped fixtures + provenance (genomes are fetched)
-│   ├── results/               # Archived evidence of the published run
 │   └── scripts/               # Data pipeline: fetch genomes / marker sets / fixtures
 ├── db/                        # expected_hashes.json (the HMM profiles are fetched)
-├── docs/                      # Test plan and measured test report (EN + CN)
 ├── scripts/                   # Utility scripts (fetch_marker_db.py, smoketest.py, …)
 ├── pyproject.toml             # Package configuration
 ├── environment.yml            # Conda environment with the external tools
