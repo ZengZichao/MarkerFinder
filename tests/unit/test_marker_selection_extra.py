@@ -238,7 +238,10 @@ class TestAdaptiveMarkerSelectionModule:
         mod._hmm_cache = {
             "G1": {
                 "M1": {
-                    "p1": [{"target": "p1", "score": 100, "evalue": 1e-10, "length": 20, "ali_start": 1, "ali_end": 20}],
+                    "p1": [{
+                        "target": "p1", "score": 100, "evalue": 1e-10,
+                        "length": 20, "ali_start": 1, "ali_end": 20,
+                    }],
                     "p2": [{"target": "p2", "score": 50, "evalue": 1e-5, "length": 20, "ali_start": 1, "ali_end": 20}],
                 }
             }

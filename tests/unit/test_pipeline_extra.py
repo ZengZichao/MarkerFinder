@@ -66,7 +66,10 @@ class TestPipelineSteps:
             input_dir=str(tmp_path),
             output_dir=str(tmp_path / "out"),
             tmp_dir=str(tmp_path / "tmp"),
-            selection_config=SelectionConfig(marker_mode="hmm", marker_hmm_dir=str(tmp_path), min_occupancy=0.0, max_markers=5),
+            selection_config=SelectionConfig(
+                marker_mode="hmm", marker_hmm_dir=str(tmp_path),
+                min_occupancy=0.0, max_markers=5,
+            ),
         )
         (tmp_path / "G1.faa").write_text(">p1\nACGT\n")
         (tmp_path / "M1.hmm").write_text("")
@@ -187,7 +190,10 @@ class TestPipelineStepSubcommands:
             input_dir=str(tmp_path),
             output_dir=str(tmp_path / "out"),
             tmp_dir=str(tmp_path / "tmp"),
-            selection_config=SelectionConfig(marker_mode="hmm", marker_hmm_dir=str(tmp_path), min_occupancy=0.0, max_markers=5),
+            selection_config=SelectionConfig(
+                marker_mode="hmm", marker_hmm_dir=str(tmp_path),
+                min_occupancy=0.0, max_markers=5,
+            ),
         )
         (tmp_path / "G1.faa").write_text(">p1\nACGT\n")
         (tmp_path / "M1.hmm").write_text("")

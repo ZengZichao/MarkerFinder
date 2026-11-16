@@ -16,7 +16,10 @@ from markerfinder.exceptions import MonophylyError
 
 class TestFormatAParseReverse:
     def test_full_taxonomy(self):
-        label = "GB_GCA_000252485.1_d_Bacteria_p_Cyanobacteriota_c_Cyanobacteriia_o_Cyanobacteriales_f_Prochloraceae_g_Prochloron"
+        label = (
+            "GB_GCA_000252485.1_d_Bacteria_p_Cyanobacteriota_c_Cyanobacteriia"
+            "_o_Cyanobacteriales_f_Prochloraceae_g_Prochloron"
+        )
         result = parse_taxonomy_embedded(label, mode="reverse")
         assert result["domain"] == "Bacteria"
         assert result["phylum"] == "Cyanobacteriota"

@@ -430,13 +430,19 @@ class AdaptiveMarkerSelectionModule:
             self.selector = AdaptiveMarkerSelector(config, marker_ids=[])
 
     def run(self, genomes: List[Genome], phase_context: object = None) -> MarkerSelectionResult:
-        logger.info(f"{canonical_log_tag('1')} Marker Selection (mode={self.config.marker_mode}; {len(self.selector.marker_ids)} profiles)")
+        logger.info(
+            f"{canonical_log_tag('1')} Marker Selection "
+            f"(mode={self.config.marker_mode}; {len(self.selector.marker_ids)} profiles)"
+        )
         if phase_context is not None and hasattr(phase_context, "adaptive_params") and phase_context.adaptive_params:
             p = phase_context.adaptive_params
             self.selector.min_occupancy_threshold = p.min_occupancy
             self.selector.max_markers = p.max_markers
             self.selector.min_hmm_score = p.min_hmm_score
-            logger.info(f"  Applied adaptive params: occ>={p.min_occupancy}, max={p.max_markers}, hmm_score>={p.min_hmm_score}")
+            logger.info(
+                f"  Applied adaptive params: occ>={p.min_occupancy}, "
+                f"max={p.max_markers}, hmm_score>={p.min_hmm_score}"
+            )
 
         self._hmm_cache = {}
         # Share the cache dict with the selector: scan_all_candidates stores each

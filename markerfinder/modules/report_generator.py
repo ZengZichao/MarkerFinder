@@ -270,7 +270,8 @@ class InteractiveReportGenerator:
             bar_html += (
                 f'<div style="margin:4px 0;">'
                 f'<span style="display:inline-block;width:180px;font-size:12px;">{label}</span>'
-                f'<span style="display:inline-block;width:{pct:.1f}%;background:{color};" title="{count} markers">&nbsp;</span>'
+                f'<span style="display:inline-block;width:{pct:.1f}%;background:{color};" '
+                f'title="{count} markers">&nbsp;</span>'
                 f'<span style="margin-left:8px;font-size:12px;">{count}</span>'
                 f'</div>'
             )
@@ -302,12 +303,18 @@ class InteractiveReportGenerator:
 
         return f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>MarkerFinder Report</title>
-<style>body{{font-family:Arial;margin:20px}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #ddd;padding:8px}}th{{background:#3498db;color:#fff}}h2{{margin-top:30px;color:#2c3e50}}.note{{background:#f9f9f9;border-left:4px solid #3498db;padding:10px;margin:10px 0}}</style>
+<style>body{{font-family:Arial;margin:20px}}
+table{{border-collapse:collapse;width:100%}}
+th,td{{border:1px solid #ddd;padding:8px}}
+th{{background:#3498db;color:#fff}}
+h2{{margin-top:30px;color:#2c3e50}}
+.note{{background:#f9f9f9;border-left:4px solid #3498db;padding:10px;margin:10px 0}}</style>
 </head><body>
 <h1>MarkerFinder Report</h1>
 <p>Generated: {datetime.now().isoformat()}</p>
 <p>Runtime: {runtime_info.duration:.1f}s | Genomes: {n_genomes} | Markers: {n_markers}</p>
-<p>HGT: L1={level_counts["level_1"]} L2={level_counts["level_2"]} L3={level_counts["level_3"]} UNK={level_counts["unknown"]} | Species tree source: {tree_source_display}</p>
+<p>HGT: L1={level_counts["level_1"]} L2={level_counts["level_2"]} L3={level_counts["level_3"]}
+UNK={level_counts["unknown"]} | Species tree source: {tree_source_display}</p>
 {quality_note}
 {quality_table}
 {species_tree_table}
@@ -723,13 +730,18 @@ class PlainTextReportGenerator:
                 f"marker's notes record 'far-distance'."
             )
             lines.append("")
+        unknown_count = getattr(
+            hgt_report, "unknown_count",
+            sum(1 for e in hgt_report.marker_evaluations if e.level.value == "unknown"),
+        )
         lines += [
             "Input/Output:",
             f"  Input directory:  {input_dir or 'N/A'}",
             f"  Output directory: {self.config.output_dir}",
             f"  Analysis mode:    {mode or 'N/A'}",
             f"  Selection strategy: {strategy}",
-            f"  Intermediate files saved: {'yes (see Phase4_intermediate/)' if self.config.save_intermediates else 'no'}",
+            f"  Intermediate files saved: "
+            f"{'yes (see Phase4_intermediate/)' if self.config.save_intermediates else 'no'}",
             "",
             "Dataset:",
             f"  Genomes: {n_genomes}",
@@ -744,7 +756,7 @@ class PlainTextReportGenerator:
             f"  Level 1 (clean):     {hgt_report.level1_count}",
             f"  Level 2 (suspicious): {hgt_report.level2_count}",
             f"  Level 3 (excluded):  {hgt_report.level3_count}",
-            f"  Unknown (screen skipped, kept): {getattr(hgt_report, 'unknown_count', sum(1 for e in hgt_report.marker_evaluations if e.level.value == 'unknown'))}",
+            f"  Unknown (screen skipped, kept): {unknown_count}",
             f"  Mean HGT risk: {hgt_report.mean_risk:.4f}",
             "",
             "HGT step availability:",

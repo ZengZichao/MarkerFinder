@@ -3,9 +3,9 @@
 # carries the conventions an editor applies on save so that a file opened by
 # any contributor comes out the same way.
 #
-# `max_line_length` is a soft guide, not a gate: the tree is not formatter-clean
-# and the project deliberately runs no linter in CI (see the mypy note in
-# pyproject.toml). It records the width new code is written to.
+# `max_line_length` is a soft guide, not a gate: the project deliberately runs
+# no linter in CI (see the mypy note in pyproject.toml), so a stray long line is
+# not a build failure. The tracked Python tree is kept within it.
 
 root = true
 
