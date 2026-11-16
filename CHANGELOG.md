@@ -20,8 +20,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   named in **both** halves of the MANUAL. It used to read `MANUAL.CN.md` only,
   so the not-wired list could drift in the authoritative English page with the
   suite green.
+- **Repository formatting policy.** A `.gitattributes` pins every text file --
+  including the `.faa` / `.hmm` / `.nwk` / `.tsv` fixtures whose SHA-256 the
+  data manifests verify -- to LF, so checking out on another platform cannot
+  change a hashed artefact; an `.editorconfig` records the editor-side
+  conventions (charset, final newline, indentation, 120-column guide). Neither
+  adds a linter gate: the tree is not formatter-clean, and the project's stated
+  position is to fix findings before gating them.
 
 ### Fixed
+
+- `.gitignore` ignored `validation/.work/` but not a `.work/` directory at any
+  other depth, and did not ignore `.ruff_cache/`; both patterns now match at
+  any level. `scripts/probe_zero_discrimination.py` was the one script in
+  `scripts/` carrying no shebang, so it could not be run directly like its four
+  siblings.
 
 - Four references that pointed at nothing, or at the wrong thing: the module
   docstring of `tests/unit/test_module_regressions.py` cited

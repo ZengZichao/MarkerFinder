@@ -34,13 +34,16 @@ env*/
 .pytest_of*/
 pytest-of-*/
 .mypy_cache/
+# Ruff is not a gate (see .editorconfig) but it is the formatter the line-length
+# convention below is written for, so its cache must not dirty the tree either.
+.ruff_cache/
 .coverage
 .coverage.*
 htmlcov/
 .tox/
 coverage.xml
 smoketest_output/
-validation/.work/
+.work/
 validation/data/markers/.hit_cache/
 validation/data/.download_tmp/
 

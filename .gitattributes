@@ -1,0 +1,41 @@
+# Line-ending and whitespace policy for the MarkerFinder repository.
+#
+# The tree ships a number of plain-text scientific artefacts (HMM profiles,
+# Newick/Nexus trees, FASTA, TSV) beside the Python sources. Without an
+# attributes file Git decides per file and per platform whether such a file is
+# text, so the same fixture can be checked out with CRLF on one machine and LF
+# on another -- which changes its SHA-256 and therefore the
+# validation/data/MANIFEST.sha256 and worked_example SHA256SUMS verifications.
+# Pinning everything text to LF keeps those manifests meaningful.
+
+# Let Git classify by content, then force LF for anything it calls text.
+* text=auto eol=lf
+
+# The data formats the pipeline reads and writes. Named explicitly so the
+# classification does not depend on Git's binary heuristic.
+*.faa    text eol=lf
+*.fna    text eol=lf
+*.fasta  text eol=lf
+*.hmm    text eol=lf
+*.HMM    text eol=lf
+*.nwk    text eol=lf
+*.nhx    text eol=lf
+*.nex    text eol=lf
+*.tsv    text eol=lf
+*.csv    text eol=lf
+*.json  text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.toml  text eol=lf
+*.cff   text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+
+# Genuinely binary artefacts that happen to live in the tree (figures, caches).
+*.png   binary
+*.tiff  binary
+*.tif   binary
+*.pdf   binary
+*.pyc   binary
+*.woff  binary
+*.woff2 binary

@@ -1,0 +1,32 @@
+# EditorConfig for MarkerFinder -- the editor-side half of the formatting
+# contract. The enforced half lives in .gitattributes (line endings); this file
+# carries the conventions an editor applies on save so that a file opened by
+# any contributor comes out the same way.
+#
+# `max_line_length` is a soft guide, not a gate: the tree is not formatter-clean
+# and the project deliberately runs no linter in CI (see the mypy note in
+# pyproject.toml). It records the width new code is written to.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# Formats with an established 2-space convention of their own.
+[*.{yml,yaml,json,toml}]
+indent_size = 2
+
+# Markdown uses trailing double spaces for a hard line break, so trimming
+# trailing whitespace would silently change meaning.
+[*.md]
+trim_trailing_whitespace = false
+
+# The HMM profiles carry a fixed-width header column; never reindent them.
+[*.{hmm,HMM}]
+indent_style = unset
