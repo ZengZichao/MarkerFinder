@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Shared runner for the scan/filter/infer/report pipeline subcommands.
 
 ``_execute_pipeline`` is a verbatim relocation of the single-step branch that

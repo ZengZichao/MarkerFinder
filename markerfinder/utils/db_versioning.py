@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Database version management utilities."""
 
 import hashlib

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ (decision card is the judges' source) and (byte determinism).
 
  asks that the assertions, the threshold scan and the consistency

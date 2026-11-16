@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Four-state evidence model.
 
 ``None`` alone cannot distinguish "could not be measured" from "does not

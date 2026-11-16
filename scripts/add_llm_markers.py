@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Apply and verify the repository's LLM-assistance annotation convention.
 
 Why this script exists

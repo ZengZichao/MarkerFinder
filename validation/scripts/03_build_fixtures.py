@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Step 3: build every remaining input fixture the validation cases read.
 
 Everything here is derived from ``data/PROVENANCE.tsv`` (which is itself read

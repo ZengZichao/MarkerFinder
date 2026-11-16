@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Taxonomy must-pass benchmark.
 
 Why this exists: the retracted *Science* sponge paper — Steenwyk, J. L. &

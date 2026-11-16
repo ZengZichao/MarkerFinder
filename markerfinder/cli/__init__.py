@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """MarkerFinder command-line interface package.
 
 Re-exports the argument parser builder and the CLI ``main`` entry point so that

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Monophyly screen semantics: root invariance, informative splits, requested rank.
 
 Three claims, each pinned here at the numeric/structural layer while the

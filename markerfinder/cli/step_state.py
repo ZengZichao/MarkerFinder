@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Step-state helpers for the pipeline subcommands.
 
 Verbatim relocation of the state-inspection/redo logic that used to live in

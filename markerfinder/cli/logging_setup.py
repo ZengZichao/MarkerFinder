@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Signal handling and log-level resolution for the MarkerFinder CLI."""
 
 from __future__ import annotations

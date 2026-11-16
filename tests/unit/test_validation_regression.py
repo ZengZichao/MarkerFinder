@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``validation.py`` (#3 A8/A9/A10).
 
 Locks in three changed behaviours of ``validate_newick_string``:

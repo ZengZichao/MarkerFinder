@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Phase numbering unification tests."""
 
 import re

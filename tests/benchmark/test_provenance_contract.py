@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Benchmark provenance is enforced, not just recommended.
 
  asks for "数据不入库；来源 DOI / 许可证 / 获取日期 / 校验和记录在案". Before

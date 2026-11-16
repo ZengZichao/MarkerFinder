@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``taxonomy.py`` (#4) monophyly_proportion.
 
 Locks in the performance optimization where ``monophyly_proportion`` pre-builds

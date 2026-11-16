@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """A stage computes AND writes its own artifact.
 
 ``markerfinder/pipeline.py`` is the coupling hotspot of the pipeline

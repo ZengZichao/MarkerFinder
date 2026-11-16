@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """End-to-end integration tests for MarkerFinderPipeline.
 
 These tests run the full pipeline with all external tools (MAFFT, trimAl,

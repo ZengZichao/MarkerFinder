@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Python 3.13+ compatibility shim for the deprecated stdlib ``cgi`` module.
 
 Python 3.13 removed :mod:`cgi` (PEP 594). ``ete3`` — a hard runtime dependency

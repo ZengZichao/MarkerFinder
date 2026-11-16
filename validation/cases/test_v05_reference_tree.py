@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-05 — reference species tree, tree parsing and sequence validation.
 
 Covers ``--species-tree``, the deprecated ``--tree`` alias,

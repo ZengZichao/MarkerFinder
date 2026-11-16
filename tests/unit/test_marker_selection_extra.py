@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Additional unit tests for marker selection helpers and module."""
 
 from pathlib import Path

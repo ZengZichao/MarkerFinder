@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Acceptance evidence that needs no external tools —.
 
 Three items on the checklist are provable in-process but had no live

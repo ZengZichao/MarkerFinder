@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for configuration file loading and merging."""
 
 import json

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Evidence coverage must be computed, printed, and warn below the floor.
 
 The field and the warning existed (``HGTReport.n_actually_measured``,

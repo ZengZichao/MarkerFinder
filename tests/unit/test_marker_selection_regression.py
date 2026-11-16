@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression test for ``modules/marker_selection.py`` extract_marker_sequences (#6 D39).
 
 The fix for #6 D39 was documentation-only (the homologous multi-copy singleton

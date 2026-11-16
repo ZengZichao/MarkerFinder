@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Single ete3 import entry point + pure-Python tree measurement fallback.
 
 Two orders of preference:

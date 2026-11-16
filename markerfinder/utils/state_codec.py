@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Explicit, versioned schema serialization for MarkerFinder subcommand state.
 
 This module replaces the legacy whole-object ``pickle`` persistence used by

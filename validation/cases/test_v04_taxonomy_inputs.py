@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-04 — taxonomy input formats, sources and the rank machinery.
 
 Covers ``--taxonomy-table``, ``--taxonomy-format``,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import pytest
 from markerfinder.models.genome import (
     Genome, GenomeSource, GenomeQuality, GeneState, OccupancyMatrix,

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Tree model -- a data shape that also carries derived measurements.
 
  (read this before treating ``Tree`` as a DTO): the methods below compute

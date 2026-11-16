@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for tree utility functions."""
 
 from pathlib import Path

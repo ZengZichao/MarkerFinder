@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Build a:class:`PipelineConfig` from parsed CLI arguments.
 
 Verbatim relocation of ``_build_pipeline_config`` from ``markerfinder.__main__``.

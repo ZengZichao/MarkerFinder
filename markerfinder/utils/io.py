@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """File I/O utilities."""
 
 import os

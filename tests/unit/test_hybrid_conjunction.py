@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """``--hgt-mode hybrid`` is the conjunction of both legs.
 
 The specification fixes the semantics that the closure report had left as the

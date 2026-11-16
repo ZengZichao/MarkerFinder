@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """One sanctioned ete3 entry point — and a ratchet on the remaining imports.
 
 ``etree.require_ete3`` is the single sanctioned way to reach ete3. A bare claim

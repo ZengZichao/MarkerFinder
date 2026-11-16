@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for GTDB-TK marker loading utilities."""
 
 import pytest

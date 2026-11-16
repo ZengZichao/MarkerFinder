@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Step 1 of the MarkerFinder validation data pipeline: real genomes + provenance.
 
 What it produces

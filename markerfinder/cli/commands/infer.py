@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Execute the ``infer`` subcommand (Phase 3, phylogenetic inference)."""
 
 from __future__ import annotations

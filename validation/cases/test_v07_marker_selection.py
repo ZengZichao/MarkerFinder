@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-07 — marker selection: resolution modes, budgets and occupancy floors.
 
 Covers ``--mode`` (four documented resolutions), ``--marker-preset``,

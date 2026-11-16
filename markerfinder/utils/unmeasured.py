@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """A run has to be able to say which metrics it did *not* measure, and why.
 
 The requirement is explicit: "外部工具/依赖不可用时，日志与报告必须显式声明哪些指标

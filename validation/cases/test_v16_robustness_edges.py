@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-16 — robustness: degenerate and malformed inputs must fail in the right way.
 
 Three properties are checked over the failure paths, none of which a

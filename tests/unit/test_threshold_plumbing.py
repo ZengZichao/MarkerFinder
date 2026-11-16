@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Threshold plumbing + scan tests."""
 
 import json

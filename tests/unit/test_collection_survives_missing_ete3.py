@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The suite must stay collectable when ete3 cannot be imported.
 
 Finding: ``tests/unit/test_mad_root_regression.py`` and

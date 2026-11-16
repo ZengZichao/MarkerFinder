@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Core data models for MarkerFinder pipeline."""
 
 from markerfinder.models.genome import (

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Placeholder removal and Optional type-contract tests.
 
 the four literal placeholders are gone from production code; Optional

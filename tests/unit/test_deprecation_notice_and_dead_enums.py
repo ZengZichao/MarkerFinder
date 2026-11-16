@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ (deprecation notice that actually fires) and (dead enums).
 
  asked that ``--hgt-threshold`` stay a backward-compatible alias of

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Obtain the per-marker TIGRFAM/Pfam HMM profiles used by ``--marker-mode hmm``.
 
 Why this is a fetch step and not a directory in the repository

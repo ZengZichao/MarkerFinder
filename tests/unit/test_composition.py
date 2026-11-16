@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Composition/GC diagnostics tests.
 
 The prohibition is locked here: composition evidence is a parallel

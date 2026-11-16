@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Pure-Python split-set RF / quartet / clade measurement tests.
 
 Differential coverage for:mod:`markerfinder.utils.etree` — the ete3-free

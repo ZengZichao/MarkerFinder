@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Reference-tree legality validation.
 
 Direct defence against "Error A" of the retracted paper — Steenwyk, J. L. &

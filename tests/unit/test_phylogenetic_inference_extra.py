@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Additional unit tests for phylogenetic inference helpers and modules."""
 
 from pathlib import Path

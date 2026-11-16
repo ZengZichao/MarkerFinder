@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Ortholog resolution helpers and the ``OrthologResolver`` class.
 
 This module is a **reserved interface** for future multi-copy marker

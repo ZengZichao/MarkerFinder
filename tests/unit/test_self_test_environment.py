@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """: ``--check`` interpreter version gate must-fail control."""
 
 from markerfinder.cli.self_test import (

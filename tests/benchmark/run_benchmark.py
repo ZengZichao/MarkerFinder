@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """Run the external benchmark end to end.
 
 Pipeline -> decision cards -> precision/recall against the planted-chimera

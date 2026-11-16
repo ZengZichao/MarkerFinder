@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Input validation and taxonomy/state resolution helpers for the CLI.
 
 Verbatim relocation of the validation and input-resolution helpers that used to

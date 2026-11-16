@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """ Control experiment: does --check's verdict come from the check bodies?
 
 The acceptance list demands "delete any assertion's check body and --check must

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Decisive-interface contract tests + taxonomy must-pass wiring
 .
 

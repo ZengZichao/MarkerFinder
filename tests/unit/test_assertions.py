@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Assertion layer tests."""
 
 import pytest

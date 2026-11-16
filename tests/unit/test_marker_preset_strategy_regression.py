@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Regression test for review item N-B13: ``--marker-preset`` wrote the strategy
 to a non-existent field.
 

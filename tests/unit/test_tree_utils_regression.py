@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``utils/tree_utils.py`` (C29).
 
 Locks in the ``calculate_rf_distance`` semantics change:

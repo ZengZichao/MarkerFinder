@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """V-12 — the four resumable steps, their state file and their ordering.
 
 Covers the subcommands ``scan`` / ``filter`` / ``infer`` / ``report``, plus

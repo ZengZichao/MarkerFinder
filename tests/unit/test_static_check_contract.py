@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Strict static checking of the new/rewritten modules, as a gate.
 
 The design scope limits mypy strict to the rewritten modules ("既有代码不追溯").

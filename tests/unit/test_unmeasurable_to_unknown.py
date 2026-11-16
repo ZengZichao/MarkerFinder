@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unmeasurable → UNKNOWN three-state tests.
 
 The zero-discrimination experiment is locked here as a must-fail control: if anyone

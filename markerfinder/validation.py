@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Input file validation: tree files, sequence files, cross-validation.
 
 Public API:

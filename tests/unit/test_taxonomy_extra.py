@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Additional unit tests for taxonomy parsing and monophyly utilities."""
 
 from pathlib import Path

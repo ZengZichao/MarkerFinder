@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """``models/tree.py``: an unreadable tree must not answer the question.
 
 Found while consolidating the ete3 entry point. Every

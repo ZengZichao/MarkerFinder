@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Utility functions for MarkerFinder."""
 
 from markerfinder.utils.io import load_genomes_from_directory, write_fasta

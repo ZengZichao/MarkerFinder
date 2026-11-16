@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """'s grading table and 's demotion of the combined score.
 
  ("分档规则照搬论文：两侧同侧且都过阈 -> consistent；两侧异侧 ->

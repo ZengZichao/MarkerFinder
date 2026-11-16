@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The external-tool pre-check table must match what the code invokes.
 
 The finding this gate retires: ``EXTERNAL_TOOLS`` listed six binaries while the

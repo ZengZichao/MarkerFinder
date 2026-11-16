@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``config.py`` (#2 + C33) and ``utils/hgt_utils.py`` (C33).
 
 Locks in:

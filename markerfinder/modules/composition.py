@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Composition / GC bias diagnostics.
 
 Default OFF (``enable_composition_screen=False``). These metrics are

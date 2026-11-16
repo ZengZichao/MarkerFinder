@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """The consistency strength metric, and the two things it must not do.
 
  is short -- "强度指标用已有的 ``calculate_rf_distance`` 与

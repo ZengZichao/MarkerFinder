@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Switches that existed but reached nothing.
 
 Two CLI/config knobs were advertised ( /) yet had no

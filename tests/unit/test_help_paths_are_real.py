@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """User-facing help text may not name a path the program never writes.
 
 The symptom this gate was written for: ``--help`` told the user that state lives

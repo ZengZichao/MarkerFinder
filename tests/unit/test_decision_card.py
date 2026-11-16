@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Per-marker decision card tests."""
 
 import json

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Wiring & dead-code cleanup tests."""
 
 import json

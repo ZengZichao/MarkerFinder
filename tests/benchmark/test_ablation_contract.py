@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """The reverse-ablation comparator refuses unattributable runs.
 
 The reverse-ablation contract is the one requirement that is pure logic, so unlike

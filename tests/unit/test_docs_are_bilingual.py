@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Every document in this repository must exist in both languages, English first.
 
 The rule this enforces is a published one: documentation ships in an English and

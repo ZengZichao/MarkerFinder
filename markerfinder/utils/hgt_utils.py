@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """HGT detection utility functions."""
 
 import logging

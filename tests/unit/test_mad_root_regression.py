@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``utils/mad_root.py`` (#0 CRITICAL + C28).
 
 These tests lock in the bug fix where ``best_tree.set_outgroup`` previously

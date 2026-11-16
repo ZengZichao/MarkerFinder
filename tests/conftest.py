@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Shared test fixtures."""
 
 import pytest

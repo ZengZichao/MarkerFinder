@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Unit tests for database version management."""
 
 from pathlib import Path

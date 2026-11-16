@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """GTDB-TK marker loading and per-marker gene-tree building.
 
 MarkerFinder consumes the conserved-protein sequences that GTDB-TK produces for

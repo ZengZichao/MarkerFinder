@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Custom exception hierarchy for MarkerFinder.
 
 All public exceptions inherit from PhyloToolError.

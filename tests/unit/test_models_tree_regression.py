@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Code-review regression tests for ``models/tree.py`` get_tips (#6 B17/B18).
 
 Locks in the fix where ``get_tips`` (ete3-backed) correctly returns tips whose
