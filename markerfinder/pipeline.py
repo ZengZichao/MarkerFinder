@@ -67,7 +67,9 @@ class MarkerFinderPipeline:
             config.phylo_config,
             gene_trees_dir=str(Path(config.output_dir) / "Phase4_trees" / "gene_trees"),
         )
-        self.report_generator = ReportGeneratorModule(config.report_config, force=config.force, no_clobber=config.no_clobber)
+        self.report_generator = ReportGeneratorModule(
+            config.report_config, force=config.force, no_clobber=config.no_clobber
+        )
         if config.ortholog_config.tmp_dir == "/tmp" and config.tmp_dir != "/tmp":
             config.ortholog_config.tmp_dir = config.tmp_dir
 
@@ -510,7 +512,14 @@ class MarkerFinderPipeline:
         # With a gene tree gets a real informativeness value instead of the 0.5 placeholder.
         gene_trees_dir = getattr(getattr(self, "phylo_inference", None), "gene_trees_dir", "") or ""
         if not gene_trees_dir:
-            gene_trees_dir = getattr(getattr(getattr(self, "phylo_inference", None), "coalescent", None), "gene_trees_dir", "") or ""
+            gene_trees_dir = (
+                getattr(
+                    getattr(getattr(self, "phylo_inference", None), "coalescent", None),
+                    "gene_trees_dir",
+                    "",
+                )
+                or ""
+            )
         if gene_trees_dir and Path(gene_trees_dir).is_dir():
             for nwk in Path(gene_trees_dir).glob("*.nwk"):
                 mid = nwk.stem

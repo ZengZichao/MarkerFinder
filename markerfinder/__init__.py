@@ -36,7 +36,13 @@ from markerfinder.taxonomy import (
     parse_custom_levels,
     get_merged_level_maps,
 )
-from markerfinder.validation import load_tree, cross_validate, ValidationReport, check_control_characters, validate_string_safety
+from markerfinder.validation import (
+    load_tree,
+    cross_validate,
+    ValidationReport,
+    check_control_characters,
+    validate_string_safety,
+)
 from markerfinder.exceptions import (
     PhyloToolError,
     PhyloFormatError,

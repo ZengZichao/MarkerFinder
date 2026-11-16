@@ -59,6 +59,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Production code wrapped to the 120-column guide.** Eleven code-structural
+  lines in `markerfinder/` -- a long `from ... import`, four `def` signatures,
+  three expressions/assignments, an argparse `help=`, and two `getattr` chains
+  -- now fit the width `.editorconfig` declares. The over-width lines that
+  remain are string literals (argparse help text, log/HTML/CSS message
+  templates, the self-test's taxonomy labels), which are left intact rather than
+  split for the sake of a number. `max_line_length` stays a soft editor guide,
+  not a CI gate.
+
 - The README badge and suite-count prose are refreshed to the live collection
   (1083 cases: 1015 unit + 17 integration + 51 benchmark), as the single-source
   rule requires, and `docs/TESTING` states the same total. The 0.1.1

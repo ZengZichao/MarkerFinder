@@ -285,7 +285,9 @@ class AdaptiveMarkerSelector:
                 scores[cog] = single / len(matrix.genomes) if matrix.genomes else 0
         return scores
 
-    def select_optimal_marker_set(self, matrix: OccupancyMatrix, occupancy_scores: Dict[str, float]) -> SelectedMarkerSet:
+    def select_optimal_marker_set(
+        self, matrix: OccupancyMatrix, occupancy_scores: Dict[str, float]
+    ) -> SelectedMarkerSet:
         strat = self.config.strategy
         if strat == SelectionStrategy.GREEDY:
             return self._greedy_selection(matrix, occupancy_scores)
@@ -337,7 +339,10 @@ class AdaptiveMarkerSelector:
                     # Bug: it never matched a column in the matrix, so the
                     # Redundancy penalty was always 0 and InfoMax collapsed into
                     # Plain greedy.
-                    red = sum(self._compute_occupancy_overlap(matrix, cog, c2, sc_sets) for c2 in selected) / len(selected)
+                    red = sum(
+                        self._compute_occupancy_overlap(matrix, cog, c2, sc_sets)
+                        for c2 in selected
+                    ) / len(selected)
                     gain = sc - rw * red
                 if gain > best_gain:
                     best_gain, best_cog = gain, cog
@@ -598,8 +603,13 @@ class AdaptiveMarkerSelectionModule:
                  "seq": seq, "score": hit["score"], "evalue": hit["evalue"]}
         mg[mid].append(entry)
 
-    def _compute_quality_scores(self, marker_set, genomes, matrix,
-                                hmm_cache: Optional[Dict[str, Dict[str, Dict[str, List[Dict]]]]] = None) -> Dict[str, MarkerQualityScore]:
+    def _compute_quality_scores(
+        self,
+        marker_set,
+        genomes,
+        matrix,
+        hmm_cache: Optional[Dict[str, Dict[str, Dict[str, List[Dict]]]]] = None,
+    ) -> Dict[str, MarkerQualityScore]:
         """Per-marker quality score.
 
         Uses only quantities that are actually computed by this phase:
@@ -666,8 +676,8 @@ class AdaptiveMarkerSelectionModule:
                 occupancy=marker_set.occupancy_scores.get(cog, 0.0),
                 length_ratio=length_ratio,
                 copy_number_cv=m / t if t else 0,
-                phylogenetic_informativeness=None,  # Unmeasured until a gene tree exists (Phase 3 back-fill in run_infer)
-                hgt_risk_score=0.0,                 # Placeholder: back-filled from HGT filter (Phase 2 back-fill in run_filter)
+                phylogenetic_informativeness=None,  # Unmeasured until a gene tree exists (Phase 3)
+                hgt_risk_score=0.0,                 # Placeholder: back-filled from the HGT filter (Phase 2)
                 functional_category="",
             )
         return out

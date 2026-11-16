@@ -74,7 +74,11 @@ class MarkerQualityScore:
             return None
         hmm_norm = min(self.hmm_score / HMM_SCORE_NORMALIZER, 1.0)
         occ_norm = self.occupancy
-        len_norm = min(self.length_ratio, 1.0) if self.length_ratio <= LENGTH_RATIO_SATURATION else LENGTH_RATIO_LOW_FLOOR
+        len_norm = (
+            min(self.length_ratio, 1.0)
+            if self.length_ratio <= LENGTH_RATIO_SATURATION
+            else LENGTH_RATIO_LOW_FLOOR
+        )
         pi_norm = self.phylogenetic_informativeness
         hgt_norm = 1.0 - self.hgt_risk_score
         score = (

@@ -95,7 +95,8 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
                             action=DeprecatedAliasAction,
                             alias_attr="used_tree_alias",
                             default=None,
-                            help="Deprecated alias for --species-tree. Input reference species tree file (Newick/Nexus/NHX)")
+                            help="Deprecated alias for --species-tree. Input reference species tree "
+                                 "file (Newick/Nexus/NHX)")
     tree_group.add_argument("--sequences",
                             type=PathType(exists=True, is_file=True),
                             help="Input sequence file (FASTA/FASTQ)")
@@ -274,7 +275,8 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
                               help="[hmm mode] Minimum bitscore for an hmmsearch hit to count as a marker "
                                    "hit (default: 20.0). Increase to tighten marker identification.")
     marker_group.add_argument("--gtdb-markers-dir",
-                              help="[gtdb_tk mode] Directory of GTDB-TK extracted per-marker raw/unaligned FASTA files.")
+                              help="[gtdb_tk mode] Directory of GTDB-TK extracted per-marker raw/unaligned "
+                                   "FASTA files.")
     marker_group.add_argument("--species-tree",
                               help="Reference species tree (Newick) used as "
                                    "the reference for HGT phylogenetic-step screening (RF/quartet vs "
