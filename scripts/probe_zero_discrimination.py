@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Zero-discrimination probe: does the output move when the input moves?
 
 Feeds two 4-taxon trees — one maximally conflicted with the reference
